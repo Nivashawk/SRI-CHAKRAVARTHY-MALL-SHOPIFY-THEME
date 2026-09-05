@@ -10,3 +10,6 @@ Thumbs.db
 .shopify
 node_modules
 *.zip
+# Seed script artefacts
+scripts/mock-images/
+.env
