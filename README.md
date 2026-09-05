@@ -39,6 +39,14 @@ shopify theme push -e dev         # update the theme you're working on
 shopify theme pull -e dev         # pull down changes made in the theme editor
 ```
 
+The storefront is password protected, so `theme dev` needs the storefront password
+(Admin → Online Store → Preferences) and cannot prompt for it in a non-interactive
+shell:
+
+```bash
+shopify theme dev -e dev --store-password '<storefront password>' --open
+```
+
 `shopify theme dev` prints two URLs: a local **preview** and the **theme editor**.
 Changes saved in the editor live on the store, not on disk — run `theme pull` to
 bring them back into git.
