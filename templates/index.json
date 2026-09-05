@@ -609,9 +609,160 @@
         "address": "Sri Chakravarthy Mall, Vijayawada, Andhra Pradesh",
         "directions_label": "Get directions"
       }
+    },
+    "hero": {
+      "type": "slideshow",
+      "settings": {
+        "section_width": "full-width",
+        "full_frame_on_mobile": true,
+        "slide_height": "medium",
+        "content_position": "middle-left",
+        "autoplay": true,
+        "autoplay_speed": 6,
+        "slideshow_controls_style": "dots",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      },
+      "blocks": {
+        "slide_1": {
+          "type": "_slide",
+          "settings": {
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "padding-inline-start": 64,
+            "padding-inline-end": 64,
+            "padding-block-start": 48,
+            "padding-block-end": 48,
+            "toggle_overlay": true,
+            "overlay_color": "#FDFBF7A6",
+            "overlay_style": "gradient",
+            "gradient_direction": "to right"
+          },
+          "blocks": {
+            "heading": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>Woven for the occasion</h2>",
+                "text_color": "#221E1A"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Pure zari silks, handwoven and finished by hand.</p>",
+                "padding-block-end": 20,
+                "text_color": "#221E1A"
+              }
+            },
+            "button": {
+              "type": "button",
+              "settings": {
+                "label": "See new arrivals",
+                "link": "/collections/all"
+              }
+            }
+          },
+          "block_order": [
+            "heading",
+            "text",
+            "button"
+          ]
+        },
+        "slide_2": {
+          "type": "_slide",
+          "settings": {
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "padding-inline-start": 64,
+            "padding-inline-end": 64,
+            "padding-block-start": 48,
+            "padding-block-end": 48,
+            "toggle_overlay": true,
+            "overlay_color": "#FDFBF7A6",
+            "overlay_style": "gradient",
+            "gradient_direction": "to right"
+          },
+          "blocks": {
+            "heading": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>Dressed for the wedding</h2>",
+                "text_color": "#221E1A"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Bridal silks in temple gold, deep maroon and ivory.</p>",
+                "padding-block-end": 20,
+                "text_color": "#221E1A"
+              }
+            },
+            "button": {
+              "type": "button",
+              "settings": {
+                "label": "Explore bridal",
+                "link": "/collections/all/wedding"
+              }
+            }
+          },
+          "block_order": [
+            "heading",
+            "text",
+            "button"
+          ]
+        },
+        "slide_3": {
+          "type": "_slide",
+          "settings": {
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "padding-inline-start": 64,
+            "padding-inline-end": 64,
+            "padding-block-start": 48,
+            "padding-block-end": 48,
+            "toggle_overlay": true,
+            "overlay_color": "#FDFBF7A6",
+            "overlay_style": "gradient",
+            "gradient_direction": "to right"
+          },
+          "blocks": {
+            "heading": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>For every celebration</h2>",
+                "text_color": "#221E1A"
+              }
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Festive drapes for Diwali, Pongal and Sankranti.</p>",
+                "padding-block-end": 20,
+                "text_color": "#221E1A"
+              }
+            },
+            "button": {
+              "type": "button",
+              "settings": {
+                "label": "Shop festive",
+                "link": "/collections/all/festive"
+              }
+            }
+          },
+          "block_order": [
+            "heading",
+            "text",
+            "button"
+          ]
+        }
+      },
+      "block_order": [
+        "slide_1",
+        "slide_2",
+        "slide_3"
+      ]
     }
   },
   "order": [
+    "hero",
     "weave_band",
     "wall",
     "weave_index",
