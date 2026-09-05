@@ -17,7 +17,7 @@
         "announcement_BxgCk9": {
           "type": "_announcement",
           "settings": {
-            "text": "Welcome to our store",
+            "text": "Free shipping across India on orders above ₹4,999",
             "font": "var(--font-subheading--family)",
             "font_size": "0.75rem",
             "letter_spacing": "normal",
@@ -33,9 +33,9 @@
       "settings": {
         "speed": 5,
         "section_width": "page-width",
-        "background_color": "{{ settings.color_palette.background }}",
+        "background_color": "#12100E",
         "divider_width": 1,
-        "divider_color": "{{ settings.color_palette.color2 }}",
+        "divider_color": "#D9982F",
         "padding-block-start": 15,
         "padding-block-end": 15
       }
@@ -93,11 +93,17 @@
         "enable_sticky_header": "always",
         "divider_width": 0,
         "divider_size": "page-width",
-        "border_width": 0,
-        "background_color_top": "{{ settings.color_palette.background }}",
+        "border_width": 1,
+        "background_color_top": "#12100E",
         "enable_transparent_header_home": false,
         "enable_transparent_header_product": false,
-        "enable_transparent_header_collection": false
+        "enable_transparent_header_collection": false,
+        "text_color_top": "#FDFBF7",
+        "background_color_bottom": "#12100E",
+        "text_color_bottom": "#FDFBF7",
+        "bubble_background_color": "#D9982F",
+        "bubble_text_color": "#12100E",
+        "bottom_border_color": "#D9982F"
       }
     }
   },
