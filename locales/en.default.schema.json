@@ -747,6 +747,7 @@
     "below_media": "Below media"
   },
   "settings": {
+    "star_color": "Star colour",
     "address": "Address",
     "author": "Author",
     "author_detail": "Author detail",

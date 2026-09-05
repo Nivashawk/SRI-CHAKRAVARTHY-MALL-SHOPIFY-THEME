@@ -12,7 +12,10 @@
 
 <div
   class="testimonial spacing-style testimonial--{{ block_settings.alignment }}{% if block_settings.background_color != blank or block_settings.text_color != blank %} color-custom-{{ block.id }}{% endif %}"
-  style="{% render 'spacing-style', settings: block_settings %}"
+  style="
+    {% render 'spacing-style', settings: block_settings %}
+    {% if block_settings.star_color != blank %}--testimonial-star-color: {{ block_settings.star_color }};{% endif %}
+  "
   {{ block.shopify_attributes }}
 >
   {%- if rating > 0 -%}
@@ -85,6 +88,7 @@
   .testimonial__rating {
     letter-spacing: 2px;
     line-height: 1;
+    color: var(--testimonial-star-color, inherit);
   }
 
   .testimonial__star--empty {
@@ -164,6 +168,12 @@
       "max": 5,
       "step": 1,
       "default": 5
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "t:settings.star_color",
+      "placeholder": "t:settings.default"
     },
     {
       "type": "header",
