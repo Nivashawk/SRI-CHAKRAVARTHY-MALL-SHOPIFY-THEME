@@ -1,0 +1,11 @@
+# Shopify CLI environments.
+# Lets you run `shopify theme dev -e dev` instead of passing --store every time.
+# Docs: https://shopify.dev/docs/storefronts/themes/tools/cli/environments
+
+[environments.dev]
+# TODO: replace with the development store domain once it's created,
+# e.g. "sri-chakravarthy-mall-dev" (the .myshopify.com suffix is optional).
+store = "REPLACE-WITH-DEV-STORE"
+
+# [environments.production]
+# store = "REPLACE-WITH-LIVE-STORE"
