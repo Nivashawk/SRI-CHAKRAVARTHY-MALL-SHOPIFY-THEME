@@ -5,3 +5,11 @@
 # Admin: https://admin.shopify.com/store/sri-chakravarty-mall
 [environments.dev]
 store = "sri-chakravarty-mall"
+# "Sri Chakravarthy Mall (dev)" — unpublished. Pinned so push/pull never prompt
+# and never touch the live theme by accident.
+theme = "165494358264"
+
+# Add this once there's a live theme to deploy to:
+# [environments.production]
+# store = "sri-chakravarty-mall"
+# theme = "<live theme id>"
