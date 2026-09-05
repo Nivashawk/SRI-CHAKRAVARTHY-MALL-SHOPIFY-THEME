@@ -1,142 +1,136 @@
-class CartDrawer extends HTMLElement {
-  constructor() {
-    super();
+import { Component } from '@theme/component';
+import { StandardEvents } from '@shopify/events';
+import { DrawerOpenEvent } from '@theme/theme-drawer';
 
-    this.addEventListener('keyup', (evt) => evt.code === 'Escape' && this.close());
-    this.querySelector('#CartDrawer-Overlay').addEventListener('click', this.close.bind(this));
-    this.setHeaderCartIconAccessibility();
+/**
+ * A custom element that manages cart drawer behavior within a `<theme-drawer>`.
+ *
+ * Dialog lifecycle (open/close, squeeze, history, animations) is owned by `<theme-drawer>`.
+ * The `cart:view` event is auto-dispatched by `CartItemsComponent` via the
+ * `view-event-trigger="dialog"` attribute (see `snippets/cart-items-component.liquid`).
+ * Cart count announcements are owned by `<header-actions>`.
+ * This component handles the remaining cart-specific concerns: auto-open on add-to-cart,
+ * sticky summary layout, and the installments CTA close-on-click.
+ *
+ * @extends {Component}
+ */
+class CartDrawerComponent extends Component {
+  /** @type {number} */
+  #summaryThreshold = 0.5;
+
+  /** @type {import('@theme/theme-drawer').ThemeDrawer | null} */
+  get #themeDrawer() {
+    return /** @type {import('@theme/theme-drawer').ThemeDrawer | null} */ (this.closest('theme-drawer'));
   }
 
-  setHeaderCartIconAccessibility() {
-    const cartLink = document.querySelector('#cart-icon-bubble');
-    if (!cartLink) return;
-
-    cartLink.setAttribute('role', 'button');
-    cartLink.setAttribute('aria-haspopup', 'dialog');
-    cartLink.addEventListener('click', (event) => {
-      event.preventDefault();
-      this.open(cartLink);
-    });
-    cartLink.addEventListener('keydown', (event) => {
-      if (event.code.toUpperCase() === 'SPACE') {
-        event.preventDefault();
-        this.open(cartLink);
-      }
-    });
+  /** @type {HTMLDialogElement | null} */
+  get #dialog() {
+    return this.closest('dialog');
   }
 
-  open(triggeredBy) {
-    if (this.classList.contains('active')) return;
-    if (triggeredBy) this.setActiveElement(triggeredBy);
-    const cartDrawerNote = this.querySelector('[id^="Details-"] summary');
-    if (cartDrawerNote && !cartDrawerNote.hasAttribute('role')) this.setSummaryAccessibility(cartDrawerNote);
-    // here the animation doesn't seem to always get triggered. A timeout seem to help
-    setTimeout(() => {
-      this.classList.add('animate', 'active');
-    });
+  connectedCallback() {
+    super.connectedCallback();
+    document.addEventListener(StandardEvents.cartLinesUpdate, this.#handleCartLinesUpdate);
+    this.#themeDrawer?.addEventListener(DrawerOpenEvent.eventName, this.#handleDrawerOpen);
 
-    this.addEventListener(
-      'transitionend',
-      () => {
-        const containerToTrapFocusOn = this.classList.contains('is-empty')
-          ? this.querySelector('.drawer__inner-empty')
-          : document.getElementById('CartDrawer');
-        const focusElement = this.querySelector('.drawer__inner') || this.querySelector('.drawer__close');
-        trapFocus(containerToTrapFocusOn, focusElement);
-      },
-      { once: true },
+    // The restore path sets [open] before this module loads, so the
+    // theme-drawer:open event will have already fired. Use the attribute
+    // check so this works even before <theme-drawer> upgrades.
+    if (this.#themeDrawer?.hasAttribute('open')) {
+      this.#handleDrawerOpen();
+    }
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    document.removeEventListener(StandardEvents.cartLinesUpdate, this.#handleCartLinesUpdate);
+    this.#themeDrawer?.removeEventListener(DrawerOpenEvent.eventName, this.#handleDrawerOpen);
+  }
+
+  /**
+   * Handles the theme-drawer opening — updates sticky state and wires up the installments CTA.
+   */
+  #handleDrawerOpen = () => {
+    this.#updateStickyState();
+
+    // Close cart drawer when installments CTA is clicked to avoid overlapping dialogs.
+    // Re-queried on every open so it survives cart content re-renders that
+    // replace the shopify-payment-terms shadow root.
+    customElements.whenDefined('shopify-payment-terms').then(() => {
+      const cta = this.querySelector('shopify-payment-terms')?.shadowRoot?.querySelector('#shopify-installments-cta');
+      cta?.addEventListener('click', () => this.#themeDrawer?.close(), { once: true });
+    });
+  };
+
+  /**
+   * @param {import('@shopify/events').CartLinesUpdateEvent} event
+   */
+  #handleCartLinesUpdate = (event) => {
+    const shouldAutoOpen = this.hasAttribute('auto-open') && event.action === 'add' && !this.#themeDrawer?.isOpen;
+
+    // When the event originates inside an open MODAL <dialog> (e.g. quick-add),
+    // defer the auto-open until that dialog's native `close` fires so its focus
+    // restoration runs first — otherwise we'd capture the wrong
+    // `#previouslyFocused`. Non-modal dialogs (e.g. the hotspot preview) don't
+    // close on add and don't move focus, so `:modal` excludes them.
+    const sourceModal = /** @type {HTMLDialogElement | null} */ (
+      event.target instanceof Element ? event.target.closest('dialog:modal') : null
     );
 
-    document.body.classList.add('overflow-hidden');
-
-    // cart-drawer-items is a CartItems subclass that extends createViewEventElement.
-    // Its `view-event-trigger="manual"` skips auto-dispatch on connect; we fire
-    // it here when the drawer opens, with `context: 'dialog'` from the payload attribute.
-    this.querySelector('cart-drawer-items')?.dispatchViewEvent();
-  }
-
-  close() {
-    this.classList.remove('active');
-    removeTrapFocus(this.activeElement);
-    document.body.classList.remove('overflow-hidden');
-  }
-
-  setSummaryAccessibility(cartDrawerNote) {
-    cartDrawerNote.setAttribute('role', 'button');
-    cartDrawerNote.setAttribute('aria-expanded', 'false');
-
-    if (cartDrawerNote.nextElementSibling.getAttribute('id')) {
-      cartDrawerNote.setAttribute('aria-controls', cartDrawerNote.nextElementSibling.id);
+    if (shouldAutoOpen && !sourceModal && !this.#isCartEmpty()) {
+      this.#themeDrawer?.open();
     }
 
-    cartDrawerNote.addEventListener('click', (event) => {
-      event.currentTarget.setAttribute('aria-expanded', !event.currentTarget.closest('details').hasAttribute('open'));
-    });
+    event.promise
+      ?.then(({ detail }) => {
+        const settle = () => requestAnimationFrame(() => this.#updateStickyState());
 
-    cartDrawerNote.parentElement.addEventListener('keyup', onKeyUpEscape);
+        if (!shouldAutoOpen || detail?.didError) {
+          settle();
+          return;
+        }
+
+        const openAndSettle = () => {
+          if (!this.#themeDrawer?.isOpen) this.#themeDrawer?.open();
+          settle();
+        };
+
+        if (sourceModal?.open) {
+          sourceModal.addEventListener('close', openAndSettle, { once: true });
+        } else {
+          openAndSettle();
+        }
+      })
+      .catch((error) => {
+        if (error?.name !== 'AbortError') console.warn('[cart-drawer] Event promise rejected:', error);
+      });
+  };
+
+  #isCartEmpty() {
+    return Boolean(this.querySelector('.cart-drawer--empty'));
   }
 
-  renderContents(parsedState) {
-    this.querySelector('.drawer__inner').classList.contains('is-empty') &&
-      this.querySelector('.drawer__inner').classList.remove('is-empty');
-    this.productId = parsedState.id;
-    this.getSectionsToRender().forEach((section) => {
-      const sectionElement = section.selector
-        ? document.querySelector(section.selector)
-        : document.getElementById(section.id);
+  #updateStickyState() {
+    const dialog = this.#dialog;
+    if (!dialog) return;
 
-      if (!sectionElement) return;
-      sectionElement.innerHTML = this.getSectionInnerHTML(parsedState.sections[section.id], section.selector);
-    });
+    // Refs do not cross nested `*-component` boundaries (e.g., `cart-items-component`), so we query within the dialog.
+    const content = dialog.querySelector('.cart-drawer__content');
+    const summary = dialog.querySelector('.cart-drawer__summary');
 
-    setTimeout(() => {
-      this.querySelector('#CartDrawer-Overlay').addEventListener('click', this.close.bind(this));
-      this.open();
-    });
-  }
+    if (!content || !summary) {
+      // Ensure the dialog doesn't get stuck in "unsticky" mode when summary disappears (e.g., empty cart).
+      dialog.setAttribute('cart-summary-sticky', 'false');
+      return;
+    }
 
-  getSectionInnerHTML(html, selector = '.shopify-section') {
-    return new DOMParser().parseFromString(html, 'text/html').querySelector(selector).innerHTML;
-  }
-
-  getSectionsToRender() {
-    return [
-      {
-        id: 'cart-drawer',
-        selector: '#CartDrawer',
-      },
-      {
-        id: 'cart-icon-bubble',
-      },
-    ];
-  }
-
-  getSectionDOM(html, selector = '.shopify-section') {
-    return new DOMParser().parseFromString(html, 'text/html').querySelector(selector);
-  }
-
-  setActiveElement(element) {
-    this.activeElement = element;
-  }
-}
-
-customElements.define('cart-drawer', CartDrawer);
-
-class CartDrawerItems extends CartItems {
-  getSectionsToRender() {
-    return [
-      {
-        id: 'CartDrawer',
-        section: 'cart-drawer',
-        selector: '.drawer__inner',
-      },
-      {
-        id: 'cart-icon-bubble',
-        section: 'cart-icon-bubble',
-        selector: '.shopify-section',
-      },
-    ];
+    const drawerHeight = dialog.getBoundingClientRect().height;
+    const summaryHeight = summary.getBoundingClientRect().height;
+    const ratio = summaryHeight / drawerHeight;
+    dialog.setAttribute('cart-summary-sticky', ratio > this.#summaryThreshold ? 'false' : 'true');
   }
 }
 
-customElements.define('cart-drawer-items', CartDrawerItems);
+if (!customElements.get('cart-drawer-component')) {
+  customElements.define('cart-drawer-component', CartDrawerComponent);
+}

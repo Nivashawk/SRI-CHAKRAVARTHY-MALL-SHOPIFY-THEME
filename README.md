@@ -1,13 +1,24 @@
 # Sri Chakravarthy Mall — Shopify Theme
 
-Custom Shopify theme for Sri Chakravarthy Mall, built on **Dawn v16.0.0** (Shopify's
-official Online Store 2.0 reference theme).
+Custom Shopify theme for Sri Chakravarthy Mall, built on **Horizon 4.1.5**
+(Shopify's current flagship theme).
 
 Everything on the storefront is section-based, so the merchant can add, drag to
 reorder, and remove sections directly in the Shopify theme editor — no code.
 
 - **No build step.** Plain Liquid + CSS. Edit files in `assets/` and the CLI hot-reloads them.
 - **Nothing hardcoded.** Text, images, colors and links are exposed as section settings.
+
+## Design sources
+
+Two Shopify themes from this store are the reference:
+
+- **Horizon 4.1.5** — the base. 42 sections and 95 theme blocks, all drag-and-drop.
+- **Debut 17.1.0** — a *vintage* (pre-OS 2.0) theme, kept only as a visual reference.
+  All of Debut's templates are `.liquid` with no JSON, so nothing structural can be
+  copied from it — its distinctive sections (feature-columns, feature-row, image-bar,
+  logo-bar, map, quotes, video, custom-content) get **rebuilt** as modern sections
+  with `presets` and blocks.
 
 ## Setup (one time)
 
@@ -42,9 +53,14 @@ bring them back into git.
 | `layout/theme.liquid` | Page shell. |
 | `sections/` | Sections + their `{% schema %}`. |
 | `sections/*-group.json` | Header/footer section groups. |
+| `blocks/` | Theme blocks — reusable, nestable units a section can accept. |
 | `snippets/` | Reusable Liquid partials. |
 | `templates/*.json` | Per-page section lists — the drag-and-drop surface. |
 | `locales/` | Translations. |
+
+`templates/`, `config/` and `locales/` JSON files are **JSONC** — Shopify allows
+`/* */` and `//` comments in them, so a strict JSON parser will reject them.
+Use `shopify theme check` to validate, not `jq` or `JSON.parse`.
 
 ## Rules for new sections
 
@@ -59,5 +75,7 @@ array — that's what puts it in the editor's "Add section" list. Beyond that:
 
 ## Upstream
 
-Dawn is MIT licensed — see [LICENSE.md](LICENSE.md). `release-notes.md` is Dawn's,
-kept as a reference for future upstream merges.
+The baseline was pulled from the store's own Horizon theme with `shopify theme pull`
+(theme id `165493375224`), committed unmodified so later work diffs cleanly against
+stock Horizon. Horizon is a Shopify-provided theme licensed for use on this store —
+unlike Dawn it is not MIT open source, so don't redistribute it.
