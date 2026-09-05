@@ -1,0 +1,310 @@
+{%- liquid
+  assign block_settings = section.settings
+
+  # Collapse the multi-line address into a single line for the map query and the
+  # directions link. newline_to_br is the only reliable way to match newlines in Liquid.
+  assign address_line = block_settings.address | newline_to_br | replace: '<br />', ', ' | replace: '<br>', ', ' | strip_html | strip
+  assign address_encoded = address_line | url_encode
+
+  # A custom embed URL wins, so a merchant can drop a precise "Share > Embed a map"
+  # URL in when the address lookup isn't exact enough. Otherwise the address is
+  # queried directly — that needs no Google Maps API key or billing account.
+  if block_settings.embed_url != blank
+    assign map_src = block_settings.embed_url
+  elsif address_line != blank
+    assign map_src = 'https://www.google.com/maps?q=' | append: address_encoded | append: '&z=' | append: block_settings.zoom | append: '&output=embed'
+  endif
+
+  if address_line != blank
+    assign directions_url = 'https://www.google.com/maps/dir/?api=1&destination=' | append: address_encoded
+  endif
+
+  if block_settings.background_color != blank
+    render 'contrast-override', background_color: block_settings.background_color, section_id: section.id
+  endif
+-%}
+
+<div
+  class="section-background{% if block_settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+></div>
+
+<div
+  class="section section--{{ block_settings.section_width }} spacing-style{% if block_settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  style="{% render 'spacing-style', settings: block_settings %}"
+>
+  <div
+    class="map-section map-section--{{ block_settings.layout }} gap-style"
+    style="{% render 'gap-style', value: block_settings.gap %}"
+  >
+    {%- if block_settings.heading != blank
+      or block_settings.description != blank
+      or block_settings.address != blank
+    -%}
+      <div class="map-section__details">
+        {%- if block_settings.heading != blank -%}
+          <h2 class="map-section__heading">{{ block_settings.heading }}</h2>
+        {%- endif -%}
+
+        {%- if block_settings.description != blank -%}
+          <div class="map-section__description text-block">{{ block_settings.description }}</div>
+        {%- endif -%}
+
+        {%- if block_settings.address != blank -%}
+          <address class="map-section__address">{{ block_settings.address | newline_to_br }}</address>
+        {%- endif -%}
+
+        {%- if block_settings.show_directions and directions_url != blank -%}
+          <a
+            class="button map-section__directions"
+            href="{{ directions_url }}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {{- block_settings.directions_label -}}
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div
+      class="map-section__frame"
+      style="--map-section-height: {{ block_settings.map_height }}px;"
+    >
+      {%- if map_src != blank -%}
+        <iframe
+          class="map-section__iframe"
+          src="{{ map_src }}"
+          title="{{ block_settings.heading | default: address_line | strip_html | escape }}"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen
+        ></iframe>
+      {%- else -%}
+        {%- comment -%}
+          Shown in the theme editor before an address is entered, so the section
+          never collapses to nothing while it's being set up.
+        {%- endcomment -%}
+        <div class="map-section__placeholder">
+          {{ 'placeholders.map_address' | t }}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .map-section {
+    display: grid;
+    gap: var(--gap, 24px);
+  }
+
+  .map-section--side-by-side {
+    grid-template-columns: 1fr;
+  }
+
+  @media screen and (min-width: 750px) {
+    .map-section--side-by-side {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+      align-items: center;
+    }
+  }
+
+  .map-section__details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .map-section__heading {
+    margin: 0;
+  }
+
+  .map-section__address {
+    font-style: normal;
+    color: var(--color-foreground-muted, inherit);
+  }
+
+  .map-section__directions {
+    margin-block-start: 4px;
+  }
+
+  .map-section__frame {
+    position: relative;
+    width: 100%;
+    height: var(--map-section-height, 420px);
+    overflow: hidden;
+    border-radius: var(--style-border-radius-cards, 0);
+  }
+
+  .map-section__iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+
+  .map-section__placeholder {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 24px;
+    text-align: center;
+    background-color: rgb(var(--color-foreground-rgb) / var(--opacity-10, 0.1));
+    color: var(--color-foreground-muted, inherit);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.map",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:settings.heading",
+      "default": "Visit us"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "t:settings.description"
+    },
+    {
+      "type": "textarea",
+      "id": "address",
+      "label": "t:settings.address",
+      "info": "t:info.map_address",
+      "default": "Sri Chakravarthy Mall"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_directions",
+      "label": "t:settings.show_directions",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "directions_label",
+      "label": "t:settings.directions_label",
+      "default": "Get directions",
+      "visible_if": "{{ section.settings.show_directions }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.map"
+    },
+    {
+      "type": "range",
+      "id": "zoom",
+      "label": "t:settings.zoom",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "map_height",
+      "label": "t:settings.height",
+      "min": 200,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "default": 420
+    },
+    {
+      "type": "url",
+      "id": "embed_url",
+      "label": "t:settings.embed_url",
+      "info": "t:info.map_embed_url"
+    },
+    {
+      "type": "header",
+      "content": "t:content.layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "t:settings.layout",
+      "options": [
+        {
+          "value": "stacked",
+          "label": "t:options.stacked"
+        },
+        {
+          "value": "side-by-side",
+          "label": "t:options.side_by_side"
+        }
+      ],
+      "default": "side-by-side"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "t:settings.gap",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.map_section",
+      "category": "t:categories.other_sections"
+    }
+  ]
+}
+{% endschema %}

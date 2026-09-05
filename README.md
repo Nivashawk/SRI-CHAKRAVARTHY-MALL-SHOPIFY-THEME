@@ -68,10 +68,22 @@ A section is only drag-and-droppable if its `{% schema %}` includes a `presets`
 array — that's what puts it in the editor's "Add section" list. Beyond that:
 
 - Every piece of content is a `setting`; nothing is hardcoded in the markup.
-- Repeating items (slides, cards, testimonials) are `blocks`, so they can be
-  added and reordered by dragging.
+- Repeating items (slides, cards, testimonials) are theme `blocks` rendered with
+  `{% content_for 'blocks' %}`, so they can be added and reordered by dragging.
+- A block's root element needs `{{ block.shopify_attributes }}` or the editor
+  cannot select it.
 - Keep templates as `.json`, never `.liquid`, or the page stops being editable.
-- Put section CSS in `assets/section-<name>.css` and load it from that section.
+- Put section CSS in an inline `{% stylesheet %}` block, not a separate file in
+  `assets/` — that is Horizon's convention.
+- Label things with `t:` keys and add them to `locales/en.default.schema.json`.
+
+Two traps that `shopify theme check` does **not** catch:
+
+- **Range settings need at least 3 steps** — `(max - min) / step >= 3`. Shopify
+  rejects the upload server-side. Use a `select` for a 2–3 value choice, which is
+  what Horizon does.
+- Inside a `{% liquid %}` tag every newline is a separate statement, so a
+  multi-line `render` silently breaks. Use a standalone `{% render %}` tag.
 
 ## Upstream
 

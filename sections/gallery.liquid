@@ -1,0 +1,211 @@
+{%- comment -%}
+  A grid container for Horizon's existing `image` and `group` blocks — it
+  deliberately does not reimplement image rendering, so image sizing, links,
+  ratios and borders keep coming from `blocks/image.liquid`.
+{%- endcomment -%}
+
+{%- liquid
+  assign block_settings = section.settings
+
+  if block_settings.background_color != blank
+    render 'contrast-override', background_color: block_settings.background_color, section_id: section.id
+  endif
+-%}
+
+<div
+  class="section-background{% if block_settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+></div>
+
+<div
+  class="section section--{{ block_settings.section_width }} spacing-style{% if block_settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  style="{% render 'spacing-style', settings: block_settings %}"
+>
+  {%- if block_settings.heading != blank -%}
+    <h2 class="gallery__heading gallery__heading--{{ block_settings.heading_alignment }}">
+      {{- block_settings.heading -}}
+    </h2>
+  {%- endif -%}
+
+  <div
+    class="gallery gap-style"
+    style="
+      {% render 'gap-style', value: block_settings.gap %}
+      --gallery-columns: {{ block_settings.columns }};
+      --gallery-columns-mobile: {{ block_settings.columns_mobile }};
+    "
+  >
+    {% content_for 'blocks' %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .gallery__heading {
+    margin-block: 0 24px;
+  }
+
+  .gallery__heading--center {
+    text-align: center;
+  }
+
+  .gallery__heading--flex-end {
+    text-align: end;
+  }
+
+  .gallery {
+    display: grid;
+    gap: var(--gap, 16px);
+    grid-template-columns: repeat(var(--gallery-columns-mobile, 2), minmax(0, 1fr));
+  }
+
+  @media screen and (min-width: 750px) {
+    .gallery {
+      grid-template-columns: repeat(var(--gallery-columns, 3), minmax(0, 1fr));
+    }
+  }
+
+  /* Image blocks default to a fit-content width; in a grid cell they should fill it. */
+  .gallery > * {
+    width: 100%;
+    max-width: 100%;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.gallery",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "blocks": [
+    {
+      "type": "image"
+    },
+    {
+      "type": "group"
+    },
+    {
+      "type": "_divider"
+    }
+  ],
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:settings.heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "t:settings.alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.right"
+        }
+      ],
+      "default": "flex-start",
+      "visible_if": "{{ section.settings.heading != blank }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.layout"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "t:settings.columns",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "t:settings.columns_mobile",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "t:settings.gap",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.gallery_section",
+      "category": "t:categories.storytelling",
+      "blocks": {
+        "first": { "type": "image" },
+        "second": { "type": "image" },
+        "third": { "type": "image" }
+      },
+      "block_order": ["first", "second", "third"]
+    }
+  ]
+}
+{% endschema %}

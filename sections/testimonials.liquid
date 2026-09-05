@@ -1,0 +1,215 @@
+{%- liquid
+  assign block_settings = section.settings
+
+  if block_settings.background_color != blank
+    render 'contrast-override', background_color: block_settings.background_color, section_id: section.id
+  endif
+-%}
+
+<div
+  class="section-background{% if block_settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+></div>
+
+<div
+  class="section section--{{ block_settings.section_width }} spacing-style{% if block_settings.background_color != blank %} color-custom-{{ section.id }}{% endif %}"
+  style="{% render 'spacing-style', settings: block_settings %}"
+>
+  {%- if block_settings.heading != blank -%}
+    <h2 class="testimonials__heading testimonials__heading--{{ block_settings.heading_alignment }}">
+      {{- block_settings.heading -}}
+    </h2>
+  {%- endif -%}
+
+  <div
+    class="testimonials gap-style"
+    style="
+      {% render 'gap-style', value: block_settings.gap %}
+      --testimonials-columns: {{ block_settings.columns }};
+      --testimonials-columns-mobile: {{ block_settings.columns_mobile }};
+    "
+  >
+    {% content_for 'blocks' %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .testimonials__heading {
+    margin-block: 0 24px;
+  }
+
+  .testimonials__heading--center {
+    text-align: center;
+  }
+
+  .testimonials__heading--flex-end {
+    text-align: end;
+  }
+
+  .testimonials {
+    display: grid;
+    gap: var(--gap, 24px);
+    grid-template-columns: repeat(var(--testimonials-columns-mobile, 1), minmax(0, 1fr));
+  }
+
+  @media screen and (min-width: 750px) {
+    .testimonials {
+      grid-template-columns: repeat(var(--testimonials-columns, 3), minmax(0, 1fr));
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.testimonials",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "blocks": [
+    {
+      "type": "testimonial"
+    },
+    {
+      "type": "_divider"
+    }
+  ],
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:settings.heading",
+      "default": "What shoppers say"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "t:settings.alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:options.left"
+        },
+        {
+          "value": "center",
+          "label": "t:options.center"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:options.right"
+        }
+      ],
+      "default": "center",
+      "visible_if": "{{ section.settings.heading != blank }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.layout"
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "t:settings.columns",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "t:settings.columns_mobile",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "t:settings.gap",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:settings.width",
+      "options": [
+        {
+          "value": "page-width",
+          "label": "t:options.page"
+        },
+        {
+          "value": "full-width",
+          "label": "t:options.full"
+        }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:settings.background_color",
+      "placeholder": "t:settings.default"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.testimonials_section",
+      "category": "t:categories.storytelling",
+      "blocks": {
+        "first": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>Great range of stores and easy parking. Our go-to weekend spot.</p>",
+            "author": "Priya R."
+          }
+        },
+        "second": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>Staff were genuinely helpful and the food court is excellent.</p>",
+            "author": "Arun K."
+          }
+        },
+        "third": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>Clean, well laid out, and there is always something on for the kids.</p>",
+            "author": "Meera S."
+          }
+        }
+      },
+      "block_order": ["first", "second", "third"]
+    }
+  ]
+}
+{% endschema %}

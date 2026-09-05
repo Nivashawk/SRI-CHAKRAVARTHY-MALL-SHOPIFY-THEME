@@ -344,6 +344,7 @@
     }
   },
   "placeholders": {
+    "map_address": "Add an address to display a map.",
     "password": "Password",
     "search": "Search",
     "product_title": "Product title",

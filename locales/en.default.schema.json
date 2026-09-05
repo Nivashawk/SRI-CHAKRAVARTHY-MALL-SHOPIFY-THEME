@@ -33,6 +33,7 @@
     "text": "Text"
   },
   "content": {
+    "map": "Map",
     "visible_if_collection_has_more_products": "Visible if collection has more products than shown",
     "advanced": "Advanced",
     "appearance": "Appearance",
@@ -223,6 +224,9 @@
     "work_quickly_to_ship": "<p>We will work quickly to ship your order as soon as possible. Once your order has shipped, you will receive an email with further information. Delivery times vary depending on your location.</p>"
   },
   "info": {
+    "map_address": "Used to look up the map and the directions link. No Google Maps API key is needed.",
+    "map_embed_url": "Optional. Paste a Google Maps \"Share > Embed a map\" URL to override the address lookup.",
+    "rating_zero_hides": "Set to 0 to hide the stars.",
     "actions_display_style": "Icons are always used on mobile",
     "applies_on_image_only": "Applies to images only",
     "aspect_ratio_adjusted": "Adjusted in some layouts",
@@ -252,6 +256,13 @@
     "media_type_info": "Features are populated from your menu links"
   },
   "names": {
+    "map": "Map",
+    "map_section": "Map",
+    "testimonial": "Testimonial",
+    "testimonials": "Testimonials",
+    "testimonials_section": "Testimonials",
+    "gallery": "Gallery",
+    "gallery_section": "Gallery",
     "column": "Column",
     "product_title": "Product title",
     "custom_liquid": "Custom Liquid",
@@ -421,6 +432,8 @@
     "comparison_slider": "Comparison slider"
   },
   "options": {
+    "stacked": "Stacked",
+    "side_by_side": "Side by side",
     "above_carousel": "Above carousel",
     "accent": "Accent",
     "all": "All",
@@ -734,6 +747,17 @@
     "below_media": "Below media"
   },
   "settings": {
+    "address": "Address",
+    "author": "Author",
+    "author_detail": "Author detail",
+    "columns_mobile": "Columns on mobile",
+    "description": "Description",
+    "directions_label": "Button label",
+    "embed_url": "Custom embed URL",
+    "quote": "Quote",
+    "rating": "Rating",
+    "show_directions": "Show directions button",
+    "zoom": "Zoom",
     "accordion": "Accordion",
     "account": "Account",
     "actions_display_style": "Menu style",
