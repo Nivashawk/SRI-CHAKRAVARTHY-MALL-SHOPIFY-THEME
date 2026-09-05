@@ -95,7 +95,7 @@
     "new_arrivals": {
       "type": "product-list",
       "settings": {
-        "collection": "",
+        "collection": "all",
         "max_products": 10,
         "layout_type": "carousel",
         "carousel_on_mobile": true,
@@ -381,7 +381,7 @@
     "wedding": {
       "type": "product-list",
       "settings": {
-        "collection": "",
+        "collection": "all",
         "max_products": 8,
         "layout_type": "carousel",
         "carousel_on_mobile": true,
