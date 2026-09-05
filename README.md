@@ -70,6 +70,33 @@ bring them back into git.
 `/* */` and `//` comments in them, so a strict JSON parser will reject them.
 Use `shopify theme check` to validate, not `jq` or `JSON.parse`.
 
+## Brand assets
+
+Generated from the client's single supplied file (a 3473x3474 JPEG, gold artwork
+on a black background with a vignette) using ffmpeg's `lumakey` filter, which
+keys on luminance and so removes the vignette cleanly rather than fighting it.
+
+| Asset | Size | Use |
+|---|---|---|
+| `assets/brand-logo-horizontal.png` | 920x220 | Desktop/mobile header |
+| `assets/brand-monogram.png` | 256x256 | Favicon, and mobile header if space is tight |
+| `assets/brand-logo.png` | 700x438 | Stacked lockup, for footer or splash use |
+
+All three have a transparent background, so they sit on the dark bands and on
+ivory equally.
+
+**The horizontal lockup is ours, not the client's.** The supplied artwork stacks
+the monogram above a flourish above the wordmark, at roughly 1.6:1. In a header
+at 40-56px tall that puts the wordmark at about 5px - illegible. The horizontal
+version re-lays the same two elements side by side at about 4:1, which keeps the
+wordmark readable at 40px. The client's designer should sign this off, and
+ideally supply a proper vector lockup before launch.
+
+The `logo`, `logo_inverse` and `favicon` theme settings are `image_picker`
+fields, which reference Shopify **Files** rather than theme assets - so these
+PNGs must be uploaded to the store (theme editor, or the Files API) before the
+settings can point at them.
+
 ## Rules for new sections
 
 A section is only drag-and-droppable if its `{% schema %}` includes a `presets`
