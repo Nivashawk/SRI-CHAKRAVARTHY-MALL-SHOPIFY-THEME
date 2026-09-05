@@ -209,12 +209,14 @@
     "weave_index": {
       "type": "section",
       "settings": {
-        "section_height": "",
         "section_width": "page-width",
         "content_direction": "column",
         "gap": 24,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "flex-start",
+        "horizontal_alignment_flex_direction_column": "flex-start",
         "padding-block-start": 64,
-        "padding-block-end": 64
+        "padding-block-end": 24
       },
       "blocks": {
         "heading": {
@@ -225,144 +227,141 @@
             "alignment": "left"
           }
         },
-        "links": {
+        "row": {
           "type": "group",
           "settings": {
             "content_direction": "row",
-            "gap": 36,
+            "gap": 16,
             "width": "fill",
-            "horizontal_alignment": "flex-start",
-            "vertical_on_mobile": true
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "flex-start"
           },
           "blocks": {
-            "w0": {
-              "type": "button",
+            "c0": {
+              "type": "collection-card",
               "settings": {
-                "label": "Kanchipuram",
-                "link": "/collections/all/kanchipuram",
-                "style_class": "button-unstyled",
-                "width": "fit-content",
-                "link_text_color": "#221E1A"
-              }
+                "collection": "kanchipuram",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "collection_card_gap": 10,
+                "border": "none",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
             },
-            "w1": {
-              "type": "button",
+            "c1": {
+              "type": "collection-card",
               "settings": {
-                "label": "Banarasi",
-                "link": "/collections/all/banarasi",
-                "style_class": "button-unstyled",
-                "width": "fit-content",
-                "link_text_color": "#221E1A"
-              }
+                "collection": "banarasi",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "collection_card_gap": 10,
+                "border": "none",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
             },
-            "w2": {
-              "type": "button",
+            "c2": {
+              "type": "collection-card",
               "settings": {
-                "label": "Soft Silk",
-                "link": "/collections/all/soft-silk",
-                "style_class": "button-unstyled",
-                "width": "fit-content",
-                "link_text_color": "#221E1A"
-              }
+                "collection": "soft-silk",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "collection_card_gap": 10,
+                "border": "none",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
             },
-            "w3": {
-              "type": "button",
+            "c3": {
+              "type": "collection-card",
               "settings": {
-                "label": "Chanderi",
-                "link": "/collections/all/chanderi",
-                "style_class": "button-unstyled",
-                "width": "fit-content",
-                "link_text_color": "#221E1A"
-              }
+                "collection": "chanderi",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "collection_card_gap": 10,
+                "border": "none",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
             },
-            "w4": {
-              "type": "button",
+            "c4": {
+              "type": "collection-card",
               "settings": {
-                "label": "Tussar",
-                "link": "/collections/all/tussar",
-                "style_class": "button-unstyled",
-                "width": "fit-content",
-                "link_text_color": "#221E1A"
-              }
-            },
-            "w5": {
-              "type": "button",
-              "settings": {
-                "label": "Organza",
-                "link": "/collections/all/organza",
-                "style_class": "button-unstyled",
-                "width": "fit-content",
-                "link_text_color": "#221E1A"
-              }
-            },
-            "w6": {
-              "type": "button",
-              "settings": {
-                "label": "Pochampally Ikat",
-                "link": "/collections/all/ikat",
-                "style_class": "button-unstyled",
-                "width": "fit-content",
-                "link_text_color": "#221E1A"
-              }
-            },
-            "w7": {
-              "type": "button",
-              "settings": {
-                "label": "Gadwal",
-                "link": "/collections/all/gadwal",
-                "style_class": "button-unstyled",
-                "width": "fit-content",
-                "link_text_color": "#221E1A"
-              }
-            },
-            "w8": {
-              "type": "button",
-              "settings": {
-                "label": "Silk Cotton",
-                "link": "/collections/all/silk-cotton",
-                "style_class": "button-unstyled",
-                "width": "fit-content",
-                "link_text_color": "#221E1A"
-              }
-            },
-            "w9": {
-              "type": "button",
-              "settings": {
-                "label": "Georgette",
-                "link": "/collections/all/georgette",
-                "style_class": "button-unstyled",
-                "width": "fit-content",
-                "link_text_color": "#221E1A"
-              }
+                "collection": "tussar",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "collection_card_gap": 10,
+                "border": "none",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
             }
           },
           "block_order": [
-            "w0",
-            "w1",
-            "w2",
-            "w3",
-            "w4",
-            "w5",
-            "w6",
-            "w7",
-            "w8",
-            "w9"
+            "c0",
+            "c1",
+            "c2",
+            "c3",
+            "c4"
           ]
         }
       },
       "block_order": [
         "heading",
-        "links"
+        "row"
       ]
     },
     "occasion": {
       "type": "section",
       "settings": {
-        "section_height": "",
         "section_width": "page-width",
         "content_direction": "column",
-        "gap": 32,
-        "padding-block-start": 8,
+        "gap": 24,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "flex-start",
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "padding-block-start": 16,
         "padding-block-end": 72
       },
       "blocks": {
@@ -378,142 +377,77 @@
           "type": "group",
           "settings": {
             "content_direction": "row",
-            "gap": 32,
+            "gap": 16,
             "width": "fill",
-            "vertical_on_mobile": true
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "flex-start"
           },
           "blocks": {
-            "o0": {
-              "type": "group",
+            "c0": {
+              "type": "collection-card",
               "settings": {
-                "content_direction": "column",
-                "gap": 8,
-                "width": "fill",
-                "link": "/collections/all/wedding",
-                "padding-block-end": 0
+                "collection": "wedding",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "collection_card_gap": 10,
+                "border": "none",
+                "border_radius": 0
               },
               "blocks": {
-                "t": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h3>Wedding</h3>",
-                    "width": "100%",
-                    "alignment": "left"
-                  }
-                },
-                "rule": {
-                  "type": "_divider",
-                  "settings": {
-                    "thickness": 1,
-                    "divider_color": "#D9982F",
-                    "padding-block-start": 10,
-                    "padding-block-end": 14
-                  }
-                },
-                "d": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p>Bridal silks in temple gold and deep maroon.</p>",
-                    "width": "100%",
-                    "alignment": "left"
-                  }
+                "title": {
+                  "type": "collection-title",
+                  "settings": {}
                 }
               },
               "block_order": [
-                "t",
-                "rule",
-                "d"
+                "title"
               ]
             },
-            "o1": {
-              "type": "group",
+            "c1": {
+              "type": "collection-card",
               "settings": {
-                "content_direction": "column",
-                "gap": 8,
-                "width": "fill",
-                "link": "/collections/all/festive",
-                "padding-block-end": 0
+                "collection": "festive",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "collection_card_gap": 10,
+                "border": "none",
+                "border_radius": 0
               },
               "blocks": {
-                "t": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h3>Festive</h3>",
-                    "width": "100%",
-                    "alignment": "left"
-                  }
-                },
-                "rule": {
-                  "type": "_divider",
-                  "settings": {
-                    "thickness": 1,
-                    "divider_color": "#D9982F",
-                    "padding-block-start": 10,
-                    "padding-block-end": 14
-                  }
-                },
-                "d": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p>Colour for Diwali, Pongal and Sankranti.</p>",
-                    "width": "100%",
-                    "alignment": "left"
-                  }
+                "title": {
+                  "type": "collection-title",
+                  "settings": {}
                 }
               },
               "block_order": [
-                "t",
-                "rule",
-                "d"
+                "title"
               ]
             },
-            "o2": {
-              "type": "group",
+            "c2": {
+              "type": "collection-card",
               "settings": {
-                "content_direction": "column",
-                "gap": 8,
-                "width": "fill",
-                "link": "/collections/all/everyday",
-                "padding-block-end": 0
+                "collection": "everyday",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "collection_card_gap": 10,
+                "border": "none",
+                "border_radius": 0
               },
               "blocks": {
-                "t": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<h3>Everyday</h3>",
-                    "width": "100%",
-                    "alignment": "left"
-                  }
-                },
-                "rule": {
-                  "type": "_divider",
-                  "settings": {
-                    "thickness": 1,
-                    "divider_color": "#D9982F",
-                    "padding-block-start": 10,
-                    "padding-block-end": 14
-                  }
-                },
-                "d": {
-                  "type": "text",
-                  "settings": {
-                    "text": "<p>Light drapes for daily wear.</p>",
-                    "width": "100%",
-                    "alignment": "left"
-                  }
+                "title": {
+                  "type": "collection-title",
+                  "settings": {}
                 }
               },
               "block_order": [
-                "t",
-                "rule",
-                "d"
+                "title"
               ]
             }
           },
           "block_order": [
-            "o0",
-            "o1",
-            "o2"
+            "c0",
+            "c1",
+            "c2"
           ]
         }
       },
@@ -525,29 +459,32 @@
     "craft": {
       "type": "section",
       "settings": {
-        "section_height": "small",
         "section_width": "page-width",
         "content_direction": "column",
-        "gap": 16,
-        "padding-block-start": 72,
-        "padding-block-end": 72,
-        "background_color": "#12100E"
+        "gap": 20,
+        "background_color": "#12100E",
+        "padding-block-start": 88,
+        "padding-block-end": 88
       },
       "blocks": {
-        "h": {
-          "type": "text",
+        "jumbo": {
+          "type": "jumbo-text",
           "settings": {
-            "text": "<h2>Six metres, one weaver, many weeks</h2>",
-            "width": "100%",
-            "max_width": "normal",
+            "text": "Six metres.\nOne weaver.\nMany weeks.",
+            "font": "heading",
             "alignment": "left",
+            "line_height": "1",
+            "letter_spacing": "-0.03em",
+            "case": "none",
+            "text_effect": "reveal",
+            "animation_repeat": false,
             "text_color": "#FDFBF7"
           }
         },
-        "p": {
+        "body": {
           "type": "text",
           "settings": {
-            "text": "<p>Each saree is woven on a handloom, the zari border worked thread by thread. The pallu alone can take a weaver several days.</p>",
+            "text": "<p>A silk saree is woven on a handloom, thread by thread. The zari border is worked separately and joined to the body by hand, and the pallu alone can take a weaver several days. Nothing about it is quick, which is rather the point.</p>",
             "width": "100%",
             "max_width": "normal",
             "alignment": "left",
@@ -556,8 +493,8 @@
         }
       },
       "block_order": [
-        "h",
-        "p"
+        "jumbo",
+        "body"
       ]
     },
     "testimonials": {
@@ -599,16 +536,6 @@
         "second",
         "third"
       ]
-    },
-    "store_map": {
-      "type": "map",
-      "settings": {
-        "heading": "Visit our showroom",
-        "layout": "side-by-side",
-        "description": "<p>See the weaves in person. Our staff can help you choose for any occasion.</p>",
-        "address": "Sri Chakravarthy Mall, Vijayawada, Andhra Pradesh",
-        "directions_label": "Get directions"
-      }
     },
     "hero": {
       "type": "slideshow",
@@ -759,6 +686,519 @@
         "slide_2",
         "slide_3"
       ]
+    },
+    "weave_index_2": {
+      "type": "section",
+      "settings": {
+        "section_width": "page-width",
+        "content_direction": "column",
+        "gap": 24,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "flex-start",
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "padding-block-start": 0,
+        "padding-block-end": 48
+      },
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "settings": {
+            "text": "<h2></h2>",
+            "width": "100%",
+            "alignment": "left"
+          }
+        },
+        "row": {
+          "type": "group",
+          "settings": {
+            "content_direction": "row",
+            "gap": 16,
+            "width": "fill",
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "flex-start"
+          },
+          "blocks": {
+            "c0": {
+              "type": "collection-card",
+              "settings": {
+                "collection": "organza",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "collection_card_gap": 10,
+                "border": "none",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
+            },
+            "c1": {
+              "type": "collection-card",
+              "settings": {
+                "collection": "ikat",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "collection_card_gap": 10,
+                "border": "none",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
+            },
+            "c2": {
+              "type": "collection-card",
+              "settings": {
+                "collection": "gadwal",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "collection_card_gap": 10,
+                "border": "none",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
+            },
+            "c3": {
+              "type": "collection-card",
+              "settings": {
+                "collection": "silk-cotton",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "collection_card_gap": 10,
+                "border": "none",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
+            },
+            "c4": {
+              "type": "collection-card",
+              "settings": {
+                "collection": "georgette",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "collection_card_gap": 10,
+                "border": "none",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
+            }
+          },
+          "block_order": [
+            "c0",
+            "c1",
+            "c2",
+            "c3",
+            "c4"
+          ]
+        }
+      },
+      "block_order": [
+        "heading",
+        "row"
+      ]
+    },
+    "promise": {
+      "type": "section",
+      "settings": {
+        "section_width": "page-width",
+        "content_direction": "column",
+        "gap": 28,
+        "padding-block-start": 72,
+        "padding-block-end": 56
+      },
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "settings": {
+            "text": "<h2>Buying online, from us</h2>",
+            "width": "100%",
+            "alignment": "left"
+          }
+        },
+        "row": {
+          "type": "group",
+          "settings": {
+            "content_direction": "row",
+            "gap": 32,
+            "width": "fill",
+            "vertical_on_mobile": true
+          },
+          "blocks": {
+            "p0": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "gap": 10,
+                "width": "fill",
+                "horizontal_alignment_flex_direction_column": "flex-start"
+              },
+              "blocks": {
+                "i": {
+                  "type": "icon",
+                  "settings": {
+                    "icon": "truck",
+                    "width": 28,
+                    "icon_color": "#D9982F"
+                  }
+                },
+                "t": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h3>Free shipping over ₹4,999</h3>",
+                    "width": "100%",
+                    "alignment": "left",
+                    "type_preset": "h6"
+                  }
+                },
+                "d": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Across India. International delivery available to most countries.</p>",
+                    "width": "100%",
+                    "alignment": "left"
+                  }
+                }
+              },
+              "block_order": [
+                "i",
+                "t",
+                "d"
+              ]
+            },
+            "p1": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "gap": 10,
+                "width": "fill",
+                "horizontal_alignment_flex_direction_column": "flex-start"
+              },
+              "blocks": {
+                "i": {
+                  "type": "icon",
+                  "settings": {
+                    "icon": "return",
+                    "width": 28,
+                    "icon_color": "#D9982F"
+                  }
+                },
+                "t": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h3>7-day returns</h3>",
+                    "width": "100%",
+                    "alignment": "left",
+                    "type_preset": "h6"
+                  }
+                },
+                "d": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Unused and unaltered, with tags intact. Refunded to your original payment method.</p>",
+                    "width": "100%",
+                    "alignment": "left"
+                  }
+                }
+              },
+              "block_order": [
+                "i",
+                "t",
+                "d"
+              ]
+            },
+            "p2": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "gap": 10,
+                "width": "fill",
+                "horizontal_alignment_flex_direction_column": "flex-start"
+              },
+              "blocks": {
+                "i": {
+                  "type": "icon",
+                  "settings": {
+                    "icon": "lock",
+                    "width": 28,
+                    "icon_color": "#D9982F"
+                  }
+                },
+                "t": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h3>Secure checkout</h3>",
+                    "width": "100%",
+                    "alignment": "left",
+                    "type_preset": "h6"
+                  }
+                },
+                "d": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>UPI, cards, net banking and wallets, all handled by Shopify Payments.</p>",
+                    "width": "100%",
+                    "alignment": "left"
+                  }
+                }
+              },
+              "block_order": [
+                "i",
+                "t",
+                "d"
+              ]
+            },
+            "p3": {
+              "type": "group",
+              "settings": {
+                "content_direction": "column",
+                "gap": 10,
+                "width": "fill",
+                "horizontal_alignment_flex_direction_column": "flex-start"
+              },
+              "blocks": {
+                "i": {
+                  "type": "icon",
+                  "settings": {
+                    "icon": "leaf",
+                    "width": 28,
+                    "icon_color": "#D9982F"
+                  }
+                },
+                "t": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<h3>Handloom woven</h3>",
+                    "width": "100%",
+                    "alignment": "left",
+                    "type_preset": "h6"
+                  }
+                },
+                "d": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Sourced directly from weaving clusters, not from resellers.</p>",
+                    "width": "100%",
+                    "alignment": "left"
+                  }
+                }
+              },
+              "block_order": [
+                "i",
+                "t",
+                "d"
+              ]
+            }
+          },
+          "block_order": [
+            "p0",
+            "p1",
+            "p2",
+            "p3"
+          ]
+        }
+      },
+      "block_order": [
+        "heading",
+        "row"
+      ]
+    },
+    "faq": {
+      "type": "section",
+      "settings": {
+        "section_width": "page-width",
+        "content_direction": "column",
+        "gap": 24,
+        "padding-block-start": 16,
+        "padding-block-end": 88
+      },
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "settings": {
+            "text": "<h2>Before you buy</h2>",
+            "width": "100%",
+            "alignment": "left"
+          }
+        },
+        "acc": {
+          "type": "accordion",
+          "settings": {
+            "icon": "plus",
+            "dividers": true,
+            "divider_color": "#E7DFD2"
+          },
+          "blocks": {
+            "q0": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "Does the saree come with a blouse piece?",
+                "open_by_default": true
+              },
+              "blocks": {
+                "t": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Yes. Every saree includes an unstitched blouse piece attached at the pallu end, unless the product page says otherwise. Stitching is not included.</p>",
+                    "width": "100%",
+                    "alignment": "left"
+                  }
+                }
+              },
+              "block_order": [
+                "t"
+              ]
+            },
+            "q1": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "How do I care for a silk saree?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "t": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Dry clean only, and only when it needs it — silk does not like frequent cleaning. Store it folded in a cotton cloth rather than plastic, and refold along different lines every few months so the zari does not crack where it creases.</p>",
+                    "width": "100%",
+                    "alignment": "left"
+                  }
+                }
+              },
+              "block_order": [
+                "t"
+              ]
+            },
+            "q2": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "When will my order arrive?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "t": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Orders are dispatched within two working days. Delivery within India takes three to seven days depending on the pin code. You will get a tracking link by email as soon as it ships.</p>",
+                    "width": "100%",
+                    "alignment": "left"
+                  }
+                }
+              },
+              "block_order": [
+                "t"
+              ]
+            },
+            "q3": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "Can I return a saree?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "t": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Yes, within seven days of delivery, provided it is unused, unaltered and has its tags intact. Refunds go back to the original payment method. Sarees that have been stitched or altered cannot be returned.</p>",
+                    "width": "100%",
+                    "alignment": "left"
+                  }
+                }
+              },
+              "block_order": [
+                "t"
+              ]
+            },
+            "q4": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "Do you ship internationally?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "t": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>We do, to most countries. International orders over ₹39,999 ship free. Customs duties and local taxes are payable by the recipient.</p>",
+                    "width": "100%",
+                    "alignment": "left"
+                  }
+                }
+              },
+              "block_order": [
+                "t"
+              ]
+            },
+            "q5": {
+              "type": "_accordion-row",
+              "settings": {
+                "heading": "Is the zari real?",
+                "open_by_default": false
+              },
+              "blocks": {
+                "t": {
+                  "type": "text",
+                  "settings": {
+                    "text": "<p>Where a saree is described as pure zari, the thread is silver electroplated with gold. Half-fine and tested zari are described as such on the product page. We do not describe one as the other.</p>",
+                    "width": "100%",
+                    "alignment": "left"
+                  }
+                }
+              },
+              "block_order": [
+                "t"
+              ]
+            }
+          },
+          "block_order": [
+            "q0",
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5"
+          ]
+        }
+      },
+      "block_order": [
+        "heading",
+        "acc"
+      ]
     }
   },
   "order": [
@@ -766,9 +1206,11 @@
     "weave_band",
     "wall",
     "weave_index",
+    "weave_index_2",
     "occasion",
     "craft",
-    "testimonials",
-    "store_map"
+    "promise",
+    "faq",
+    "testimonials"
   ]
 }

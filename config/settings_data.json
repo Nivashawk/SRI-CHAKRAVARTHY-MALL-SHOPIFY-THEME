@@ -44,8 +44,8 @@
     "type_font_h6": "subheading",
     "type_size_h6": "12",
     "type_line_height_h6": "display-loose",
-    "page_transition_enabled": false,
-    "transition_to_main_product": false,
+    "page_transition_enabled": true,
+    "transition_to_main_product": true,
     "card_hover_effect": "subtle-zoom",
     "badge_position": "top-left",
     "badge_corner_radius": 100,
@@ -109,7 +109,8 @@
       "color2": "#E7DFD2"
     },
     "show_second_image_on_hover": true,
-    "mobile_quick_add": true
+    "mobile_quick_add": true,
+    "add_to_cart_animation": true
   },
   "presets": {
     "Horizon": {
