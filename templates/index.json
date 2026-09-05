@@ -500,7 +500,9 @@
     "testimonials": {
       "type": "testimonials",
       "settings": {
-        "heading": "What our customers say"
+        "heading": "What our customers say",
+        "padding-block-start": 56,
+        "padding-block-end": 56
       },
       "blocks": {
         "first": {
@@ -700,14 +702,6 @@
         "padding-block-end": 48
       },
       "blocks": {
-        "heading": {
-          "type": "text",
-          "settings": {
-            "text": "<h2></h2>",
-            "width": "100%",
-            "alignment": "left"
-          }
-        },
         "row": {
           "type": "group",
           "settings": {
@@ -829,7 +823,6 @@
         }
       },
       "block_order": [
-        "heading",
         "row"
       ]
     },
@@ -839,7 +832,7 @@
         "section_width": "page-width",
         "content_direction": "column",
         "gap": 28,
-        "padding-block-start": 72,
+        "padding-block-start": 56,
         "padding-block-end": 56
       },
       "blocks": {
@@ -1205,12 +1198,12 @@
     "hero",
     "weave_band",
     "wall",
+    "promise",
     "weave_index",
     "weave_index_2",
+    "testimonials",
     "occasion",
     "craft",
-    "promise",
-    "faq",
-    "testimonials"
+    "faq"
   ]
 }
