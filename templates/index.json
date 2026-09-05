@@ -46,14 +46,14 @@
         "carousel_on_mobile": true,
         "columns": 4,
         "mobile_columns": "2",
-        "columns_gap": 8,
-        "rows_gap": 24,
-        "icons_style": "arrow",
-        "icons_shape": "none",
-        "section_width": "full-width",
-        "gap": 28,
+        "columns_gap": 16,
+        "rows_gap": 32,
+        "icons_style": "arrows_large",
+        "icons_shape": "circle",
+        "section_width": "page-width",
+        "gap": 20,
         "padding-block-start": 0,
-        "padding-block-end": 56
+        "padding-block-end": 24
       },
       "blocks": {
         "static-header": {
@@ -209,7 +209,7 @@
     "weave_index": {
       "type": "section",
       "settings": {
-        "section_height": "small",
+        "section_height": "",
         "section_width": "page-width",
         "content_direction": "column",
         "gap": 24,
@@ -358,7 +358,7 @@
     "occasion": {
       "type": "section",
       "settings": {
-        "section_height": "small",
+        "section_height": "",
         "section_width": "page-width",
         "content_direction": "column",
         "gap": 32,

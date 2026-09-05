@@ -1,0 +1,12 @@
+/* ---------------------------------------------------------------------------
+   Sri Chakravarthy overrides.
+   Kept in one file so Horizon's own stylesheets can be updated cleanly.
+   --------------------------------------------------------------------------- */
+
+/* Horizon fades carousel arrows in on hover only (slideshow-arrows.liquid sets
+   opacity: 0, base.css animates it in on :hover / :focus-within). On a product
+   carousel that hides the main affordance for browsing, so keep them visible at
+   rest. Scoped to resource lists, so the hero slideshow keeps its hover reveal. */
+.resource-list__carousel slideshow-arrows .slideshow-control {
+  opacity: 1;
+}
