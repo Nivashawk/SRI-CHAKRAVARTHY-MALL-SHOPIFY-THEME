@@ -31,7 +31,6 @@ const items = [
   // Every product was created the same day, so this is not yet a real
   // distinction — but the sort keeps it correct as the catalogue grows.
   { title: 'New Arrivals', type: 'HTTP', url: '/collections/all?sort_by=created-descending' },
-  { title: 'Contact', type: 'HTTP', url: '/pages/contact' },
 ];
 
 writeFileSync('/tmp/menuvars.json', JSON.stringify({
