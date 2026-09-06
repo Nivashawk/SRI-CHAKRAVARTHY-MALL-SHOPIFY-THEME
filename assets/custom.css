@@ -10,3 +10,110 @@
 .resource-list__carousel slideshow-arrows .slideshow-control {
   opacity: 1;
 }
+
+/* --- Scroll reveals ------------------------------------------------------- */
+/* Everything here is gated on html.js-reveal, which custom.js adds only once it
+   is actually running. No JS, no hiding — the page renders in full.
+   Only opacity and transform animate, so nothing reflows and no CLS is added. */
+
+@media (prefers-reduced-motion: no-preference) {
+  .js-reveal .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .js-reveal .reveal.is-revealed {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 600ms cubic-bezier(0.22, 0.61, 0.36, 1),
+      transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  /* Children arrive in sequence rather than as one slab. */
+  .js-reveal .reveal .reveal-child {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  .js-reveal .reveal.is-revealed .reveal-child {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 520ms cubic-bezier(0.22, 0.61, 0.36, 1) var(--reveal-delay, 0ms),
+      transform 520ms cubic-bezier(0.22, 0.61, 0.36, 1) var(--reveal-delay, 0ms);
+  }
+
+  /* --- Ken Burns on the hero --------------------------------------------- */
+  /* A slow drift so the campaign photography is not dead on the page. Applied to
+     the image only; the slideshow's own logic is untouched. */
+  slideshow-component .slideshow-slide img,
+  slideshow-component slideshow-slide img {
+    animation: sc-kenburns 16s ease-out both;
+    transform-origin: 50% 45%;
+    will-change: transform;
+  }
+
+  @keyframes sc-kenburns {
+    from { transform: scale(1); }
+    to   { transform: scale(1.06); }
+  }
+}
+
+/* --- Gold rule under section headings ------------------------------------- */
+/* Animates the saree-border motif already used on the occasion tiles.
+   Three states only:
+     default            visible, so a no-JS page still gets the rule
+     JS, not yet seen   collapsed
+     JS, revealed       draws out left to right */
+.reveal .text-block h2 {
+  position: relative;
+  padding-block-end: 14px;
+}
+
+.reveal .text-block h2::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-end: 0;
+  width: min(180px, 40%);
+  height: 1px;
+  background: #d9982f;
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+.js-reveal .reveal:not(.is-revealed) .text-block h2::after {
+  transform: scaleX(0);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal .text-block h2::after {
+    transition: transform 900ms cubic-bezier(0.22, 0.61, 0.36, 1) 180ms;
+  }
+}
+
+/* --- Product cards -------------------------------------------------------- */
+/* Gold reads as the brand on a short, bold price. It is not used for body copy,
+   where it would fail contrast on ivory. */
+.product-card .price,
+.card-gallery + * .price,
+.product-card .price-item {
+  color: #d9982f;
+}
+
+/* Weave label above the product title. */
+.card-weave {
+  display: block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-foreground-muted, #6b625a);
+  margin-block-end: 4px;
+}
+
+/* custom-liquid renders inside a bare <div>; match the sibling text blocks. */
+.promise-copy {
+  margin: 0;
+  color: var(--color-foreground, inherit);
+}
