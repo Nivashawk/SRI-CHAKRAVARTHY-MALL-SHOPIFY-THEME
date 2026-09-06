@@ -26,10 +26,10 @@
             "vertical_alignment_flex_direction_column": "center",
             "gap": 12,
             "background_color": "",
-            "toggle_overlay": true,
+            "toggle_overlay": false,
             "overlay_color": "#fdfbf7a6",
             "overlay_style": "gradient",
-            "gradient_direction": "to right",
+            "gradient_direction": "to top",
             "padding-block-start": 48,
             "padding-block-end": 48,
             "padding-inline-start": 64,
@@ -125,7 +125,7 @@
             "vertical_alignment_flex_direction_column": "center",
             "gap": 12,
             "background_color": "",
-            "toggle_overlay": true,
+            "toggle_overlay": false,
             "overlay_color": "#fdfbf7a6",
             "overlay_style": "gradient",
             "gradient_direction": "to right",
@@ -224,7 +224,7 @@
             "vertical_alignment_flex_direction_column": "center",
             "gap": 12,
             "background_color": "",
-            "toggle_overlay": true,
+            "toggle_overlay": false,
             "overlay_color": "#fdfbf7a6",
             "overlay_style": "gradient",
             "gradient_direction": "to right",
@@ -494,7 +494,8 @@
               "type": "custom-liquid",
               "settings": {
                 "custom_liquid": "{%- assign weaves = 'kanchipuram,banarasi,soft-silk,chanderi,tussar,organza,ikat,gadwal,silk-cotton,georgette' | split: ',' -%}\n{%- assign labels = 'Kanchipuram,Banarasi,Soft Silk,Chanderi,Tussar,Organza,Pochampally Ikat,Gadwal,Silk Cotton,Georgette' | split: ',' -%}\n{%- for tag in closest.product.tags -%}\n  {%- assign idx = 0 -%}\n  {%- for w in weaves -%}\n    {%- if w == tag -%}<span class=\"card-weave\">{{ labels[forloop.index0] }}</span>{%- break -%}{%- endif -%}\n  {%- endfor -%}\n{%- endfor -%}"
-              }
+              },
+              "blocks": {}
             },
             "product_title": {
               "type": "product-title",
@@ -717,7 +718,8 @@
                   "type": "custom-liquid",
                   "settings": {
                     "custom_liquid": "<p class=\"promise-copy\">Across India on orders above ₹<span data-count-to=\"4999\">4,999</span>. International delivery available to most countries.</p>"
-                  }
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
@@ -805,7 +807,8 @@
                   "type": "custom-liquid",
                   "settings": {
                     "custom_liquid": "<p class=\"promise-copy\"><span data-count-to=\"7\">7</span> days to return, unused and unaltered with tags intact. Refunded to your original payment method.</p>"
-                  }
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
@@ -2658,33 +2661,6 @@
     },
     "178867041633bf3dcd": {
       "type": "_blocks",
-      "blocks": {
-        "ai_gen_block_c2c088f_YdyriC": {
-          "type": "ai_gen_block_c2c088f",
-          "settings": {
-            "heading": "Make an impression",
-            "heading_font": "playfair_display_n4",
-            "alignment": "center",
-            "font_weight": "400",
-            "text_case": "none",
-            "font_size": 56,
-            "mobile_font_size": 36,
-            "letter_spacing": 0,
-            "text_color": "#221E1A",
-            "glow_color": "#D9982F",
-            "background_color": "#FDFBF7",
-            "glow_size": 8,
-            "animation_speed": 3,
-            "vertical_padding": 24,
-            "horizontal_padding": 24,
-            "desktop_width_percent": 100
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "ai_gen_block_c2c088f_YdyriC"
-      ],
       "settings": {
         "content_direction": "column",
         "vertical_on_mobile": true,
