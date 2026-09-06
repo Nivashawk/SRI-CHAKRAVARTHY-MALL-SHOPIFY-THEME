@@ -89,7 +89,7 @@
     "currency_code_enabled_product_cards": false,
     "currency_code_enabled_cart_items": false,
     "mobile_quick_add": true,
-    "quick_add_background": "#12100E",
+    "quick_add_background": "#4A1220",
     "quick_add_text": "#FDFBF7",
     "show_second_image_on_hover": true,
     "product_corner_radius": 0,
