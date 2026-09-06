@@ -16,7 +16,7 @@
           "type": "_slide",
           "settings": {
             "media_type_1": "image",
-            "image_1": "shopify://shop_images/hero-1-heritage.jpg",
+            "image_1": "shopify://shop_images/hero-heritage-orig.jpg",
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
@@ -115,7 +115,7 @@
           "type": "_slide",
           "settings": {
             "media_type_1": "image",
-            "image_1": "shopify://shop_images/hero-3-bridal.jpg",
+            "image_1": "shopify://shop_images/hero-bridal-orig.jpg",
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
@@ -214,7 +214,7 @@
           "type": "_slide",
           "settings": {
             "media_type_1": "image",
-            "image_1": "shopify://shop_images/hero-2-family.jpg",
+            "image_1": "shopify://shop_images/hero-family-orig.webp",
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
