@@ -6,21 +6,343 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */{
+ */
+{
   "sections": {
+    "hero": {
+      "type": "slideshow",
+      "blocks": {
+        "slide_1": {
+          "type": "_slide",
+          "settings": {
+            "media_type_1": "image",
+            "image_1": "shopify://shop_images/hero-1-heritage.jpg",
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "background_color": "",
+            "toggle_overlay": true,
+            "overlay_color": "#fdfbf7a6",
+            "overlay_style": "gradient",
+            "gradient_direction": "to right",
+            "padding-block-start": 48,
+            "padding-block-end": 48,
+            "padding-inline-start": 64,
+            "padding-inline-end": 64
+          },
+          "blocks": {
+            "heading": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>Woven for the occasion</h2>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#221e1a",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Pure zari silks, handwoven and finished by hand.</p>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#221e1a",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 20,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "button": {
+              "type": "button",
+              "settings": {
+                "label": "See new arrivals",
+                "link": "/collections/all",
+                "open_in_new_tab": false,
+                "style_class": "button",
+                "custom_button_background": "{{ settings.color_palette.foreground }}",
+                "custom_button_text": "{{ settings.color_palette.background }}",
+                "custom_button_border": "{{ settings.color_palette.background }}",
+                "link_text_color": "",
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fit-content",
+                "custom_width_mobile": 100
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "heading",
+            "text",
+            "button"
+          ]
+        },
+        "slide_2": {
+          "type": "_slide",
+          "settings": {
+            "media_type_1": "image",
+            "image_1": "shopify://shop_images/hero-3-bridal.jpg",
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "background_color": "",
+            "toggle_overlay": true,
+            "overlay_color": "#fdfbf7a6",
+            "overlay_style": "gradient",
+            "gradient_direction": "to right",
+            "padding-block-start": 48,
+            "padding-block-end": 48,
+            "padding-inline-start": 64,
+            "padding-inline-end": 64
+          },
+          "blocks": {
+            "heading": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>Dressed for the wedding</h2>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#221e1a",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Bridal silks in temple gold, deep maroon and ivory.</p>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#221e1a",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 20,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "button": {
+              "type": "button",
+              "settings": {
+                "label": "Explore bridal",
+                "link": "/collections/all/wedding",
+                "open_in_new_tab": false,
+                "style_class": "button",
+                "custom_button_background": "{{ settings.color_palette.foreground }}",
+                "custom_button_text": "{{ settings.color_palette.background }}",
+                "custom_button_border": "{{ settings.color_palette.background }}",
+                "link_text_color": "",
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fit-content",
+                "custom_width_mobile": 100
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "heading",
+            "text",
+            "button"
+          ]
+        },
+        "slide_3": {
+          "type": "_slide",
+          "settings": {
+            "media_type_1": "image",
+            "image_1": "shopify://shop_images/hero-2-family.jpg",
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "background_color": "",
+            "toggle_overlay": true,
+            "overlay_color": "#fdfbf7a6",
+            "overlay_style": "gradient",
+            "gradient_direction": "to right",
+            "padding-block-start": 48,
+            "padding-block-end": 48,
+            "padding-inline-start": 64,
+            "padding-inline-end": 64
+          },
+          "blocks": {
+            "heading": {
+              "type": "text",
+              "settings": {
+                "text": "<h2>For every celebration</h2>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#221e1a",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "text": {
+              "type": "text",
+              "settings": {
+                "text": "<p>Festive drapes for Diwali, Pongal and Sankranti.</p>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "text_color": "#221e1a",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 20,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
+            },
+            "button": {
+              "type": "button",
+              "settings": {
+                "label": "Shop festive",
+                "link": "/collections/all/festive",
+                "open_in_new_tab": false,
+                "style_class": "button",
+                "custom_button_background": "{{ settings.color_palette.foreground }}",
+                "custom_button_text": "{{ settings.color_palette.background }}",
+                "custom_button_border": "{{ settings.color_palette.background }}",
+                "link_text_color": "",
+                "width": "fit-content",
+                "custom_width": 100,
+                "width_mobile": "fit-content",
+                "custom_width_mobile": 100
+              },
+              "blocks": {}
+            }
+          },
+          "block_order": [
+            "heading",
+            "text",
+            "button"
+          ]
+        }
+      },
+      "block_order": [
+        "slide_1",
+        "slide_2",
+        "slide_3"
+      ],
+      "settings": {
+        "display_mode": "full_frame",
+        "section_width": "full-width",
+        "full_frame_on_mobile": true,
+        "slideshow_gap": 12,
+        "corner_radius": 0,
+        "slide_height": "large",
+        "content_position": "middle-left",
+        "background_color": "",
+        "icons_style": "arrows_large",
+        "icons_shape": "circle",
+        "slideshow_controls_style": "dots",
+        "autoplay": true,
+        "autoplay_speed": 6,
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
     "weave_band": {
       "type": "marquee",
-      "settings": {
-        "background_color": "#12100E",
-        "gap_between_elements": 72,
-        "padding-block-start": 16,
-        "padding-block-end": 16
-      },
       "blocks": {
         "text": {
           "type": "text",
           "settings": {
             "text": "<p>Kanchipuram &nbsp;&nbsp; Banarasi &nbsp;&nbsp; Gadwal &nbsp;&nbsp; Chanderi &nbsp;&nbsp; Pochampally &nbsp;&nbsp; Tussar &nbsp;&nbsp; Organza &nbsp;&nbsp; Silk Cotton</p>",
+            "width": "fit-content",
+            "max_width": "normal",
+            "alignment": "left",
             "type_preset": "custom",
             "font": "var(--font-heading--family)",
             "font_size": "var(--font-size--h5)",
@@ -28,36 +350,35 @@
             "letter_spacing": "wide",
             "case": "none",
             "wrap": "nowrap",
-            "width": "fit-content",
-            "text_color": "#D9982F"
-          }
+            "text_color": "#d9982f",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
         }
       },
       "block_order": [
         "text"
-      ]
+      ],
+      "settings": {
+        "movement_direction": "normal",
+        "background_color": "#12100e",
+        "padding-block-start": 16,
+        "padding-block-end": 16,
+        "gap_between_elements": 72
+      }
     },
     "wall": {
       "type": "product-list",
-      "settings": {
-        "collection": "all",
-        "max_products": 12,
-        "layout_type": "carousel",
-        "carousel_on_mobile": true,
-        "columns": 4,
-        "mobile_columns": "2",
-        "columns_gap": 16,
-        "rows_gap": 32,
-        "icons_style": "arrows_large",
-        "icons_shape": "circle",
-        "section_width": "page-width",
-        "gap": 20,
-        "padding-block-start": 0,
-        "padding-block-end": 24
-      },
       "blocks": {
         "static-header": {
           "type": "_product-list-content",
+          "static": true,
           "settings": {
             "content_direction": "row",
             "vertical_on_mobile": false,
@@ -74,23 +395,27 @@
             "height": "fit",
             "custom_height": 100,
             "background_media": "none",
+            "background_color": "",
             "video_position": "cover",
             "background_image_position": "cover",
             "border": "none",
             "border_width": 1,
             "border_opacity": 100,
+            "border_color": "",
             "border_radius": 0,
             "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
-          "static": true,
           "blocks": {
             "product_list_text": {
               "type": "_product-list-text",
               "settings": {
                 "text": "<h2>New this week</h2>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
                 "font_size": "",
@@ -98,14 +423,16 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "padding-block-start": 0,
+                "text_color": "",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 10,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
-              }
+              },
+              "blocks": {}
             },
             "product_list_button": {
               "type": "_product-list-button",
@@ -113,12 +440,16 @@
                 "label": "See all",
                 "open_in_new_tab": false,
                 "style_class": "button-unstyled",
+                "custom_button_background": "{{ settings.color_palette.foreground }}",
+                "custom_button_text": "{{ settings.color_palette.background }}",
+                "custom_button_border": "{{ settings.color_palette.background }}",
+                "link_text_color": "",
                 "width": "fit-content",
                 "custom_width": 100,
                 "width_mobile": "fit-content",
-                "custom_width_mobile": 100,
-                "link": "/collections/all"
-              }
+                "custom_width_mobile": 100
+              },
+              "blocks": {}
             }
           },
           "block_order": [
@@ -128,18 +459,20 @@
         },
         "static-product-card": {
           "type": "_product-card",
+          "static": true,
           "settings": {
             "product_card_gap": 4,
+            "background_color": "",
             "border": "none",
             "border_width": 1,
             "border_opacity": 100,
+            "border_color": "",
             "border_radius": 0,
             "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
-          "static": true,
           "blocks": {
             "product-card-gallery": {
               "type": "_product-card-gallery",
@@ -148,26 +481,29 @@
                 "border": "none",
                 "border_width": 1,
                 "border_opacity": 100,
+                "border_color": "",
                 "border_radius": 0,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
-              }
+              },
+              "blocks": {}
             },
             "product_title": {
               "type": "product-title",
               "settings": {
-                "width": "fit-content",
+                "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
-                "type_preset": "paragraph",
+                "type_preset": "h4",
                 "font": "var(--font-body--family)",
                 "font_size": "1rem",
                 "line_height": "normal",
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
+                "text_color": "",
                 "background": false,
                 "background_color": "#00000026",
                 "corner_radius": 0,
@@ -175,7 +511,8 @@
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
-              }
+              },
+              "blocks": {}
             },
             "price": {
               "type": "price",
@@ -183,7 +520,7 @@
                 "show_sale_price_first": true,
                 "show_installments": false,
                 "show_tax_info": false,
-                "type_preset": "h6",
+                "type_preset": "h4",
                 "width": "100%",
                 "alignment": "left",
                 "font": "var(--font-body--family)",
@@ -191,11 +528,13 @@
                 "line_height": "normal",
                 "letter_spacing": "normal",
                 "case": "none",
+                "text_color": "",
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
-              }
+              },
+              "blocks": {}
             }
           },
           "block_order": [
@@ -204,662 +543,131 @@
             "price"
           ]
         }
-      }
-    },
-    "weave_index": {
-      "type": "section",
+      },
       "settings": {
+        "collection": "all",
+        "layout_type": "carousel",
+        "carousel_on_mobile": true,
+        "max_products": 7,
+        "columns": 4,
+        "mobile_columns": "2",
+        "mobile_card_size": "60cqw",
+        "columns_gap": 16,
+        "rows_gap": 32,
+        "icons_style": "chevron_large",
+        "icons_shape": "circle",
         "section_width": "page-width",
-        "content_direction": "column",
-        "gap": 24,
         "horizontal_alignment": "flex-start",
-        "vertical_alignment": "flex-start",
-        "horizontal_alignment_flex_direction_column": "flex-start",
-        "padding-block-start": 64,
-        "padding-block-end": 24
-      },
-      "blocks": {
-        "heading": {
-          "type": "text",
-          "settings": {
-            "text": "<h2>Shop by weave</h2>",
-            "width": "100%",
-            "alignment": "left"
-          }
-        },
-        "row": {
-          "type": "group",
-          "settings": {
-            "content_direction": "row",
-            "gap": 16,
-            "width": "fill",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "flex-start"
-          },
-          "blocks": {
-            "c0": {
-              "type": "collection-card",
-              "settings": {
-                "collection": "kanchipuram",
-                "placement": "below_image",
-                "horizontal_alignment": "flex-start",
-                "collection_card_gap": 10,
-                "border": "none",
-                "border_radius": 0
-              },
-              "blocks": {
-                "title": {
-                  "type": "collection-title",
-                  "settings": {}
-                }
-              },
-              "block_order": [
-                "title"
-              ]
-            },
-            "c1": {
-              "type": "collection-card",
-              "settings": {
-                "collection": "banarasi",
-                "placement": "below_image",
-                "horizontal_alignment": "flex-start",
-                "collection_card_gap": 10,
-                "border": "none",
-                "border_radius": 0
-              },
-              "blocks": {
-                "title": {
-                  "type": "collection-title",
-                  "settings": {}
-                }
-              },
-              "block_order": [
-                "title"
-              ]
-            },
-            "c2": {
-              "type": "collection-card",
-              "settings": {
-                "collection": "soft-silk",
-                "placement": "below_image",
-                "horizontal_alignment": "flex-start",
-                "collection_card_gap": 10,
-                "border": "none",
-                "border_radius": 0
-              },
-              "blocks": {
-                "title": {
-                  "type": "collection-title",
-                  "settings": {}
-                }
-              },
-              "block_order": [
-                "title"
-              ]
-            },
-            "c3": {
-              "type": "collection-card",
-              "settings": {
-                "collection": "chanderi",
-                "placement": "below_image",
-                "horizontal_alignment": "flex-start",
-                "collection_card_gap": 10,
-                "border": "none",
-                "border_radius": 0
-              },
-              "blocks": {
-                "title": {
-                  "type": "collection-title",
-                  "settings": {}
-                }
-              },
-              "block_order": [
-                "title"
-              ]
-            },
-            "c4": {
-              "type": "collection-card",
-              "settings": {
-                "collection": "tussar",
-                "placement": "below_image",
-                "horizontal_alignment": "flex-start",
-                "collection_card_gap": 10,
-                "border": "none",
-                "border_radius": 0
-              },
-              "blocks": {
-                "title": {
-                  "type": "collection-title",
-                  "settings": {}
-                }
-              },
-              "block_order": [
-                "title"
-              ]
-            }
-          },
-          "block_order": [
-            "c0",
-            "c1",
-            "c2",
-            "c3",
-            "c4"
-          ]
-        }
-      },
-      "block_order": [
-        "heading",
-        "row"
-      ]
-    },
-    "occasion": {
-      "type": "section",
-      "settings": {
-        "section_width": "page-width",
-        "content_direction": "column",
-        "gap": 24,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "flex-start",
-        "horizontal_alignment_flex_direction_column": "flex-start",
-        "padding-block-start": 16,
-        "padding-block-end": 72
-      },
-      "blocks": {
-        "heading": {
-          "type": "text",
-          "settings": {
-            "text": "<h2>Shop by occasion</h2>",
-            "width": "100%",
-            "alignment": "left"
-          }
-        },
-        "row": {
-          "type": "group",
-          "settings": {
-            "content_direction": "row",
-            "gap": 16,
-            "width": "fill",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "flex-start"
-          },
-          "blocks": {
-            "c0": {
-              "type": "collection-card",
-              "settings": {
-                "collection": "wedding",
-                "placement": "below_image",
-                "horizontal_alignment": "flex-start",
-                "collection_card_gap": 10,
-                "border": "none",
-                "border_radius": 0
-              },
-              "blocks": {
-                "title": {
-                  "type": "collection-title",
-                  "settings": {}
-                }
-              },
-              "block_order": [
-                "title"
-              ]
-            },
-            "c1": {
-              "type": "collection-card",
-              "settings": {
-                "collection": "festive",
-                "placement": "below_image",
-                "horizontal_alignment": "flex-start",
-                "collection_card_gap": 10,
-                "border": "none",
-                "border_radius": 0
-              },
-              "blocks": {
-                "title": {
-                  "type": "collection-title",
-                  "settings": {}
-                }
-              },
-              "block_order": [
-                "title"
-              ]
-            },
-            "c2": {
-              "type": "collection-card",
-              "settings": {
-                "collection": "everyday",
-                "placement": "below_image",
-                "horizontal_alignment": "flex-start",
-                "collection_card_gap": 10,
-                "border": "none",
-                "border_radius": 0
-              },
-              "blocks": {
-                "title": {
-                  "type": "collection-title",
-                  "settings": {}
-                }
-              },
-              "block_order": [
-                "title"
-              ]
-            }
-          },
-          "block_order": [
-            "c0",
-            "c1",
-            "c2"
-          ]
-        }
-      },
-      "block_order": [
-        "heading",
-        "row"
-      ]
-    },
-    "craft": {
-      "type": "section",
-      "settings": {
-        "section_width": "page-width",
-        "content_direction": "column",
         "gap": 20,
-        "background_color": "#12100E",
-        "padding-block-start": 88,
-        "padding-block-end": 88
-      },
-      "blocks": {
-        "jumbo": {
-          "type": "jumbo-text",
-          "settings": {
-            "text": "Six metres.\nOne weaver.\nMany weeks.",
-            "font": "heading",
-            "alignment": "left",
-            "line_height": "1",
-            "letter_spacing": "-0.03em",
-            "case": "none",
-            "text_effect": "reveal",
-            "animation_repeat": false,
-            "text_color": "#FDFBF7"
-          }
-        },
-        "body": {
-          "type": "text",
-          "settings": {
-            "text": "<p>A silk saree is woven on a handloom, thread by thread. The zari border is worked separately and joined to the body by hand, and the pallu alone can take a weaver several days. Nothing about it is quick, which is rather the point.</p>",
-            "width": "100%",
-            "max_width": "normal",
-            "alignment": "left",
-            "text_color": "#E7DFD2"
-          }
-        }
-      },
-      "block_order": [
-        "jumbo",
-        "body"
-      ]
-    },
-    "testimonials": {
-      "type": "testimonials",
-      "settings": {
-        "heading": "What our customers say",
-        "padding-block-start": 56,
-        "padding-block-end": 56
-      },
-      "blocks": {
-        "first": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "<p>The zari work on my Kanchipuram is exquisite. Exactly as pictured.</p>",
-            "author": "Lakshmi N.",
-            "rating": 5,
-            "star_color": "#D9982F"
-          }
-        },
-        "second": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "<p>Draped beautifully and the colour is richer in person.</p>",
-            "author": "Anitha R.",
-            "rating": 5,
-            "star_color": "#D9982F"
-          }
-        },
-        "third": {
-          "type": "testimonial",
-          "settings": {
-            "quote": "<p>Staff helped me choose a bridal silk over video call.</p>",
-            "author": "Divya S.",
-            "rating": 5,
-            "star_color": "#D9982F"
-          }
-        }
-      },
-      "block_order": [
-        "first",
-        "second",
-        "third"
-      ]
-    },
-    "hero": {
-      "type": "slideshow",
-      "settings": {
-        "section_width": "full-width",
-        "full_frame_on_mobile": true,
-        "slide_height": "medium",
-        "content_position": "middle-left",
-        "autoplay": true,
-        "autoplay_speed": 6,
-        "slideshow_controls_style": "dots",
+        "background_color": "",
         "padding-block-start": 0,
-        "padding-block-end": 0
-      },
-      "blocks": {
-        "slide_1": {
-          "type": "_slide",
-          "settings": {
-            "horizontal_alignment_flex_direction_column": "flex-start",
-            "padding-inline-start": 64,
-            "padding-inline-end": 64,
-            "padding-block-start": 48,
-            "padding-block-end": 48,
-            "toggle_overlay": true,
-            "overlay_color": "#FDFBF7A6",
-            "overlay_style": "gradient",
-            "gradient_direction": "to right"
-          },
-          "blocks": {
-            "heading": {
-              "type": "text",
-              "settings": {
-                "text": "<h2>Woven for the occasion</h2>",
-                "text_color": "#221E1A"
-              }
-            },
-            "text": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Pure zari silks, handwoven and finished by hand.</p>",
-                "padding-block-end": 20,
-                "text_color": "#221E1A"
-              }
-            },
-            "button": {
-              "type": "button",
-              "settings": {
-                "label": "See new arrivals",
-                "link": "/collections/all"
-              }
-            }
-          },
-          "block_order": [
-            "heading",
-            "text",
-            "button"
-          ]
-        },
-        "slide_2": {
-          "type": "_slide",
-          "settings": {
-            "horizontal_alignment_flex_direction_column": "flex-start",
-            "padding-inline-start": 64,
-            "padding-inline-end": 64,
-            "padding-block-start": 48,
-            "padding-block-end": 48,
-            "toggle_overlay": true,
-            "overlay_color": "#FDFBF7A6",
-            "overlay_style": "gradient",
-            "gradient_direction": "to right"
-          },
-          "blocks": {
-            "heading": {
-              "type": "text",
-              "settings": {
-                "text": "<h2>Dressed for the wedding</h2>",
-                "text_color": "#221E1A"
-              }
-            },
-            "text": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Bridal silks in temple gold, deep maroon and ivory.</p>",
-                "padding-block-end": 20,
-                "text_color": "#221E1A"
-              }
-            },
-            "button": {
-              "type": "button",
-              "settings": {
-                "label": "Explore bridal",
-                "link": "/collections/all/wedding"
-              }
-            }
-          },
-          "block_order": [
-            "heading",
-            "text",
-            "button"
-          ]
-        },
-        "slide_3": {
-          "type": "_slide",
-          "settings": {
-            "horizontal_alignment_flex_direction_column": "flex-start",
-            "padding-inline-start": 64,
-            "padding-inline-end": 64,
-            "padding-block-start": 48,
-            "padding-block-end": 48,
-            "toggle_overlay": true,
-            "overlay_color": "#FDFBF7A6",
-            "overlay_style": "gradient",
-            "gradient_direction": "to right"
-          },
-          "blocks": {
-            "heading": {
-              "type": "text",
-              "settings": {
-                "text": "<h2>For every celebration</h2>",
-                "text_color": "#221E1A"
-              }
-            },
-            "text": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Festive drapes for Diwali, Pongal and Sankranti.</p>",
-                "padding-block-end": 20,
-                "text_color": "#221E1A"
-              }
-            },
-            "button": {
-              "type": "button",
-              "settings": {
-                "label": "Shop festive",
-                "link": "/collections/all/festive"
-              }
-            }
-          },
-          "block_order": [
-            "heading",
-            "text",
-            "button"
-          ]
-        }
-      },
-      "block_order": [
-        "slide_1",
-        "slide_2",
-        "slide_3"
-      ]
-    },
-    "weave_index_2": {
-      "type": "section",
-      "settings": {
-        "section_width": "page-width",
-        "content_direction": "column",
-        "gap": 24,
-        "horizontal_alignment": "flex-start",
-        "vertical_alignment": "flex-start",
-        "horizontal_alignment_flex_direction_column": "flex-start",
-        "padding-block-start": 0,
-        "padding-block-end": 48
-      },
-      "blocks": {
-        "row": {
-          "type": "group",
-          "settings": {
-            "content_direction": "row",
-            "gap": 16,
-            "width": "fill",
-            "vertical_on_mobile": false,
-            "horizontal_alignment": "flex-start"
-          },
-          "blocks": {
-            "c0": {
-              "type": "collection-card",
-              "settings": {
-                "collection": "organza",
-                "placement": "below_image",
-                "horizontal_alignment": "flex-start",
-                "collection_card_gap": 10,
-                "border": "none",
-                "border_radius": 0
-              },
-              "blocks": {
-                "title": {
-                  "type": "collection-title",
-                  "settings": {}
-                }
-              },
-              "block_order": [
-                "title"
-              ]
-            },
-            "c1": {
-              "type": "collection-card",
-              "settings": {
-                "collection": "ikat",
-                "placement": "below_image",
-                "horizontal_alignment": "flex-start",
-                "collection_card_gap": 10,
-                "border": "none",
-                "border_radius": 0
-              },
-              "blocks": {
-                "title": {
-                  "type": "collection-title",
-                  "settings": {}
-                }
-              },
-              "block_order": [
-                "title"
-              ]
-            },
-            "c2": {
-              "type": "collection-card",
-              "settings": {
-                "collection": "gadwal",
-                "placement": "below_image",
-                "horizontal_alignment": "flex-start",
-                "collection_card_gap": 10,
-                "border": "none",
-                "border_radius": 0
-              },
-              "blocks": {
-                "title": {
-                  "type": "collection-title",
-                  "settings": {}
-                }
-              },
-              "block_order": [
-                "title"
-              ]
-            },
-            "c3": {
-              "type": "collection-card",
-              "settings": {
-                "collection": "silk-cotton",
-                "placement": "below_image",
-                "horizontal_alignment": "flex-start",
-                "collection_card_gap": 10,
-                "border": "none",
-                "border_radius": 0
-              },
-              "blocks": {
-                "title": {
-                  "type": "collection-title",
-                  "settings": {}
-                }
-              },
-              "block_order": [
-                "title"
-              ]
-            },
-            "c4": {
-              "type": "collection-card",
-              "settings": {
-                "collection": "georgette",
-                "placement": "below_image",
-                "horizontal_alignment": "flex-start",
-                "collection_card_gap": 10,
-                "border": "none",
-                "border_radius": 0
-              },
-              "blocks": {
-                "title": {
-                  "type": "collection-title",
-                  "settings": {}
-                }
-              },
-              "block_order": [
-                "title"
-              ]
-            }
-          },
-          "block_order": [
-            "c0",
-            "c1",
-            "c2",
-            "c3",
-            "c4"
-          ]
-        }
-      },
-      "block_order": [
-        "row"
-      ]
+        "padding-block-end": 24
+      }
     },
     "promise": {
       "type": "section",
-      "settings": {
-        "section_width": "page-width",
-        "content_direction": "column",
-        "gap": 28,
-        "padding-block-start": 56,
-        "padding-block-end": 56
-      },
       "blocks": {
         "heading": {
           "type": "text",
           "settings": {
             "text": "<h2>Buying online, from us</h2>",
             "width": "100%",
-            "alignment": "left"
-          }
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "text_color": "",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
         },
         "row": {
           "type": "group",
           "settings": {
             "content_direction": "row",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
             "gap": 32,
             "width": "fill",
-            "vertical_on_mobile": true
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {
             "p0": {
               "type": "group",
               "settings": {
                 "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
                 "gap": 10,
                 "width": "fill",
-                "horizontal_alignment_flex_direction_column": "flex-start"
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               },
               "blocks": {
                 "i": {
@@ -867,25 +675,61 @@
                   "settings": {
                     "icon": "truck",
                     "width": 28,
-                    "icon_color": "#D9982F"
-                  }
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "icon_color": "#d9982f"
+                  },
+                  "blocks": {}
                 },
                 "t": {
                   "type": "text",
                   "settings": {
                     "text": "<h3>Free shipping over ₹4,999</h3>",
                     "width": "100%",
+                    "max_width": "normal",
                     "alignment": "left",
-                    "type_preset": "h6"
-                  }
+                    "type_preset": "h6",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
                 },
                 "d": {
                   "type": "text",
                   "settings": {
                     "text": "<p>Across India. International delivery available to most countries.</p>",
                     "width": "100%",
-                    "alignment": "left"
-                  }
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
@@ -898,9 +742,39 @@
               "type": "group",
               "settings": {
                 "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
                 "gap": 10,
                 "width": "fill",
-                "horizontal_alignment_flex_direction_column": "flex-start"
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               },
               "blocks": {
                 "i": {
@@ -908,25 +782,61 @@
                   "settings": {
                     "icon": "return",
                     "width": 28,
-                    "icon_color": "#D9982F"
-                  }
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "icon_color": "#d9982f"
+                  },
+                  "blocks": {}
                 },
                 "t": {
                   "type": "text",
                   "settings": {
                     "text": "<h3>7-day returns</h3>",
                     "width": "100%",
+                    "max_width": "normal",
                     "alignment": "left",
-                    "type_preset": "h6"
-                  }
+                    "type_preset": "h6",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
                 },
                 "d": {
                   "type": "text",
                   "settings": {
                     "text": "<p>Unused and unaltered, with tags intact. Refunded to your original payment method.</p>",
                     "width": "100%",
-                    "alignment": "left"
-                  }
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
@@ -939,9 +849,39 @@
               "type": "group",
               "settings": {
                 "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
                 "gap": 10,
                 "width": "fill",
-                "horizontal_alignment_flex_direction_column": "flex-start"
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               },
               "blocks": {
                 "i": {
@@ -949,25 +889,61 @@
                   "settings": {
                     "icon": "lock",
                     "width": 28,
-                    "icon_color": "#D9982F"
-                  }
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "icon_color": "#d9982f"
+                  },
+                  "blocks": {}
                 },
                 "t": {
                   "type": "text",
                   "settings": {
                     "text": "<h3>Secure checkout</h3>",
                     "width": "100%",
+                    "max_width": "normal",
                     "alignment": "left",
-                    "type_preset": "h6"
-                  }
+                    "type_preset": "h6",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
                 },
                 "d": {
                   "type": "text",
                   "settings": {
                     "text": "<p>UPI, cards, net banking and wallets, all handled by Shopify Payments.</p>",
                     "width": "100%",
-                    "alignment": "left"
-                  }
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
@@ -980,9 +956,39 @@
               "type": "group",
               "settings": {
                 "content_direction": "column",
+                "vertical_on_mobile": true,
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "align_baseline": false,
+                "horizontal_alignment_flex_direction_column": "flex-start",
+                "vertical_alignment_flex_direction_column": "center",
                 "gap": 10,
                 "width": "fill",
-                "horizontal_alignment_flex_direction_column": "flex-start"
+                "custom_width": 100,
+                "width_mobile": "fill",
+                "custom_width_mobile": 100,
+                "height": "fit",
+                "custom_height": 100,
+                "background_media": "none",
+                "background_color": "",
+                "video_position": "cover",
+                "background_image_position": "cover",
+                "toggle_overlay": false,
+                "overlay_color": "#00000026",
+                "overlay_style": "solid",
+                "gradient_direction": "to top",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0,
+                "link": "",
+                "open_in_new_tab": false,
+                "placeholder": "",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
               },
               "blocks": {
                 "i": {
@@ -990,25 +996,61 @@
                   "settings": {
                     "icon": "leaf",
                     "width": 28,
-                    "icon_color": "#D9982F"
-                  }
+                    "link": "",
+                    "open_in_new_tab": false,
+                    "icon_color": "#d9982f"
+                  },
+                  "blocks": {}
                 },
                 "t": {
                   "type": "text",
                   "settings": {
                     "text": "<h3>Handloom woven</h3>",
                     "width": "100%",
+                    "max_width": "normal",
                     "alignment": "left",
-                    "type_preset": "h6"
-                  }
+                    "type_preset": "h6",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
                 },
                 "d": {
                   "type": "text",
                   "settings": {
                     "text": "<p>Sourced directly from weaving clusters, not from resellers.</p>",
                     "width": "100%",
-                    "alignment": "left"
-                  }
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
@@ -1029,39 +1071,1351 @@
       "block_order": [
         "heading",
         "row"
-      ]
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 28,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 56,
+        "padding-block-end": 56
+      }
+    },
+    "weave_index": {
+      "type": "section",
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "settings": {
+            "text": "<h2>Shop by weave</h2>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "text_color": "",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "row": {
+          "type": "group",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 16,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "c0": {
+              "type": "collection-card",
+              "settings": {
+                "collection": "kanchipuram",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "collection_card_gap": 10,
+                "background_color": "",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h4",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "{{ settings.color_palette.background }}",
+                    "text_color": "{{ settings.color_palette.foreground }}",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "collection-card-image": {
+                  "type": "_collection-card-image",
+                  "static": true,
+                  "settings": {
+                    "image_ratio": "portrait",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
+            },
+            "c1": {
+              "type": "collection-card",
+              "settings": {
+                "collection": "banarasi",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "collection_card_gap": 10,
+                "background_color": "",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h4",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "{{ settings.color_palette.background }}",
+                    "text_color": "{{ settings.color_palette.foreground }}",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "collection-card-image": {
+                  "type": "_collection-card-image",
+                  "static": true,
+                  "settings": {
+                    "image_ratio": "portrait",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
+            },
+            "c2": {
+              "type": "collection-card",
+              "settings": {
+                "collection": "soft-silk",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "collection_card_gap": 10,
+                "background_color": "",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h4",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "{{ settings.color_palette.background }}",
+                    "text_color": "{{ settings.color_palette.foreground }}",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "collection-card-image": {
+                  "type": "_collection-card-image",
+                  "static": true,
+                  "settings": {
+                    "image_ratio": "portrait",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
+            },
+            "c3": {
+              "type": "collection-card",
+              "settings": {
+                "collection": "chanderi",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "collection_card_gap": 10,
+                "background_color": "",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h4",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "{{ settings.color_palette.background }}",
+                    "text_color": "{{ settings.color_palette.foreground }}",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "collection-card-image": {
+                  "type": "_collection-card-image",
+                  "static": true,
+                  "settings": {
+                    "image_ratio": "portrait",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
+            },
+            "c4": {
+              "type": "collection-card",
+              "settings": {
+                "collection": "tussar",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "collection_card_gap": 10,
+                "background_color": "",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h4",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "{{ settings.color_palette.background }}",
+                    "text_color": "{{ settings.color_palette.foreground }}",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "collection-card-image": {
+                  "type": "_collection-card-image",
+                  "static": true,
+                  "settings": {
+                    "image_ratio": "portrait",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
+            }
+          },
+          "block_order": [
+            "c0",
+            "c1",
+            "c2",
+            "c3",
+            "c4"
+          ]
+        }
+      },
+      "block_order": [
+        "heading",
+        "row"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "flex-start",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 24,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 64,
+        "padding-block-end": 24
+      }
+    },
+    "weave_index_2": {
+      "type": "section",
+      "blocks": {
+        "row": {
+          "type": "group",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 16,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "c0": {
+              "type": "collection-card",
+              "settings": {
+                "collection": "organza",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "collection_card_gap": 10,
+                "background_color": "",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h4",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "{{ settings.color_palette.background }}",
+                    "text_color": "{{ settings.color_palette.foreground }}",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "collection-card-image": {
+                  "type": "_collection-card-image",
+                  "static": true,
+                  "settings": {
+                    "image_ratio": "portrait",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
+            },
+            "c1": {
+              "type": "collection-card",
+              "settings": {
+                "collection": "ikat",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "collection_card_gap": 10,
+                "background_color": "",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h4",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "{{ settings.color_palette.background }}",
+                    "text_color": "{{ settings.color_palette.foreground }}",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "collection-card-image": {
+                  "type": "_collection-card-image",
+                  "static": true,
+                  "settings": {
+                    "image_ratio": "portrait",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
+            },
+            "c2": {
+              "type": "collection-card",
+              "settings": {
+                "collection": "gadwal",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "collection_card_gap": 10,
+                "background_color": "",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h4",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "{{ settings.color_palette.background }}",
+                    "text_color": "{{ settings.color_palette.foreground }}",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "collection-card-image": {
+                  "type": "_collection-card-image",
+                  "static": true,
+                  "settings": {
+                    "image_ratio": "portrait",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
+            },
+            "c3": {
+              "type": "collection-card",
+              "settings": {
+                "collection": "silk-cotton",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "collection_card_gap": 10,
+                "background_color": "",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h4",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "{{ settings.color_palette.background }}",
+                    "text_color": "{{ settings.color_palette.foreground }}",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "collection-card-image": {
+                  "type": "_collection-card-image",
+                  "static": true,
+                  "settings": {
+                    "image_ratio": "portrait",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
+            },
+            "c4": {
+              "type": "collection-card",
+              "settings": {
+                "collection": "georgette",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "collection_card_gap": 10,
+                "background_color": "",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h4",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "{{ settings.color_palette.background }}",
+                    "text_color": "{{ settings.color_palette.foreground }}",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "collection-card-image": {
+                  "type": "_collection-card-image",
+                  "static": true,
+                  "settings": {
+                    "image_ratio": "portrait",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
+            }
+          },
+          "block_order": [
+            "c0",
+            "c1",
+            "c2",
+            "c3",
+            "c4"
+          ]
+        }
+      },
+      "block_order": [
+        "row"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "flex-start",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 24,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 0,
+        "padding-block-end": 48
+      }
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "blocks": {
+        "first": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>The zari work on my Kanchipuram is exquisite. Exactly as pictured.</p>",
+            "author": "Lakshmi N.",
+            "author_detail": "",
+            "rating": 5,
+            "star_color": "#d9982f",
+            "alignment": "flex-start",
+            "background_color": "",
+            "text_color": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "second": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>Draped beautifully and the colour is richer in person.</p>",
+            "author": "Anitha R.",
+            "author_detail": "",
+            "rating": 5,
+            "star_color": "#d9982f",
+            "alignment": "flex-start",
+            "background_color": "",
+            "text_color": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "third": {
+          "type": "testimonial",
+          "settings": {
+            "quote": "<p>Staff helped me choose a bridal silk over video call.</p>",
+            "author": "Divya S.",
+            "author_detail": "",
+            "rating": 5,
+            "star_color": "#d9982f",
+            "alignment": "flex-start",
+            "background_color": "",
+            "text_color": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "first",
+        "second",
+        "third"
+      ],
+      "settings": {
+        "heading": "What our customers say",
+        "heading_alignment": "center",
+        "columns": 3,
+        "columns_mobile": "1",
+        "gap": 24,
+        "section_width": "page-width",
+        "background_color": "",
+        "padding-block-start": 56,
+        "padding-block-end": 56
+      }
+    },
+    "occasion": {
+      "type": "section",
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "settings": {
+            "text": "<h2>Shop by occasion</h2>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "text_color": "",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "row": {
+          "type": "group",
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 16,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "background_media": "none",
+            "background_color": "",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "link": "",
+            "open_in_new_tab": false,
+            "placeholder": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "c0": {
+              "type": "collection-card",
+              "settings": {
+                "collection": "wedding",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "collection_card_gap": 10,
+                "background_color": "",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h4",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "{{ settings.color_palette.background }}",
+                    "text_color": "{{ settings.color_palette.foreground }}",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "collection-card-image": {
+                  "type": "_collection-card-image",
+                  "static": true,
+                  "settings": {
+                    "image_ratio": "portrait",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
+            },
+            "c1": {
+              "type": "collection-card",
+              "settings": {
+                "collection": "festive",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "collection_card_gap": 10,
+                "background_color": "",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h4",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "{{ settings.color_palette.background }}",
+                    "text_color": "{{ settings.color_palette.foreground }}",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "collection-card-image": {
+                  "type": "_collection-card-image",
+                  "static": true,
+                  "settings": {
+                    "image_ratio": "portrait",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
+            },
+            "c2": {
+              "type": "collection-card",
+              "settings": {
+                "collection": "everyday",
+                "placement": "below_image",
+                "horizontal_alignment": "flex-start",
+                "vertical_alignment": "center",
+                "collection_card_gap": 10,
+                "background_color": "",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_color": "",
+                "border_radius": 0
+              },
+              "blocks": {
+                "title": {
+                  "type": "collection-title",
+                  "settings": {
+                    "width": "fit-content",
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "h4",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "background": false,
+                    "background_color": "{{ settings.color_palette.background }}",
+                    "text_color": "{{ settings.color_palette.foreground }}",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
+                },
+                "collection-card-image": {
+                  "type": "_collection-card-image",
+                  "static": true,
+                  "settings": {
+                    "image_ratio": "portrait",
+                    "toggle_overlay": false,
+                    "overlay_color": "#00000026",
+                    "overlay_style": "solid",
+                    "gradient_direction": "to top",
+                    "border": "none",
+                    "border_width": 1,
+                    "border_opacity": 100,
+                    "border_color": "",
+                    "border_radius": 0
+                  },
+                  "blocks": {}
+                }
+              },
+              "block_order": [
+                "title"
+              ]
+            }
+          },
+          "block_order": [
+            "c0",
+            "c1",
+            "c2"
+          ]
+        }
+      },
+      "block_order": [
+        "heading",
+        "row"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "flex-start",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 24,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 16,
+        "padding-block-end": 72
+      }
+    },
+    "craft": {
+      "type": "section",
+      "blocks": {
+        "jumbo": {
+          "type": "jumbo-text",
+          "settings": {
+            "text": "Six metres.\nOne weaver.\nMany weeks.",
+            "font": "heading",
+            "alignment": "left",
+            "line_height": "1",
+            "letter_spacing": "-0.03em",
+            "case": "none",
+            "text_effect": "reveal",
+            "animation_repeat": false,
+            "text_color": "#fdfbf7"
+          },
+          "blocks": {}
+        },
+        "body": {
+          "type": "text",
+          "settings": {
+            "text": "<p>A silk saree is woven on a handloom, thread by thread. The zari border is worked separately and joined to the body by hand, and the pallu alone can take a weaver several days. Nothing about it is quick, which is rather the point.</p>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "text_color": "#e7dfd2",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "jumbo",
+        "body"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 20,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "#12100e",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 88,
+        "padding-block-end": 88
+      }
     },
     "faq": {
       "type": "section",
-      "settings": {
-        "section_width": "page-width",
-        "content_direction": "column",
-        "gap": 24,
-        "padding-block-start": 16,
-        "padding-block-end": 88
-      },
       "blocks": {
         "heading": {
           "type": "text",
           "settings": {
             "text": "<h2>Before you buy</h2>",
             "width": "100%",
-            "alignment": "left"
-          }
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "rte",
+            "font": "var(--font-body--family)",
+            "font_size": "1rem",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "text_color": "",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
         },
         "acc": {
           "type": "accordion",
           "settings": {
             "icon": "plus",
             "dividers": true,
-            "divider_color": "#E7DFD2"
+            "divider_color": "#e7dfd2",
+            "type_preset": "h6",
+            "background_color": "",
+            "text_color": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_color": "",
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
           },
           "blocks": {
             "q0": {
               "type": "_accordion-row",
               "settings": {
                 "heading": "Does the saree come with a blouse piece?",
-                "open_by_default": true
+                "open_by_default": true,
+                "icon": "none",
+                "width": 20
               },
               "blocks": {
                 "t": {
@@ -1069,8 +2423,25 @@
                   "settings": {
                     "text": "<p>Yes. Every saree includes an unstitched blouse piece attached at the pallu end, unless the product page says otherwise. Stitching is not included.</p>",
                     "width": "100%",
-                    "alignment": "left"
-                  }
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
@@ -1081,7 +2452,9 @@
               "type": "_accordion-row",
               "settings": {
                 "heading": "How do I care for a silk saree?",
-                "open_by_default": false
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
               },
               "blocks": {
                 "t": {
@@ -1089,8 +2462,25 @@
                   "settings": {
                     "text": "<p>Dry clean only, and only when it needs it — silk does not like frequent cleaning. Store it folded in a cotton cloth rather than plastic, and refold along different lines every few months so the zari does not crack where it creases.</p>",
                     "width": "100%",
-                    "alignment": "left"
-                  }
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
@@ -1101,7 +2491,9 @@
               "type": "_accordion-row",
               "settings": {
                 "heading": "When will my order arrive?",
-                "open_by_default": false
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
               },
               "blocks": {
                 "t": {
@@ -1109,8 +2501,25 @@
                   "settings": {
                     "text": "<p>Orders are dispatched within two working days. Delivery within India takes three to seven days depending on the pin code. You will get a tracking link by email as soon as it ships.</p>",
                     "width": "100%",
-                    "alignment": "left"
-                  }
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
@@ -1121,7 +2530,9 @@
               "type": "_accordion-row",
               "settings": {
                 "heading": "Can I return a saree?",
-                "open_by_default": false
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
               },
               "blocks": {
                 "t": {
@@ -1129,8 +2540,25 @@
                   "settings": {
                     "text": "<p>Yes, within seven days of delivery, provided it is unused, unaltered and has its tags intact. Refunds go back to the original payment method. Sarees that have been stitched or altered cannot be returned.</p>",
                     "width": "100%",
-                    "alignment": "left"
-                  }
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
@@ -1141,7 +2569,9 @@
               "type": "_accordion-row",
               "settings": {
                 "heading": "Do you ship internationally?",
-                "open_by_default": false
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
               },
               "blocks": {
                 "t": {
@@ -1149,8 +2579,25 @@
                   "settings": {
                     "text": "<p>We do, to most countries. International orders over ₹39,999 ship free. Customs duties and local taxes are payable by the recipient.</p>",
                     "width": "100%",
-                    "alignment": "left"
-                  }
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
@@ -1161,7 +2608,9 @@
               "type": "_accordion-row",
               "settings": {
                 "heading": "Is the zari real?",
-                "open_by_default": false
+                "open_by_default": false,
+                "icon": "none",
+                "width": 20
               },
               "blocks": {
                 "t": {
@@ -1169,8 +2618,25 @@
                   "settings": {
                     "text": "<p>Where a saree is described as pure zari, the thread is silver electroplated with gold. Half-fine and tested zari are described as such on the product page. We do not describe one as the other.</p>",
                     "width": "100%",
-                    "alignment": "left"
-                  }
+                    "max_width": "normal",
+                    "alignment": "left",
+                    "type_preset": "rte",
+                    "font": "var(--font-body--family)",
+                    "font_size": "1rem",
+                    "line_height": "normal",
+                    "letter_spacing": "normal",
+                    "case": "none",
+                    "wrap": "pretty",
+                    "text_color": "",
+                    "background": false,
+                    "background_color": "#00000026",
+                    "corner_radius": 0,
+                    "padding-block-start": 0,
+                    "padding-block-end": 0,
+                    "padding-inline-start": 0,
+                    "padding-inline-end": 0
+                  },
+                  "blocks": {}
                 }
               },
               "block_order": [
@@ -1191,7 +2657,93 @@
       "block_order": [
         "heading",
         "acc"
-      ]
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 24,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 16,
+        "padding-block-end": 88
+      }
+    },
+    "178867041633bf3dcd": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_c2c088f_YdyriC": {
+          "type": "ai_gen_block_c2c088f",
+          "settings": {
+            "heading": "Make an impression",
+            "heading_font": "playfair_display_n4",
+            "alignment": "center",
+            "font_weight": "400",
+            "text_case": "none",
+            "font_size": 56,
+            "mobile_font_size": 36,
+            "letter_spacing": 0,
+            "text_color": "#221E1A",
+            "glow_color": "#D9982F",
+            "background_color": "#FDFBF7",
+            "glow_size": 8,
+            "animation_speed": 3,
+            "vertical_padding": 24,
+            "horizontal_padding": 24,
+            "desktop_width_percent": 100
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_c2c088f_YdyriC"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "flex-start",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "flex-start",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 12,
+        "section_width": "page-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
     }
   },
   "order": [
@@ -1204,6 +2756,7 @@
     "testimonials",
     "occasion",
     "craft",
-    "faq"
+    "faq",
+    "178867041633bf3dcd"
   ]
 }

@@ -18,10 +18,13 @@
           "type": "_announcement",
           "settings": {
             "text": "Free shipping across India on orders above ₹4,999",
+            "link": "",
             "font": "var(--font-subheading--family)",
             "font_size": "0.75rem",
+            "weight": "",
             "letter_spacing": "normal",
-            "case": "none"
+            "case": "none",
+            "text_color": ""
           },
           "blocks": {}
         }
@@ -33,9 +36,9 @@
       "settings": {
         "speed": 5,
         "section_width": "page-width",
-        "background_color": "#12100E",
+        "background_color": "#12100e",
         "divider_width": 1,
-        "divider_color": "#D9982F",
+        "divider_color": "#d9982f",
         "padding-block-start": 15,
         "padding-block-end": 15
       }
@@ -58,18 +61,22 @@
           "static": true,
           "settings": {
             "menu": "main-menu",
+            "background_color": "{{ settings.color_palette.background }}",
+            "text_color": "",
             "type_font_primary_size": "0.875rem",
             "menu_font_style": "inverse",
-            "type_font_primary_link": "body",
-            "type_case_primary_link": "none",
-            "menu_style": "featured_products",
+            "type_font_primary_link": "subheading",
+            "type_case_primary_link": "uppercase",
+            "menu_style": "featured_collections",
             "featured_products_aspect_ratio": "4 / 5",
             "featured_collections_aspect_ratio": "16 / 9",
             "image_border_radius": 0,
-            "navigation_bar": false,
-            "drawer_accordion": false,
-            "drawer_accordion_expand_first": false,
-            "drawer_dividers": false
+            "navigation_bar": true,
+            "background_color_navigation_bar": "#12100e",
+            "text_color_navigation_bar": "#fdfbf7",
+            "drawer_accordion": true,
+            "drawer_accordion_expand_first": true,
+            "drawer_dividers": true
           },
           "blocks": {}
         }
@@ -78,6 +85,7 @@
         "logo_position": "left",
         "menu_position": "left",
         "menu_row": "top",
+        "customer_account_menu": "customer-account-main-menu",
         "show_search": true,
         "search_position": "right",
         "search_row": "top",
@@ -88,22 +96,34 @@
         "localization_font_size": "0.875rem",
         "localization_position": "right",
         "localization_row": "top",
-        "section_width": "page-width",
+        "section_width": "full-width",
         "section_height": "standard",
         "enable_sticky_header": "always",
-        "divider_width": 0,
+        "divider_width": 1,
         "divider_size": "page-width",
+        "divider_color": "#d9982f",
         "border_width": 1,
-        "background_color_top": "#12100E",
+        "bottom_border_color": "#d9982f",
+        "actions_display_style": "icon",
+        "actions_font_size": "0.875rem",
+        "actions_font": "body",
+        "actions_text_case": "none",
+        "background_color_top": "#12100e",
+        "text_color_top": "#fdfbf7",
+        "background_color_bottom": "#12100e",
+        "text_color_bottom": "#fdfbf7",
+        "bubble_style": "default",
+        "bubble_background_color": "#d9982f",
+        "bubble_text_color": "#12100e",
         "enable_transparent_header_home": false,
+        "home_inverse_logo": false,
+        "text_color_transparent_home": "",
         "enable_transparent_header_product": false,
+        "product_inverse_logo": false,
+        "text_color_transparent_product": "",
         "enable_transparent_header_collection": false,
-        "text_color_top": "#FDFBF7",
-        "background_color_bottom": "#12100E",
-        "text_color_bottom": "#FDFBF7",
-        "bubble_background_color": "#D9982F",
-        "bubble_text_color": "#12100E",
-        "bottom_border_color": "#D9982F"
+        "collection_inverse_logo": false,
+        "text_color_transparent_collection": ""
       }
     }
   },

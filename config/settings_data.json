@@ -9,10 +9,10 @@
  */
 {
   "current": {
-    "logo_height": 36,
+    "logo": "shopify://shop_images/chakravaty.jpg",
+    "logo_height": 70,
     "logo_height_mobile": 28,
-    "page_background_color": "{{ settings.color_palette.background }}",
-    "page_width": "narrow",
+    "favicon": "shopify://shop_images/chakravaty.jpg",
     "page_text_color": "{{ settings.color_palette.foreground }}",
     "type_body_font": "inter_n4",
     "type_subheading_font": "inter_n5",
@@ -44,8 +44,11 @@
     "type_font_h6": "subheading",
     "type_size_h6": "12",
     "type_line_height_h6": "display-loose",
+    "page_background_color": "{{ settings.color_palette.background }}",
+    "page_width": "narrow",
     "page_transition_enabled": true,
     "transition_to_main_product": true,
+    "add_to_cart_animation": true,
     "card_hover_effect": "subtle-zoom",
     "badge_position": "top-left",
     "badge_corner_radius": 100,
@@ -85,8 +88,10 @@
     "currency_code_enabled_product_pages": false,
     "currency_code_enabled_product_cards": false,
     "currency_code_enabled_cart_items": false,
+    "mobile_quick_add": true,
     "quick_add_background": "#12100E",
     "quick_add_text": "#FDFBF7",
+    "show_second_image_on_hover": true,
     "product_corner_radius": 0,
     "card_corner_radius": 0,
     "show_variant_image": false,
@@ -102,15 +107,13 @@
     "variant_button_border_width": 1,
     "variant_button_radius": 14,
     "variant_button_width": "equal-width-buttons",
+    "content_for_index": [],
     "color_palette": {
       "background": "#FDFBF7",
       "foreground": "#221E1A",
       "color1": "#D9982F",
       "color2": "#E7DFD2"
-    },
-    "show_second_image_on_hover": true,
-    "mobile_quick_add": true,
-    "add_to_cart_animation": true
+    }
   },
   "presets": {
     "Horizon": {
