@@ -117,28 +117,3 @@
   margin: 0;
   color: var(--color-foreground, inherit);
 }
-
-/* --- Hero copy legibility -------------------------------------------------- */
-/* The full-slide overlay was switched off in the admin to stop the photographs
-   being washed out — right call, but the charcoal copy then sat unreadable on
-   bright imagery. This scrims only the area behind the text, so the rest of the
-   photograph stays exactly as shot. */
-.slideshow-slide .slideshow-slide__content,
-slideshow-slide .group-block-content {
-  position: relative;
-}
-
-.slideshow-slide .slideshow-slide__content::before,
-slideshow-slide .group-block-content::before {
-  content: '';
-  position: absolute;
-  inset: -32px -48px;
-  z-index: -1;
-  background: radial-gradient(
-    ellipse at 30% 50%,
-    rgb(253 251 247 / 0.92) 0%,
-    rgb(253 251 247 / 0.72) 45%,
-    rgb(253 251 247 / 0) 78%
-  );
-  pointer-events: none;
-}
