@@ -2595,6 +2595,31 @@
         "padding-block-start": 0,
         "padding-block-end": 0
       }
+    },
+    "stat_band": {
+      "type": "section",
+      "settings": {
+        "section_width": "full-width",
+        "content_direction": "column",
+        "horizontal_alignment": "center",
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment": "center",
+        "gap": 8,
+        "background_color": "#4A1220",
+        "padding-block-start": 72,
+        "padding-block-end": 72
+      },
+      "blocks": {
+        "figure": {
+          "type": "custom-liquid",
+          "settings": {
+            "custom_liquid": "{%- comment -%}\n  UPDATE THE CUSTOMER COUNT HERE.\n  count_number  drives the count-up animation.\n  count_display is what shows before JavaScript runs, and for anyone without it.\n  Change both so they agree.\n{%- endcomment -%}\n{%- assign count_number = 75000 -%}\n{%- assign count_display = '75,000' -%}\n\n<div class=\"stat-band\">\n  <p class=\"stat-band__figure\"><span data-count-to=\"{{ count_number }}\">{{ count_display }}</span>+</p>\n  <p class=\"stat-band__label\">happy customers</p>\n</div>"
+          }
+        }
+      },
+      "block_order": [
+        "figure"
+      ]
     }
   },
   "order": [
@@ -2604,6 +2629,7 @@
     "promise",
     "weave_index",
     "weave_index_2",
+    "stat_band",
     "testimonials",
     "occasion",
     "craft",

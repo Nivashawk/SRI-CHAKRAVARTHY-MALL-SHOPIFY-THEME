@@ -117,3 +117,48 @@
   margin: 0;
   color: var(--color-foreground, inherit);
 }
+
+/* --- Customer count band --------------------------------------------------- */
+/* blocks/custom-liquid.liquid wraps its output in a bare, class-less div. As a
+   flex item that div shrink-wraps to its content, so everything inside it is only
+   as wide as the text and cannot centre across the band. Widen it by what it
+   contains. Without this the figure centres on desktop by luck and sits ~54px
+   right of centre on mobile. */
+.section-content-wrapper > div:has(> .stat-band) {
+  width: 100%;
+}
+
+/* The theme injects asymmetric inline padding onto content inside a section, so
+   text-align alone left the figure off-centre. Own flex wrapper with the padding
+   reset, which centres regardless of what the surrounding layout applies. */
+.stat-band {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding-inline: 0;
+  text-align: center;
+}
+
+.stat-band__figure {
+  margin: 0 0 10px;
+  padding: 0;
+  color: #d9982f;
+  font-family: var(--font-heading--family, serif);
+  font-size: clamp(3rem, 11vw, 7rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  /* Equal-width digits, so the line does not jitter while counting up. */
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+.stat-band__label {
+  margin: 0;
+  padding: 0;
+  color: #fdfbf7;
+  font-size: clamp(0.9rem, 2.4vw, 1.125rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
