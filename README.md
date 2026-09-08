@@ -120,6 +120,55 @@ Two traps that `shopify theme check` does **not** catch:
 - Inside a `{% liquid %}` tag every newline is a separate statement, so a
   multi-line `render` silently breaks. Use a standalone `{% render %}` tag.
 
+## Footer
+
+Four columns plus a full-width payment row, then the utilities bar. The layout
+is not hand-built: `sections/footer.liquid` sets `--grid-columns` to
+`min(block_count, 4)` and gives a lone trailing block its own full-width row, so
+**five top-level blocks** produce 4 columns on desktop, 2 on tablet, 1 on mobile
+with the payment icons spanning the bottom. Add a sixth block and the grid
+reflows on its own; nothing in `custom.css` touches it.
+
+The three link columns render Shopify navigation menus, so the client reorders
+them in Admin without touching code:
+
+| Menu handle | Column |
+|---|---|
+| `footer-shop` | Shop |
+| `footer-help` | Help |
+| `footer-about` | The house |
+
+Rebuild them with `node scripts/build-footer-menus.mjs <outdir>` and apply each
+emitted file with `menuCreate`. **If a menu handle is deleted in Admin the
+column silently renders empty** — the block has no fallback.
+
+`snippets/footer-contact.liquid` prints the store email and WhatsApp link from
+`shop.email` and `settings.whatsapp_number` rather than from typed-in text, so
+neither can go stale. It is invoked from a `custom_liquid` block setting inside
+`sections/footer-group.json`, which is why `theme check` reports it as an
+orphaned snippet — that warning is expected and is the only one the repo has.
+
+`snippets/whatsapp-number.liquid` normalises the number for `wa.me`: digits
+only, and a bare 10-digit value is treated as Indian and given a `91` prefix.
+`wa.me` does not error on a number missing its country code, it just opens an
+"invalid number" page, so this is not cosmetic. Both the footer link and the
+floating button render this one snippet.
+
+Two footer blocks populate themselves from store settings and are collapsed by
+CSS while those settings are empty: `payment-icons` (needs an activated payment
+provider) and `social-links`, which by design renders nothing on the storefront
+unless a URL has a profile path — a bare `https://www.instagram.com/` is
+deliberately inert, though the theme editor still shows it greyed out.
+
+### Page and policy content
+
+`scripts/footer-content/*.html` holds the source for the two pages (`about`,
+`faq`) and two shop policies (shipping, refund) created for the footer to link
+to. Every claim in them is taken from the homepage `faq`, `promise` and `craft`
+sections, so the two never contradict each other — change one, change both.
+Shipping and returns are **shop policies rather than pages**, so checkout links
+to them too.
+
 ## Local changes to stock Horizon files
 
 Most customisation lives in `assets/custom.css`, `assets/custom.js` and the JSON
@@ -142,6 +191,17 @@ Three traps this cost, worth remembering when editing Liquid here:
   below it, with no error — the condition simply never runs.
 - `split` returns **strings**. Comparing one to an image width throws
   "comparison of String with N failed"; coerce with `| plus: 0` first.
+
+Three more, found building the footer:
+
+- **`footer-utilities` accepts only three block types** (`footer-copyright`,
+  `footer-policy-list`, `social-links`) and `max_blocks: 3`. Payment icons
+  cannot go there; they belong to the `footer` section.
+- The `custom-liquid` block's setting id is **`custom_liquid`**, not `code`, and
+  it takes no padding settings.
+- The storefront password page answers **200 for every URL**, so a bare `curl`
+  check proves nothing. Post `form_type=storefront_password` first and reuse the
+  cookie jar, or you will "verify" pages that do not exist.
 
 ## Upstream
 

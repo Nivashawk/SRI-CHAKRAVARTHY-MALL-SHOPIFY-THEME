@@ -11,8 +11,10 @@
   {% render 'whatsapp-button' %}
 {% enddoc %}
 
+{%- capture wa_number -%}{%- render 'whatsapp-number' -%}{%- endcapture -%}
+
 {%- liquid
-  assign wa_number = settings.whatsapp_number | remove: ' ' | remove: '-' | remove: '(' | remove: ')' | remove: '+'
+  assign wa_number = wa_number | strip
   if settings.whatsapp_enabled == false or wa_number == blank
     break
   endif

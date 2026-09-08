@@ -216,3 +216,108 @@
     bottom: max(84px, calc(env(safe-area-inset-bottom) + 84px));
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Footer
+   Layout comes from the stock .footer-content grid in sections/footer.liquid
+   (4 columns >=990px, 2 at 750-989px, 1 below), driven purely by the block
+   count. Nothing here touches the grid — these rules are colour and rhythm
+   only, so a theme update to that grid keeps working.
+   --------------------------------------------------------------------------- */
+
+.footer-content .menu__heading,
+.footer-content .menu__heading__default {
+  color: #d9982f;
+  font-family: var(--font-heading--family);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Links sit slightly back from the headings so the columns read as lists
+   rather than as five competing headlines. */
+.footer-content a:not(.button) {
+  opacity: 0.85;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.footer-content a:not(.button):hover,
+.footer-content a:not(.button):focus-visible {
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+.footer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  font-size: 0.875rem;
+}
+
+/* The payment row is the 5th block, which the stock grid gives a full-width
+   row of its own. Cap the icon size so it reads as reassurance, not signage. */
+.footer-content > :last-child .payment-icons,
+.footer-content .payment-icons {
+  opacity: 0.9;
+}
+
+.footer-content .payment-icons svg,
+.footer-content .payment-icons img {
+  height: 24px;
+  width: auto;
+}
+
+@media screen and (max-width: 749px) {
+  /* Stacked on a phone, left-aligned columns read better than centred ones,
+     and the payment row is the one thing that should stay centred. */
+  .footer-content .payment-icons {
+    justify-content: center;
+  }
+}
+
+/* Collapse the two footer blocks that populate themselves from store settings,
+   for as long as those settings are empty — otherwise each leaves a gap in the
+   grid with nothing in it.
+
+   payment-icons loops shop.enabled_payment_types, which is empty until a
+   payment provider is activated. social-links (blocks/social-links.liquid:60)
+   deliberately renders no icon on the storefront unless the URL has a profile
+   path, so the stock bare-domain placeholders produce an empty wrapper; it
+   still shows them greyed out in the theme editor, which is the cue to fill
+   them in. Both rules stop applying the moment real values exist. */
+.footer-content .payment-icons:has(.payment-icons__list:empty) {
+  display: none;
+}
+
+.footer-content .social-icons__wrapper:not(:has(.social-icons__icon-wrapper)) {
+  display: none;
+}
+
+/* The newsletter column's heading is a text block, not a menu heading, so it
+   does not pick up the rule above — match it so all four columns read as one
+   set rather than three headings and a stray line. */
+.footer-content .text-block h2 {
+  color: #d9982f;
+  font-family: var(--font-heading--family);
+  font-size: var(--font-size--h6);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Keep the utilities row clear of the floating WhatsApp button, which is fixed
+   to the viewport corner (56px + 16px inset) and otherwise sits on top of the
+   "Terms and policies" link exactly when the visitor has scrolled to it. */
+@media screen and (min-width: 750px) {
+  .footer-utilities .utilities > :last-child {
+    padding-inline-end: 76px;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .footer-utilities .utilities {
+    padding-block-end: 44px;
+  }
+}

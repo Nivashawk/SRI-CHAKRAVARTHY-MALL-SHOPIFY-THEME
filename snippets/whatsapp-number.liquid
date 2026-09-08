@@ -1,0 +1,28 @@
+{% doc %}
+  Outputs the WhatsApp number in the form wa.me needs: digits only, including
+  the country code, with no +, spaces or punctuation. Outputs nothing at all if
+  no number is set.
+
+  wa.me silently fails on a number without a country code — it does not error,
+  it just opens a "phone number shared via link is invalid" page. The admin
+  field was filled in as a bare 10-digit Indian mobile, so a 10-digit value is
+  treated as Indian and given a 91 prefix. Anything 11 digits or longer is
+  assumed to already carry its country code and is passed through untouched.
+
+  Capture it, don't print it, when you need the value:
+
+  @example
+  {%- capture wa_number -%}{%- render 'whatsapp-number' -%}{%- endcapture -%}
+{% enddoc %}
+
+{%- liquid
+  assign wa = settings.whatsapp_number | remove: ' ' | remove: '-' | remove: '(' | remove: ')' | remove: '+' | strip
+  if wa == blank
+    break
+  endif
+  assign wa_size = wa | size
+  if wa_size == 10
+    assign wa = '91' | append: wa
+  endif
+  echo wa
+-%}

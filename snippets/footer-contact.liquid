@@ -1,0 +1,40 @@
+{% doc %}
+  The footer's contact line: store email and WhatsApp, each shown only when it
+  is actually set.
+
+  Both values are read live rather than typed into a theme setting, so changing
+  the store email in Settings > Store details, or the number in Theme settings >
+  WhatsApp, updates the footer with no code change and no stale address left
+  behind.
+
+  Rendered from a custom-liquid block, because the footer section's schema does
+  not accept arbitrary text with links.
+
+  @example
+  {% render 'footer-contact' %}
+{% enddoc %}
+
+{%- capture wa_number -%}{%- render 'whatsapp-number' -%}{%- endcapture -%}
+{%- assign wa_number = wa_number | strip -%}
+
+{%- if shop.email != blank or wa_number != blank -%}
+  <ul class="footer-contact list-unstyled">
+    {%- if shop.email != blank -%}
+      <li>
+        <a href="mailto:{{ shop.email }}" class="footer-contact__link">{{ shop.email }}</a>
+      </li>
+    {%- endif -%}
+    {%- if settings.whatsapp_enabled and wa_number != blank -%}
+      <li>
+        <a
+          href="https://wa.me/{{ wa_number }}?text={{ settings.whatsapp_message | default: 'Hello, I would like to know more about your sarees.' | url_encode }}"
+          class="footer-contact__link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          WhatsApp us
+        </a>
+      </li>
+    {%- endif -%}
+  </ul>
+{%- endif -%}
