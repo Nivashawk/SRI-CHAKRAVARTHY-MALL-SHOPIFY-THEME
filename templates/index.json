@@ -12,113 +12,14 @@
     "hero": {
       "type": "slideshow",
       "blocks": {
-        "slide_1": {
-          "type": "_slide",
-          "settings": {
-            "media_type_1": "image",
-            "image_1": "shopify://shop_images/saree-parrot-green-maroon-1.jpg",
-            "content_direction": "column",
-            "vertical_on_mobile": true,
-            "horizontal_alignment": "flex-start",
-            "vertical_alignment": "center",
-            "align_baseline": false,
-            "horizontal_alignment_flex_direction_column": "flex-start",
-            "vertical_alignment_flex_direction_column": "center",
-            "gap": 12,
-            "background_color": "",
-            "toggle_overlay": true,
-            "overlay_color": "#FDFBF73D",
-            "overlay_style": "gradient",
-            "gradient_direction": "to bottom",
-            "padding-block-start": 48,
-            "padding-block-end": 48,
-            "padding-inline-start": 64,
-            "padding-inline-end": 64,
-            "custom_mobile_media": true,
-            "media_type_1_mobile": "image",
-            "image_1_mobile": "shopify://shop_images/hero-heritage-mobile.jpg"
-          },
-          "blocks": {
-            "heading": {
-              "type": "text",
-              "settings": {
-                "text": "<h2>Woven for the occasion</h2>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "text_color": "#221e1a",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "text": {
-              "type": "text",
-              "settings": {
-                "text": "<p>Pure zari silks, handwoven and finished by hand.</p>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "rte",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "text_color": "#221e1a",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 20,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            },
-            "button": {
-              "type": "button",
-              "settings": {
-                "label": "See new arrivals",
-                "link": "/collections/all",
-                "open_in_new_tab": false,
-                "style_class": "button",
-                "custom_button_background": "{{ settings.color_palette.foreground }}",
-                "custom_button_text": "{{ settings.color_palette.background }}",
-                "custom_button_border": "{{ settings.color_palette.background }}",
-                "link_text_color": "",
-                "width": "fit-content",
-                "custom_width": 100,
-                "width_mobile": "fit-content",
-                "custom_width_mobile": 100
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "heading",
-            "text",
-            "button"
-          ]
-        },
         "slide_2": {
           "type": "_slide",
           "settings": {
             "media_type_1": "image",
             "image_1": "shopify://shop_images/hero-bridal-orig.jpg",
+            "custom_mobile_media": true,
+            "media_type_1_mobile": "image",
+            "image_1_mobile": "shopify://shop_images/saree-parrot-green-maroon-1.jpg",
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
@@ -135,10 +36,7 @@
             "padding-block-start": 48,
             "padding-block-end": 48,
             "padding-inline-start": 64,
-            "padding-inline-end": 64,
-            "custom_mobile_media": true,
-            "media_type_1_mobile": "image",
-            "image_1_mobile": "shopify://shop_images/hero-bridal-mobile.jpg"
+            "padding-inline-end": 64
           },
           "blocks": {
             "heading": {
@@ -221,6 +119,9 @@
           "settings": {
             "media_type_1": "image",
             "image_1": "shopify://shop_images/hero-family-orig.webp",
+            "custom_mobile_media": true,
+            "media_type_1_mobile": "image",
+            "image_1_mobile": "shopify://shop_images/saree-mustard-navy-border-1.jpg",
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
@@ -237,10 +138,7 @@
             "padding-block-start": 48,
             "padding-block-end": 48,
             "padding-inline-start": 64,
-            "padding-inline-end": 64,
-            "custom_mobile_media": true,
-            "media_type_1_mobile": "image",
-            "image_1_mobile": "shopify://shop_images/hero-family-mobile.jpg"
+            "padding-inline-end": 64
           },
           "blocks": {
             "heading": {
@@ -320,7 +218,6 @@
         }
       },
       "block_order": [
-        "slide_1",
         "slide_2",
         "slide_3"
       ],
