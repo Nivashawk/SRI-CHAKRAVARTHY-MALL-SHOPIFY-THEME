@@ -11,7 +11,7 @@
   "current": {
     "logo": "shopify://shop_images/chakravaty-removebg-preview.png",
     "logo_height": 70,
-    "logo_height_mobile": 28,
+    "logo_height_mobile": 89,
     "favicon": "shopify://shop_images/chakravaty.jpg",
     "page_text_color": "{{ settings.color_palette.foreground }}",
     "type_body_font": "inter_n4",
@@ -108,6 +108,13 @@
     "variant_button_radius": 14,
     "variant_button_width": "equal-width-buttons",
     "content_for_index": [],
+    "blocks": {
+      "17370010407503379518": {
+        "type": "shopify://apps/wishlist-by-square/blocks/app-embed/88ec2beb-ce43-48ed-b791-0a6554082c2b",
+        "disabled": false,
+        "settings": {}
+      }
+    },
     "color_palette": {
       "background": "#FDFBF7",
       "foreground": "#221E1A",
