@@ -162,3 +162,57 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
+
+/* --- Floating WhatsApp button ---------------------------------------------- */
+/* Deliberately WhatsApp's own green and white glyph rather than the store
+   palette: people recognise this control by its colour, and restyling it to
+   maroon and gold would cost more in recognition than it gains in consistency. */
+.wa-float {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 900; /* above page content, below the cart drawer and modals */
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #25d366;
+  color: #fff;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.22);
+  text-decoration: none;
+}
+
+.wa-float:hover,
+.wa-float:focus-visible {
+  background: #1ebe5b;
+  color: #fff;
+}
+
+.wa-float:focus-visible {
+  outline: 3px solid #fdfbf7;
+  outline-offset: 3px;
+}
+
+.wa-float__icon {
+  display: block;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .wa-float {
+    transition: background-color 180ms ease, transform 180ms ease;
+  }
+
+  .wa-float:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* Keep clear of the sticky add-to-cart bar on product pages. */
+@media screen and (max-width: 749px) {
+  body:has(.product-form-buttons--sticky) .wa-float,
+  body:has(sticky-add-to-cart) .wa-float {
+    bottom: max(84px, calc(env(safe-area-inset-bottom) + 84px));
+  }
+}

@@ -120,7 +120,10 @@
       "foreground": "#221E1A",
       "color1": "#D9982F",
       "color2": "#E7DFD2"
-    }
+    },
+    "whatsapp_enabled": true,
+    "whatsapp_number": "",
+    "whatsapp_message": "Hello, I would like to know more about your sarees."
   },
   "presets": {
     "Horizon": {

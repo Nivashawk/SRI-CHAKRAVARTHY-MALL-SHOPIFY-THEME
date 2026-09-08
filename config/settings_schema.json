@@ -2116,5 +2116,32 @@
         "default": "equal-width-buttons"
       }
     ]
+  },
+  {
+    "name": "WhatsApp",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "A floating WhatsApp button appears bottom-right on every page. It stays hidden until a number is entered below."
+      },
+      {
+        "type": "checkbox",
+        "id": "whatsapp_enabled",
+        "label": "Show the WhatsApp button",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "whatsapp_number",
+        "label": "WhatsApp number",
+        "info": "Full international format including country code, e.g. 919876543210 for India. Spaces, dashes and + are ignored."
+      },
+      {
+        "type": "text",
+        "id": "whatsapp_message",
+        "label": "Pre-filled message",
+        "default": "Hello, I would like to know more about your sarees."
+      }
+    ]
   }
 ]

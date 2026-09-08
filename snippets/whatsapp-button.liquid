@@ -1,0 +1,41 @@
+{% doc %}
+  Floating WhatsApp button, fixed bottom-right on every page.
+
+  Renders nothing unless a number is set in Theme settings > WhatsApp, so the
+  store never ships a button that opens an empty chat.
+
+  Uses WhatsApp's official green and glyph rather than the store palette —
+  recognisability is the whole point of this control.
+
+  @example
+  {% render 'whatsapp-button' %}
+{% enddoc %}
+
+{%- liquid
+  assign wa_number = settings.whatsapp_number | remove: ' ' | remove: '-' | remove: '(' | remove: ')' | remove: '+'
+  if settings.whatsapp_enabled == false or wa_number == blank
+    break
+  endif
+
+  assign wa_text = settings.whatsapp_message | default: 'Hello, I would like to know more about your sarees.'
+-%}
+
+<a
+  class="wa-float"
+  href="https://wa.me/{{ wa_number }}?text={{ wa_text | url_encode }}"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="{{ 'content.whatsapp_aria' | t | default: 'Chat with us on WhatsApp' }}"
+>
+  <svg
+    class="wa-float__icon"
+    aria-hidden="true"
+    focusable="false"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 20 20"
+    width="30"
+    height="30"
+  >
+    {%- render 'icon', icon: 'whatsapp' -%}
+  </svg>
+</a>
