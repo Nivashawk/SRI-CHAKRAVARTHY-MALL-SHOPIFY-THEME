@@ -174,10 +174,20 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {}
+                },
+                "item_code": {
+                  "type": "sku",
+                  "settings": {
+                    "type_preset": "paragraph",
+                    "alignment": "left",
+                    "font_size": "0.8125rem",
+                    "letter_spacing": "wide"
+                  }
                 }
               },
               "block_order": [
                 "text_xrnftG",
+                "item_code",
                 "price_tVjtKg"
               ]
             },
