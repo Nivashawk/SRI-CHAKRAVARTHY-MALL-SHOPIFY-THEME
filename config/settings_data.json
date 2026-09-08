@@ -107,6 +107,9 @@
     "variant_button_border_width": 1,
     "variant_button_radius": 14,
     "variant_button_width": "equal-width-buttons",
+    "whatsapp_enabled": true,
+    "whatsapp_number": "9361422459",
+    "whatsapp_message": "Hello, I would like to know more about your sarees.",
     "content_for_index": [],
     "blocks": {
       "17370010407503379518": {
@@ -120,10 +123,7 @@
       "foreground": "#221E1A",
       "color1": "#D9982F",
       "color2": "#E7DFD2"
-    },
-    "whatsapp_enabled": true,
-    "whatsapp_number": "",
-    "whatsapp_message": "Hello, I would like to know more about your sarees."
+    }
   },
   "presets": {
     "Horizon": {
