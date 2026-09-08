@@ -120,6 +120,29 @@ Two traps that `shopify theme check` does **not** catch:
 - Inside a `{% liquid %}` tag every newline is a separate statement, so a
   multi-line `render` silently breaks. Use a standalone `{% render %}` tag.
 
+## Local changes to stock Horizon files
+
+Most customisation lives in `assets/custom.css`, `assets/custom.js` and the JSON
+templates, which upstream updates never touch. One stock file is forked:
+
+**`blocks/_slide.liquid`** — adds per-slide mobile art direction: a
+`custom_mobile_media` toggle plus `media_type_1_mobile` / `image_1_mobile` /
+`video_1_mobile`, rendered as a `<picture>` with a `max-width: 749px` source, so
+a phone downloads only the mobile file. The pattern is copied from
+`sections/hero.liquid:118-140`, which already did this for the static hero. When
+the toggle is off the block renders exactly as stock. If a theme update changes
+`_slide.liquid`, re-apply this.
+
+Three traps this cost, worth remembering when editing Liquid here:
+
+- Inside a `{% liquid %}` tag, **every newline is a separate statement**. A
+  wrapped `if ... and ...` parses `and` as a tag name.
+- **Never put Liquid delimiters inside a `#` comment in a `{% liquid %}` tag.**
+  A closing brace pair ends the tag early and silently drops every statement
+  below it, with no error — the condition simply never runs.
+- `split` returns **strings**. Comparing one to an image width throws
+  "comparison of String with N failed"; coerce with `| plus: 0` first.
+
 ## Upstream
 
 The baseline was pulled from the store's own Horizon theme with `shopify theme pull`

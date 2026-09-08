@@ -67,7 +67,50 @@
         endif
       -%}
 
-      {%- if block_settings.media_type_1 == 'image' -%}
+      {%- liquid
+        # Art direction: when a slide carries its own mobile image, serve it via a
+        # picture source so a phone downloads ONLY the mobile file and a desktop
+        # ONLY the wide one. Mirrors sections/hero.liquid:118-140.
+        # Keep the condition on ONE line. Inside a liquid tag each newline is a
+        # separate statement, so a wrapped condition parses "and" as a tag name.
+        # Also keep Liquid delimiters out of these comments: a closing brace pair
+        # here ends the liquid tag early and silently drops the code below it.
+        assign use_mobile_art = false
+        if block_settings.custom_mobile_media and block_settings.media_type_1 == 'image' and block_settings.media_type_1_mobile == 'image' and block_settings.image_1_mobile != blank
+          assign use_mobile_art = true
+        endif
+        # split yields strings, so coerce each to a number before comparing with
+        # the image width. Only offer widths the source can actually supply, and
+        # always include the source width itself so a small crop still gets a
+        # srcset entry rather than an empty one.
+        assign mobile_src_width = block_settings.image_1_mobile.width
+        assign mobile_widths_array = '416, 600, 800, 1200, 1600' | split: ', '
+      -%}
+
+      {%- if use_mobile_art -%}
+        <picture class="slide__picture">
+          <source
+            media="(max-width: 749px)"
+            srcset="
+              {%- for mw in mobile_widths_array -%}
+                {%- assign mw_num = mw | plus: 0 -%}
+                {%- if mw_num < mobile_src_width -%}
+                  {{ block_settings.image_1_mobile | image_url: width: mw_num }} {{ mw_num }}w,
+                {%- endif -%}
+              {%- endfor -%}
+              {{ block_settings.image_1_mobile | image_url: width: mobile_src_width }} {{ mobile_src_width }}w
+            "
+            sizes="{{ media_width_mobile }}"
+            width="{{ block_settings.image_1_mobile.width }}"
+            height="{{ block_settings.image_1_mobile.height }}"
+          >
+          {{
+            block_settings.image_1
+            | image_url: width: 3840
+            | image_tag: height: height, sizes: sizes, widths: widths, class: 'slide__image', loading: loading, fetchpriority: fetchpriority
+          }}
+        </picture>
+      {%- elsif block_settings.media_type_1 == 'image' -%}
         {{
           block_settings.image_1
           | image_url: width: 3840
@@ -252,6 +295,45 @@
       "id": "video_1",
       "label": "t:settings.video",
       "visible_if": "{{ block.settings.media_type_1 == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.mobile_media_1"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_mobile_media",
+      "label": "t:settings.custom_mobile_media",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "media_type_1_mobile",
+      "label": "t:settings.type",
+      "options": [
+        {
+          "value": "image",
+          "label": "t:options.image"
+        },
+        {
+          "value": "video",
+          "label": "t:options.video"
+        }
+      ],
+      "default": "image",
+      "visible_if": "{{ block.settings.custom_mobile_media }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1_mobile",
+      "label": "t:settings.image",
+      "visible_if": "{{ block.settings.custom_mobile_media and block.settings.media_type_1_mobile == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "video_1_mobile",
+      "label": "t:settings.video",
+      "visible_if": "{{ block.settings.custom_mobile_media and block.settings.media_type_1_mobile == 'video' }}"
     },
     {
       "type": "header",
@@ -524,7 +606,11 @@
           }
         }
       },
-      "block_order": ["heading", "text", "button"]
+      "block_order": [
+        "heading",
+        "text",
+        "button"
+      ]
     }
   ]
 }
