@@ -205,7 +205,18 @@
     position: absolute;
   }
 
+  /* The mobile-art-direction <picture> sits between the container and the <img>,
+     so it must carry the sizing the image used to get as a direct child. Without
+     this the image draws at its intrinsic size and leaves a gap beside it. */
+  .slide__image-container > .slide__picture {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
   .slide__image-container > .slide__image,
+  .slide__image-container > .slide__picture > .slide__image,
   .slide__image-container > .slide__video,
   .slide__image-container > .slide__video-poster {
     position: relative;
