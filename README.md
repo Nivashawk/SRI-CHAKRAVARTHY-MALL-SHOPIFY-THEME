@@ -303,6 +303,48 @@ Until those are fixed the shipping policy page states terms the checkout does
 not honour. The zone structure is correct; only the amounts and conditions are
 the merchant's to set.
 
+## Colour palette
+
+Current direction is **Antique Gold**, on branch `gold-primary`. Gold leads as
+the accent and call-to-action colour on a deep gold-brown ground.
+
+| Role | Value | Notes |
+|---|---|---|
+| Surface bands (header, footer, section bands, quick-add) | `#3E2C10` | 11 values across 4 files |
+| Accent / dividers / column headings | `#D9982F` | `color_palette.color1` |
+| Primary button fill | `#D9982F` with `#221E1A` text | bound via `color_palette.color1` |
+| Price on the ivory page | `#8B6914` | deeper gold; see below |
+| Footer utilities divider | `#6B5220` | |
+| Background / foreground / `color2` | `#FDFBF7` / `#221E1A` / `#E7DFD2` | unchanged |
+
+**Bright gold cannot be a surface colour, and the logo is the reason.** The logo
+is gold-bronze linework (dominant tone `#C09048`) that the client has twice said
+not to change. On a `#D9982F` header it measures **1.16:1 and disappears**;
+cream text on it is 2.40:1 and also fails. Gold-family surfaces only become
+usable around `#5C4317` and darker. `#3E2C10` gives logo 4.66 and cream text
+12.92 -- as safe as the maroon it replaced (5.24 / 14.53).
+
+**Never use `#D9982F` as text on the ivory page: it is 2.40:1 and fails AA.**
+Product card prices used to do exactly that; they now use `#8B6914` (4.92:1),
+the same hue carried deeper. On the dark bands `#D9982F` reaches 5.39:1 and is
+fine, which is why the footer headings keep it.
+
+Measured on the final palette -- cream on espresso 12.92, gold on espresso 5.39,
+ink on the gold button 6.69, deep gold price on ivory 4.92, ink on ivory 16.02.
+All clear AA.
+
+### Reverting to maroon
+
+| Situation | Undo |
+|---|---|
+| Not yet merged | `git checkout main` |
+| Pushed live, we revert | `git checkout main && shopify theme push -e dev --allow-live` |
+| Client wants it back themselves | Admin -> Online Store -> Themes -> **"Maroon backup — pre-gold 2026-09-09"** (id `165627101432`) -> Publish |
+
+That backup is a full unpublished copy of the maroon site, verified to render
+11 maroon and 11 gold values identically to the live theme at the time. Tag
+`maroon-v1` marks the same state in git.
+
 ## Local changes to stock Horizon files
 
 Most customisation lives in `assets/custom.css`, `assets/custom.js` and the JSON

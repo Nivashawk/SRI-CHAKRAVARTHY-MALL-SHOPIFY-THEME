@@ -273,7 +273,7 @@
       ],
       "settings": {
         "movement_direction": "normal",
-        "background_color": "#4a1220",
+        "background_color": "#3E2C10",
         "padding-block-start": 16,
         "padding-block-end": 16,
         "gap_between_elements": 72
@@ -1820,7 +1820,7 @@
         "section_height": "",
         "section_height_custom": 50,
         "background_media": "none",
-        "background_color": "#4a1220",
+        "background_color": "#3E2C10",
         "video_position": "cover",
         "background_image_position": "cover",
         "toggle_overlay": false,
@@ -2266,7 +2266,7 @@
         "section_height": "",
         "section_height_custom": 50,
         "background_media": "none",
-        "background_color": "#4a1220",
+        "background_color": "#3E2C10",
         "video_position": "cover",
         "background_image_position": "cover",
         "toggle_overlay": false,

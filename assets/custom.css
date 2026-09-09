@@ -94,12 +94,15 @@
 }
 
 /* --- Product cards -------------------------------------------------------- */
-/* Gold reads as the brand on a short, bold price. It is not used for body copy,
-   where it would fail contrast on ivory. */
+/* Gold reads as the brand on a short, bold price -- but the accent gold
+   #d9982f measures only 2.40:1 on the ivory page, which fails AA, and this rule
+   used to use it. #8B6914 is the same hue carried deeper: 4.92:1 on ivory, so it
+   passes and still reads as gold. Never put #d9982f on the light page as text;
+   it is only safe on the dark bands, where it reaches 5.39:1. */
 .product-card .price,
 .card-gallery + * .price,
 .product-card .price-item {
-  color: #d9982f;
+  color: #8b6914;
 }
 
 /* Weave label above the product title. */
