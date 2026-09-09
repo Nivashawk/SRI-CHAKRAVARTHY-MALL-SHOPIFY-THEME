@@ -169,6 +169,46 @@ sections, so the two never contradict each other — change one, change both.
 Shipping and returns are **shop policies rather than pages**, so checkout links
 to them too.
 
+## Product spec table
+
+`blocks/product-specs.liquid` renders the "Product details" list under the
+description on the product page. It holds **no content of its own** -- every row
+comes from a pinned product metafield in the `specs` namespace, so the client
+edits them as ordinary fields on the product in Admin:
+
+| Key | Label | Populated? |
+|---|---|---|
+| `specs.colour` | Colour | yes, hand-read from each title |
+| `specs.weave` | Weave | yes, from the product's weave tag |
+| `specs.occasion` | Occasion | yes, from the product's occasion tag |
+| `specs.blouse` | Blouse piece | yes, stated in every description |
+| `specs.length` | Saree length | **empty -- needs real data** |
+| `specs.zari` | Zari | **empty -- needs real data** |
+| `specs.weight` | Weight | **empty -- needs real data** |
+| `specs.care` | Care | falls back to the block's default text |
+
+**Empty fields are skipped, not rendered blank.** `length`, `zari` and `weight`
+ship empty on purpose: nobody supplied them, and the homepage FAQ promises zari
+is described honestly per product -- writing "pure zari" into 19 products to
+fill a table would turn that promise into a lie. Each row appears the moment
+someone fills it in, with no theme change.
+
+Care is the one field with a theme-level default, because the sentence is the
+same for every silk saree; a product metafield overrides it only where a saree
+needs different wording.
+
+Rebuild the values with `node scripts/build-product-specs.mjs <outdir>` (reads
+`products.json` from the products query, writes `metafieldsSet` batches of 25).
+It **exits non-zero if any product's colour, weave or occasion cannot be
+derived** rather than skipping it quietly, since a silently skipped product
+ships a half-empty table.
+
+Note the products themselves have no options -- every one is a single default
+variant. The `variant-picker` block is already on the product template, so if
+real options are ever added (blouse stitching, fall and pico) they render with
+no theme work. Each variant would then need its own SKU, which is what the item
+code search matches on.
+
 ## Local changes to stock Horizon files
 
 Most customisation lives in `assets/custom.css`, `assets/custom.js` and the JSON

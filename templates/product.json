@@ -311,6 +311,18 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
+            },
+            "product_specs": {
+              "type": "product-specs",
+              "settings": {
+                "heading": "Product details",
+                "care_default": "Dry clean only. Store folded in a cotton cloth rather than plastic, and refold along different lines every few months.",
+                "padding-block-start": 24,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              },
+              "blocks": {}
             }
           },
           "block_order": [
@@ -318,7 +330,8 @@
             "divider_VJhene",
             "variant_picker_R3rGDr",
             "buy_buttons_eYQEYi",
-            "text_aEtTtq"
+            "text_aEtTtq",
+            "product_specs"
           ]
         }
       },
