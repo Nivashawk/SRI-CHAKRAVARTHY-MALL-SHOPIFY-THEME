@@ -209,6 +209,68 @@ real options are ever added (blouse stitching, fall and pico) they render with
 no theme work. Each variant would then need its own SKU, which is what the item
 code search matches on.
 
+## Markets and the currency switcher
+
+**The currency switcher is store configuration, not theme code.** Do not go
+looking for a snippet to write. `snippets/localization-form.liquid:35-38` sets
+`show_currencies` when `localization.available_countries | map: 'currency' |
+uniq` has more than one entry, and the selector already renders on desktop
+(`sections/header.liquid:250`) and in the mobile drawer
+(`snippets/header-drawer.liquid:621`), switched on by `show_country` in
+`sections/header-group.json`. The header button shows
+`localization.country.currency.iso_code`, so it reads `INR` today.
+
+The store previously offered **only Canada and the United States** -- India, the
+home market, was not a country at all. `scripts/build-markets.mjs` defines five
+markets covering 23 countries:
+
+| Market | Countries |
+|---|---|
+| `india` | IN |
+| `us` | US |
+| `canada` | CA |
+| `uk-europe-australia` | GB IE DE FR IT ES NL BE AT PT SE DK FI PL GR CZ AU |
+| `singapore-malaysia-uae` | SG MY AE |
+
+US and Canada stay separate markets rather than merging into one: a country
+belongs to exactly one market, so merging would mean moving CA between markets
+mid-flight, and separate markets are what you want once shipping rates differ.
+Existing markets are updated, **never deleted** -- `marketDelete` discards the
+delivery and catalog config attached to a market.
+
+### Currencies are a second phase, and need Shopify Payments
+
+Prices are still INR everywhere, and the currency label in the selector is still
+`hidden`. **That is correct behaviour, not a bug:** with one currency,
+`currencies.size == 1`. Shopify rejects the flag outright until Shopify Payments
+is activated, in as many words:
+
+> The shop's payment gateway does not support enabling more than one currency.
+
+So the script runs in two phases:
+
+```bash
+# Phase 1 -- regions only. Safe today, already applied.
+node scripts/build-markets.mjs <outdir> <markets.json>
+
+# Phase 2 -- AFTER Shopify Payments is activated. Re-dump markets.json first
+# so the newly created markets have ids.
+node scripts/build-markets.mjs <outdir> <markets.json> --currency
+```
+
+Phase 2 emits `mkt_currency_*.json` for `marketUpdate`, setting
+`currencySettings.localCurrencies`. Once that succeeds the theme starts showing
+`USD $`, `GBP £` and the rest on its own, with no theme change.
+
+Before promising the client conversion will work, confirm with Shopify support
+that an **India-based Shopify Payments account can settle foreign currencies** --
+Indian accounts have had FEMA-related limits, and that should be checked rather
+than assumed.
+
+The four `currency_code_enabled_*` settings are on, so prices read
+`Rs. 5,680.00 INR`. That matters more once live: the chosen regions span four
+different dollars (USD, CAD, AUD, SGD), and a bare `$68.00` is ambiguous.
+
 ## Local changes to stock Horizon files
 
 Most customisation lives in `assets/custom.css`, `assets/custom.js` and the JSON
