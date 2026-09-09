@@ -271,6 +271,38 @@ The four `currency_code_enabled_*` settings are on, so prices read
 `Rs. 5,680.00 INR`. That matters more once live: the chosen regions span four
 different dollars (USD, CAD, AUD, SGD), and a bare `$68.00` is ambiguous.
 
+## Shipping zones
+
+The store was set up with US defaults: the "Domestic" zone contained **only the
+United States**, so India fell into "International" and every Indian order was
+charged the flat international rate. The zone is now `India` (IN, all provinces
+-- Shopify rejects an Indian zone without them), and `International` is
+rest-of-world, covering the export markets.
+
+**All rates are still defined in USD on an INR store** and are converted at
+checkout, so they drift with the exchange rate. Measured against a Rs 5,680
+saree:
+
+| Destination | Charged | Defined as |
+|---|---|---|
+| India | Rs 756 Standard, Rs 1,418 Express | $8 / $15 |
+| Everywhere else | Rs 2,835 | $30 |
+
+Two rate conditions contradict the storefront and need re-entering **in INR** in
+Admin -> Settings -> Shipping:
+
+- Free domestic shipping triggers at **$70** (about Rs 6,600), but the
+  announcement bar, the FAQ and `scripts/footer-content/shipping-policy.html`
+  all promise **free over Rs 4,999**. An order between those two figures is
+  charged despite the promise.
+- "Free International Shipping" requires **total weight >= 20 kg**. A saree is
+  roughly 600 g, so it needs about 33 of them and effectively never applies --
+  while the FAQ promises free international over **Rs 39,999**.
+
+Until those are fixed the shipping policy page states terms the checkout does
+not honour. The zone structure is correct; only the amounts and conditions are
+the merchant's to set.
+
 ## Local changes to stock Horizon files
 
 Most customisation lives in `assets/custom.css`, `assets/custom.js` and the JSON
