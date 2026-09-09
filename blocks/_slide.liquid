@@ -226,6 +226,22 @@
     object-position: center center;
   }
 
+  /* Mobile art direction uses portrait model shots (3:4) inside a landscape
+     40dvh row, so centre-cropping cuts roughly equal slices off the top and
+     bottom -- and the top slice contains the model's head. Anchoring to the top
+     pushes the whole overflow to the bottom, which is only fabric.
+
+     Deliberately mobile-only: the desktop images are landscape and lose nothing
+     worth keeping when centred, so they stay as they were. */
+  @media screen and (max-width: 749px) {
+    .slide__image-container > .slide__image,
+    .slide__image-container > .slide__picture > .slide__image,
+    .slide__image-container > .slide__video,
+    .slide__image-container > .slide__video-poster {
+      object-position: center top;
+    }
+  }
+
   .slide__image-container > .slide__video-poster {
     position: absolute;
   }

@@ -182,6 +182,14 @@ a phone downloads only the mobile file. The pattern is copied from
 the toggle is off the block renders exactly as stock. If a theme update changes
 `_slide.liquid`, re-apply this.
 
+The same file also anchors the mobile crop to the top
+(`object-position: center top` under `max-width: 749px`). The mobile hero images
+are 3:4 portrait model shots dropped into a landscape `40dvh` row, so the stock
+`center center` cover crop cut roughly 90px off the top -- taking the model's
+head with it. Anchoring to the top sends the whole overflow to the bottom
+instead. Desktop stays centred, because those images are landscape and lose
+nothing worth keeping.
+
 Three traps this cost, worth remembering when editing Liquid here:
 
 - Inside a `{% liquid %}` tag, **every newline is a separate statement**. A
