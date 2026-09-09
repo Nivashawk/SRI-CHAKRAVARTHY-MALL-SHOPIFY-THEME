@@ -303,10 +303,39 @@ Until those are fixed the shipping policy page states terms the checkout does
 not honour. The zone structure is correct; only the amounts and conditions are
 the merchant's to set.
 
-## Colour palette
+## Environments — read this before running any CLI command
 
-Current direction is **Antique Gold**, on branch `gold-primary`. Gold leads as
-the accent and call-to-action colour on a deep gold-brown ground.
+`shopify theme dev` **uploads local files to whatever theme it is pointed at.**
+`-e dev` used to be pinned to the published theme, so every preview run wrote
+straight to the live storefront -- which is how a colour change reached the real
+site while it was supposedly being previewed locally. `-e dev` now points at an
+unpublished staging theme, and the live theme has its own explicit environment:
+
+| Environment | Theme | Use |
+|---|---|---|
+| `-e dev` (default) | `165628346616` "Staging — do not publish" | `theme dev`, `theme push`, everyday work |
+| `-e production` | `165494358264` (published) | `shopify theme push -e production --allow-live` only |
+
+Verify the split still holds by running `shopify theme push -e dev` with no
+`--allow-live`: it must succeed. If it demands the flag, `-e dev` is pointing at
+the live theme again.
+
+## Colour palette and type
+
+Current direction is **Antique Gold** with **Cormorant + Work Sans**. Gold leads
+as the accent and call-to-action colour on a deep gold-brown ground.
+
+Fonts are `cormorant_n6` heading / `cormorant_n7` accent / `work_sans_n5`
+subheading / `work_sans_n4` body. **Cormorant has a small x-height and sets
+noticeably smaller than Playfair at the same nominal size**, so h1-h4 were
+raised about 20% (56/48/32/24 -> 68/58/38/28) to compensate. h5 and h6 use the
+subheading font, so they were left alone.
+
+Not every font is available: `cormorant_garamond`, `eb_garamond` and `cinzel`
+**500 the page** -- they are not in Shopify's library. `cormorant` (no
+"Garamond"), `marcellus`, `lora`, `libre_baskerville` and `crimson_text` all
+work. Validate a handle by setting it locally and checking
+`--font-heading--family` resolves, before offering it to the client.
 
 | Role | Value | Notes |
 |---|---|---|

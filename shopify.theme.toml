@@ -1,11 +1,20 @@
 # Shopify CLI environments.
-# Lets you run `shopify theme dev -e dev` instead of passing --store every time.
 # Docs: https://shopify.dev/docs/storefronts/themes/tools/cli/environments
-
+#
 # Admin: https://admin.shopify.com/store/sri-chakravarty-mall
+
+# DEFAULT TARGET — an unpublished staging theme, NOT the live site.
+#
+# `shopify theme dev` uploads local files to whatever theme it is pointed at.
+# This environment used to point at the live theme, so every preview run wrote
+# straight to the real storefront. It is pinned to staging now: previewing,
+# pushing by habit, or forgetting a flag can no longer change what shoppers see.
 [environments.dev]
 store = "sri-chakravarty-mall"
-# "Sri Chakravarthy Mall (dev)" — the name says dev, but this theme is now
-# PUBLISHED and is the live storefront (`shopify theme list` confirms [live]).
-# Every push to -e dev therefore needs --allow-live and lands on the real shop.
-theme = "165494358264"
+theme = "165628346616"  # "Staging — do not publish"
+
+# THE LIVE STOREFRONT. Deliberate, explicit, and still needs --allow-live.
+#   shopify theme push -e production --allow-live
+[environments.production]
+store = "sri-chakravarty-mall"
+theme = "165494358264"  # "Sri Chakravarthy Mall (dev)" — published, despite the name
