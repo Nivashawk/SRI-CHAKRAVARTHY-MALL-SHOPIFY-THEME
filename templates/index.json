@@ -26,12 +26,12 @@
             "vertical_alignment": "center",
             "align_baseline": false,
             "horizontal_alignment_flex_direction_column": "flex-start",
-            "vertical_alignment_flex_direction_column": "center",
-            "gap": 12,
+            "vertical_alignment_flex_direction_column": "flex-start",
+            "gap": 100,
             "background_color": "",
-            "toggle_overlay": false,
-            "overlay_color": "#fdfbf7a6",
-            "overlay_style": "gradient",
+            "toggle_overlay": true,
+            "overlay_color": "#fdfbf73b",
+            "overlay_style": "solid",
             "gradient_direction": "to right",
             "padding-block-start": 48,
             "padding-block-end": 48,
@@ -131,9 +131,9 @@
             "vertical_alignment_flex_direction_column": "center",
             "gap": 12,
             "background_color": "",
-            "toggle_overlay": false,
-            "overlay_color": "#fdfbf7a6",
-            "overlay_style": "gradient",
+            "toggle_overlay": true,
+            "overlay_color": "#fdfbf73b",
+            "overlay_style": "solid",
             "gradient_direction": "to right",
             "padding-block-start": 48,
             "padding-block-end": 48,
@@ -228,7 +228,7 @@
         "slideshow_gap": 12,
         "corner_radius": 0,
         "slide_height": "large",
-        "content_position": "middle-left",
+        "content_position": "on-media",
         "background_color": "",
         "icons_style": "arrows_large",
         "icons_shape": "circle",
@@ -1793,6 +1793,49 @@
         "padding-block-end": 48
       }
     },
+    "stat_band": {
+      "type": "section",
+      "blocks": {
+        "figure": {
+          "type": "custom-liquid",
+          "settings": {
+            "custom_liquid": "{%- comment -%}\n  UPDATE THE CUSTOMER COUNT HERE.\n  count_number  drives the count-up animation.\n  count_display is what shows before JavaScript runs, and for anyone without it.\n  Change both so they agree.\n{%- endcomment -%}\n{%- assign count_number = 75000 -%}\n{%- assign count_display = '75,000' -%}\n\n<div class=\"stat-band\">\n  <p class=\"stat-band__figure\"><span data-count-to=\"{{ count_number }}\">{{ count_display }}</span>+</p>\n  <p class=\"stat-band__label\">happy customers</p>\n</div>"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "figure"
+      ],
+      "settings": {
+        "content_direction": "column",
+        "vertical_on_mobile": true,
+        "horizontal_alignment": "center",
+        "vertical_alignment": "center",
+        "align_baseline": false,
+        "horizontal_alignment_flex_direction_column": "center",
+        "vertical_alignment_flex_direction_column": "center",
+        "gap": 8,
+        "section_width": "full-width",
+        "section_height": "",
+        "section_height_custom": 50,
+        "background_media": "none",
+        "background_color": "#4a1220",
+        "video_position": "cover",
+        "background_image_position": "cover",
+        "toggle_overlay": false,
+        "overlay_color": "#00000026",
+        "overlay_style": "solid",
+        "gradient_direction": "to top",
+        "border": "none",
+        "border_width": 1,
+        "border_opacity": 100,
+        "border_color": "",
+        "border_radius": 0,
+        "padding-block-start": 72,
+        "padding-block-end": 72
+      }
+    },
     "testimonials": {
       "type": "testimonials",
       "blocks": {
@@ -2595,31 +2638,6 @@
         "padding-block-start": 0,
         "padding-block-end": 0
       }
-    },
-    "stat_band": {
-      "type": "section",
-      "settings": {
-        "section_width": "full-width",
-        "content_direction": "column",
-        "horizontal_alignment": "center",
-        "horizontal_alignment_flex_direction_column": "center",
-        "vertical_alignment": "center",
-        "gap": 8,
-        "background_color": "#4A1220",
-        "padding-block-start": 72,
-        "padding-block-end": 72
-      },
-      "blocks": {
-        "figure": {
-          "type": "custom-liquid",
-          "settings": {
-            "custom_liquid": "{%- comment -%}\n  UPDATE THE CUSTOMER COUNT HERE.\n  count_number  drives the count-up animation.\n  count_display is what shows before JavaScript runs, and for anyone without it.\n  Change both so they agree.\n{%- endcomment -%}\n{%- assign count_number = 75000 -%}\n{%- assign count_display = '75,000' -%}\n\n<div class=\"stat-band\">\n  <p class=\"stat-band__figure\"><span data-count-to=\"{{ count_number }}\">{{ count_display }}</span>+</p>\n  <p class=\"stat-band__label\">happy customers</p>\n</div>"
-          }
-        }
-      },
-      "block_order": [
-        "figure"
-      ]
     }
   },
   "order": [
