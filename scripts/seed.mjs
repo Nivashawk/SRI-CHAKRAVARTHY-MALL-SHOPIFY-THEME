@@ -23,6 +23,10 @@ async function findCollection(handle) {
 async function makeSmartCollection(handle, title, rules) {
   const existing = await findCollection(handle);
   if (existing) { console.log(`  = ${handle} (exists)`); return existing; }
+  // NOTE: collectionCreate does not publish. An unpublished collection is
+  // invisible to Liquid, so a collection-card renders Horizon's "Collection
+  // title" placeholder with no error. Run scripts/publish-collections.mjs after
+  // seeding.
   const d = await gql(`
     mutation($input:CollectionInput!){
       collectionCreate(input:$input){ collection{ id handle } userErrors{ field message } }
