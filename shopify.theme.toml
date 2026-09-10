@@ -1,20 +1,35 @@
 # Shopify CLI environments.
 # Docs: https://shopify.dev/docs/storefronts/themes/tools/cli/environments
 #
-# Admin: https://admin.shopify.com/store/sri-chakravarty-mall
-
-# DEFAULT TARGET — an unpublished staging theme, NOT the live site.
+# Admin:      https://admin.shopify.com/store/x05pzd-dc
+# Storefront: https://sri-chakravarthy-mall.myshopify.com
 #
-# `shopify theme dev` uploads local files to whatever theme it is pointed at.
-# This environment used to point at the live theme, so every preview run wrote
-# straight to the real storefront. It is pinned to staging now: previewing,
-# pushing by habit, or forgetting a flag can no longer change what shoppers see.
-[environments.dev]
-store = "sri-chakravarty-mall"
-theme = "165628346616"  # "Staging — do not publish"
+# TWO NAMES, ONE STORE. `x05pzd-dc` is the canonical handle the API and CLI
+# require; `sri-chakravarthy-mall` is only the customer-facing storefront domain
+# and is REJECTED with a 401 by the CLI. Always use x05pzd-dc here.
+#
+# The previous store, sri-chakravarty-mall (note: no "h"), was a development
+# store created "for testing" and could never be transferred to the client, which
+# is why this theme was migrated rather than handed over. It still hosts the
+# product images referenced by scripts/sarees-client-import.csv, so do not delete
+# it until the catalogue import is finished.
 
-# THE LIVE STOREFRONT. Deliberate, explicit, and still needs --allow-live.
+# DEFAULT TARGET — the working theme. Not published, so previewing or pushing by
+# habit cannot change what shoppers see.
+[environments.dev]
+store = "x05pzd-dc"
+theme = "152195367087"  # "Sri Chakravarthy Mall" — unpublished
+
+# THE LIVE STOREFRONT.
+#
+# Deliberately unset. The live theme on this store is still stock Horizon
+# (#152194777263) — pushing this repo over it would replace Shopify's default
+# with a half-configured storefront while the client's own migration is still in
+# progress. Once "Sri Chakravarthy Mall" (152195367087) is published, set that id
+# here.
+#
 #   shopify theme push -e production --allow-live
-[environments.production]
-store = "sri-chakravarty-mall"
-theme = "165494358264"  # "Sri Chakravarthy Mall (dev)" — published, despite the name
+#
+# [environments.production]
+# store = "x05pzd-dc"
+# theme = "<id of the published theme>"
