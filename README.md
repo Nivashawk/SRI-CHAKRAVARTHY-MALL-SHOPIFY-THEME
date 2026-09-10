@@ -169,6 +169,11 @@ sections, so the two never contradict each other — change one, change both.
 Shipping and returns are **shop policies rather than pages**, so checkout links
 to them too.
 
+Create all of it on a fresh store with `node scripts/build-pages.mjs`. It is
+idempotent, and deliberately conservative: an existing page is skipped rather
+than overwritten, and a policy is only written when it is still empty, so a
+re-run never clobbers copy the client has edited in Admin.
+
 ## Product spec table
 
 `blocks/product-specs.liquid` renders the "Product details" list under the
@@ -196,6 +201,11 @@ someone fills it in, with no theme change.
 Care is the one field with a theme-level default, because the sentence is the
 same for every silk saree; a product metafield overrides it only where a saree
 needs different wording.
+
+The eight definitions are store configuration and do **not** travel with
+`theme push` -- a fresh store renders an empty spec table until they exist.
+Create them with `node scripts/build-metafield-definitions.mjs` (idempotent,
+pins all eight in render order), then fill them.
 
 Rebuild the values with `node scripts/build-product-specs.mjs <outdir>` (reads
 `products.json` from the products query, writes `metafieldsSet` batches of 25).
