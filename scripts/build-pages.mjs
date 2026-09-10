@@ -58,22 +58,27 @@ for (const p of PAGES) {
 
 /* --------------------------------------------------------------- policies */
 
-const shop = await gql(`query { shop { shopPolicies { id type body } } }`);
-const byType = new Map(shop.shop.shopPolicies.map((s) => [s.type, s]));
+// shopPolicies returns ONLY policies that already exist -- a fresh store has
+// just PRIVACY_POLICY -- so there is no id to look up for shipping or refund.
+// ShopPolicyInput takes { type, body } and upserts by type, which is what makes
+// creating them possible at all. There is no shopPolicyCreate.
+const shop = await gql(`query { shop { shopPolicies { type body } } }`);
+const current = new Map(shop.shop.shopPolicies.map((s) => [s.type, s.body]));
 
 for (const { type, file } of POLICIES) {
-  const current = byType.get(type);
-  if (!current) { console.error(`  ! ${type} not offered by this shop`); continue; }
-  // Only write into an empty policy. Shopify has no "create" for these, and
-  // blindly updating would overwrite whatever the client wrote themselves.
-  if (current.body && current.body.trim()) {
+  // Only write into a policy that is absent or empty. Blindly updating would
+  // overwrite whatever the client has since written themselves.
+  const body = current.get(type);
+  if (body && body.trim()) {
     console.log(`  = ${type} (already has content, left alone)`);
     continue;
   }
   await gql(`
     mutation($shopPolicy: ShopPolicyInput!) {
-      shopPolicyUpdate(shopPolicy: $shopPolicy) { shopPolicy { id type } userErrors { field message } }
-    }`, { shopPolicy: { id: current.id, body: html(file) } });
+      shopPolicyUpdate(shopPolicy: $shopPolicy) {
+        shopPolicy { type } userErrors { field message }
+      }
+    }`, { shopPolicy: { type, body: html(file) } });
   console.log(`  + ${type}`);
 }
 
