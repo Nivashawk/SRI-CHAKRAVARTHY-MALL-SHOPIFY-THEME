@@ -73,10 +73,20 @@ if (EXISTING) {
   }
 }
 
+// A store's home market is created by Shopify under its own handle -- an Indian
+// store gets "in", not "india" -- so matching on handle alone tries to create a
+// SECOND India market and fails with "Name has already been taken". Index the
+// existing markets by their country set as well, and treat an exact country
+// match as the same market. Nothing outside this script references a market
+// handle, so keeping Shopify's is harmless.
+const key = (cs) => cs.slice().sort().join(',');
+const byCountry = new Map();
+for (const [handle, v] of existing) byCountry.set(key(v.countries), { handle, ...v });
+
 const plan = [];
 
 for (const m of MARKETS) {
-  const cur = existing.get(m.handle);
+  const cur = existing.get(m.handle) ?? byCountry.get(key(m.countries));
   const currencySettings = { localCurrencies: m.localCurrencies };
 
   if (CURRENCY_PHASE) {

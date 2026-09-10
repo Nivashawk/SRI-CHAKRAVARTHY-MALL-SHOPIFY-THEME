@@ -7,16 +7,17 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { gql } from './shopify-api.mjs';
 
-const gids = JSON.parse(readFileSync('/tmp/gidmap.json', 'utf8'));
+const OUT = process.argv[2] ?? '/tmp';
+const gids = JSON.parse(readFileSync(`${OUT}/gidmap.json`, 'utf8'));
 
 // The menu id is per-store, so it is resolved by handle at run time. It used to
 // be a hardcoded gid for the development store, which meant this script either
 // failed or -- worse -- wrote into a shop nobody intended once pointed elsewhere.
+// `menus(query: "handle:x")` is silently ignored by the Admin API and returns
+// every menu, so nodes[0] is whichever menu happens to come first. Match exactly.
 const MENU_HANDLE = 'main-menu';
-const found = await gql(
-  `query($q:String!){ menus(first:1, query:$q){ nodes{ id handle title } } }`,
-  { q: `handle:${MENU_HANDLE}` });
-const menu = found.menus.nodes[0];
+const found = await gql(`query { menus(first: 50) { nodes { id handle title } } }`);
+const menu = found.menus.nodes.find((n) => n.handle === MENU_HANDLE);
 if (!menu) throw new Error(`menu not found: ${MENU_HANDLE}`);
 const col = (handle, title) => {
   const c = gids[handle];
@@ -44,7 +45,7 @@ const items = [
   { title: 'New Arrivals', type: 'HTTP', url: '/collections/all?sort_by=created-descending' },
 ];
 
-writeFileSync('/tmp/menuvars.json', JSON.stringify({
+writeFileSync(`${OUT}/menuvars.json`, JSON.stringify({
   id: menu.id,
   title: menu.title,
   handle: MENU_HANDLE,
