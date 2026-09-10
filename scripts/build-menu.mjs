@@ -5,8 +5,19 @@
 // the dropdown thumbnail; an HTTP link has no .object, so the menu would render
 // text-only with no error to tell you why.
 import { readFileSync, writeFileSync } from 'node:fs';
+import { gql } from './shopify-api.mjs';
 
 const gids = JSON.parse(readFileSync('/tmp/gidmap.json', 'utf8'));
+
+// The menu id is per-store, so it is resolved by handle at run time. It used to
+// be a hardcoded gid for the development store, which meant this script either
+// failed or -- worse -- wrote into a shop nobody intended once pointed elsewhere.
+const MENU_HANDLE = 'main-menu';
+const found = await gql(
+  `query($q:String!){ menus(first:1, query:$q){ nodes{ id handle title } } }`,
+  { q: `handle:${MENU_HANDLE}` });
+const menu = found.menus.nodes[0];
+if (!menu) throw new Error(`menu not found: ${MENU_HANDLE}`);
 const col = (handle, title) => {
   const c = gids[handle];
   if (!c) throw new Error(`collection not found: ${handle}`);
@@ -34,9 +45,9 @@ const items = [
 ];
 
 writeFileSync('/tmp/menuvars.json', JSON.stringify({
-  id: 'gid://shopify/Menu/268235604216',
-  title: 'Main menu',
-  handle: 'main-menu',
+  id: menu.id,
+  title: menu.title,
+  handle: MENU_HANDLE,
   items,
 }, null, 1));
 console.log('menu items:', items.length,

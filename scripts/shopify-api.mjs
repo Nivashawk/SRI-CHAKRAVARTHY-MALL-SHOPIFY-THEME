@@ -1,7 +1,18 @@
 // Thin Admin GraphQL client. Token comes from the environment and is never
 // written to disk or logged.
-const SHOP = process.env.SHOPIFY_STORE || 'sri-chakravarty-mall';
+const SHOP = process.env.SHOPIFY_STORE;
 const TOKEN = process.env.SHOPIFY_ADMIN_TOKEN;
+
+// Deliberately no default. This used to fall back to the original development
+// store, so an unset variable pointed every script at the wrong shop and did it
+// silently -- the worst possible failure once that shop is someone else's, or
+// deleted.
+if (!SHOP) {
+  console.error('SHOPIFY_STORE is not set.\n' +
+    'Set it to the store handle, the part before .myshopify.com:\n' +
+    '  export SHOPIFY_STORE=my-store');
+  process.exit(1);
+}
 
 if (!TOKEN) {
   console.error('SHOPIFY_ADMIN_TOKEN is not set.\n' +

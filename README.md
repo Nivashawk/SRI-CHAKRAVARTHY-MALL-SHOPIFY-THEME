@@ -29,6 +29,28 @@ shopify version
 
 Then set your store domain in [`shopify.theme.toml`](shopify.theme.toml).
 
+Everything under `scripts/` talks to the Admin API and needs two variables. Put
+them in `.env` (gitignored) or export them:
+
+```bash
+export SHOPIFY_STORE=<store-handle>       # the part before .myshopify.com
+export SHOPIFY_ADMIN_TOKEN=shpat_...      # Settings > Apps and sales channels >
+                                          # Develop apps > Admin API scopes
+```
+
+`SHOPIFY_STORE` has **no default and no fallback**. Every script exits rather than
+guessing: this repo used to default to the original development store, so an unset
+variable pointed the tooling at the wrong shop without saying so. An error you can
+read beats a mutation you cannot undo.
+
+The two CSV generators are the exception, because the images they link to and the
+store being imported *into* are usually different shops during a migration:
+
+```bash
+export SHOPIFY_ASSET_STORE=<old-handle>   # shop still SERVING the images
+export SHOPIFY_ASSET_THEME=4              # theme sequence in /cdn/shop/t/<n>/
+```
+
 ## Daily commands
 
 ```bash

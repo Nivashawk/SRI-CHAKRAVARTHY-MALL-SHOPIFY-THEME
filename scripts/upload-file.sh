@@ -6,7 +6,8 @@
 # theme asks for; scaling up beforehand only fabricates detail and adds
 # compression artefacts.
 set -e
-STORE=sri-chakravarty-mall.myshopify.com
+: "${SHOPIFY_STORE:?SHOPIFY_STORE is not set (store handle, e.g. my-store)}"
+STORE="$SHOPIFY_STORE.myshopify.com"
 SRC="$1"; NAME="$2"; ALT="${3:-$2}"
 [ -f "$SRC" ] || { echo "no such file: $SRC"; exit 1; }
 SIZE=$(stat -f%z "$SRC")
