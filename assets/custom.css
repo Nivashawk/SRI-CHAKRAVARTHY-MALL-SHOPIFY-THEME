@@ -46,9 +46,12 @@
 
   /* --- Ken Burns on the hero --------------------------------------------- */
   /* A slow drift so the campaign photography is not dead on the page. Applied to
-     the image only; the slideshow's own logic is untouched. */
-  slideshow-component .slideshow-slide img,
-  slideshow-component slideshow-slide img {
+     the image only; the slideshow's own logic is untouched.
+     Scoped to .slideshow-section (sections/slideshow.liquid). An unscoped
+     slideshow-component selector also drifted the product gallery on mobile and
+     product-card image carousels, which zoomed product photos nobody asked to. */
+  .slideshow-section slideshow-component .slideshow-slide img,
+  .slideshow-section slideshow-component slideshow-slide img {
     animation: sc-kenburns 16s ease-out both;
     transform-origin: 50% 45%;
     will-change: transform;

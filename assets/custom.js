@@ -18,8 +18,13 @@
   const STAGGER_MS = 60;
   const MAX_STEPS = 6; // a 10-tile grid shouldn't take 600ms to finish arriving
 
-  /** Sections that should never be hidden: the hero is already on screen. */
-  const SKIP = new Set(['hero']);
+  /**
+   * Sections that should never be hidden, because they are already on screen:
+   * the homepage hero, and `main` — every template's primary section (product,
+   * collection, page). Fading `main` in held the product photo, the LCP element,
+   * at opacity 0 for the reveal transition.
+   */
+  const SKIP = new Set(['hero', 'main']);
 
   const sectionId = (el) => (el.id || '').split('__').pop();
 
