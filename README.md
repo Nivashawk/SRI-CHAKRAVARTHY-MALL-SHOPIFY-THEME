@@ -241,6 +241,59 @@ real options are ever added (blouse stitching, fall and pico) they render with
 no theme work. Each variant would then need its own SKU, which is what the item
 code search matches on.
 
+## Detail explorer
+
+Every saree has **one photo**, so the product page had no other angles to show.
+`blocks/detail-explorer.liquid` adds them from that photo: a "Look closer" row of
+close-up tiles under the price, and — through `assets/detail-explorer.js` —
+hotspot markers on the gallery photo that open a close-up viewer over it.
+
+**Every close-up is a Shopify CDN crop of the original photo** (`image_url` with
+`crop: 'region'`). No image is generated or uploaded, so a close-up can never
+show anything the photo does not, and there is nothing to keep in sync.
+
+Regions live in a JSON product metafield, `detail.regions`:
+
+```json
+{ "version": 1, "source": "saree-bronze-teal-border-1.jpg",
+  "regions": [ { "id": "pallu", "label": "Pallu", "x": 30, "y": 42, "w": 35, "h": 20 } ] }
+```
+
+`x, y, w, h` are **percent of the photo**, so they survive a re-upload at a
+different resolution — but **not a different photo**. Replace a product's photo
+and its regions must be re-picked. A product with no regions renders the block as
+nothing at all, not even its script.
+
+```bash
+node scripts/build-metafield-definitions.mjs          # creates detail.regions once
+node scripts/dump-products.mjs        <outdir>
+node scripts/build-detail-regions.mjs <outdir> [--only handle,handle]
+node scripts/apply-product-specs.mjs  <outdir> v_detail
+```
+
+`build-detail-regions.mjs` holds the coordinates per handle, validates them, and
+writes `<outdir>/contact-sheet.html`: each photo with its regions outlined beside
+the exact crops the page will serve. **Review it before applying**, and have the
+client review it. Rules the coordinates follow:
+
+- **Saree fabric only.** The blouse and jewellery in each photo are styling, not
+  the product. A region centred on them implies they come with the saree — the
+  peach saree's embroidered sleeves are its most eye-catching detail and must
+  never get one.
+- **A region's centre is where its marker sits**, so it must land on fabric.
+- **Pallu regions start at 42–46%.** The model's hands, rings and bangles sit
+  just above, and a crop starting higher leads with them.
+- **Only label what is visibly there.** A plain hem is not a "Border", so six
+  sarees have two regions, not three.
+- **Crops are at least 400 source px wide** (the script refuses smaller). At one
+  1200×1600 photo per saree every crop is 420px — honest but soft. The viewer
+  caps display at 1.5 device pixels per source pixel and never stretches. Sharper
+  close-ups need real macro photos.
+
+**When real close-up photos exist**, a region can later point at one instead of
+a crop, and the gallery can switch to stock `carousel` + `thumbnails`; neither
+needs a redesign.
+
 ## Markets and the currency switcher
 
 **The currency switcher is store configuration, not theme code.** Do not go
@@ -447,6 +500,35 @@ Three more, found building the footer:
 - The storefront password page answers **200 for every URL**, so a bare `curl`
   check proves nothing. Post `form_type=storefront_password` first and reuse the
   cookie jar, or you will "verify" pages that do not exist.
+
+### Stock behaviour the detail explorer depends on
+
+The detail explorer forks **no** stock file. It appends two nodes into Horizon's
+gallery at runtime instead, which means it relies on stock internals. **After a
+Horizon update, re-check these**:
+
+- `snippets/product-media.liquid` prints `data-media-id` on `.product-media`,
+  and both the desktop grid item and the mobile slide carry the
+  `.product-media-container` class (which is `position: relative`).
+- `assets/component.js` delegates `on:click` from `document` in the **capture**
+  phase, and gallery frames use it to open the zoom dialog. That is why the
+  explorer intercepts its own clicks on `window` — a listener on its nodes would
+  run too late to stop the zoom opening.
+- `assets/media-gallery.js` exposes `zoom(index, event)` and replaces the whole
+  gallery on variant change; the explorer re-mounts with a MutationObserver.
+- The zoom button sits at `--layer-flat`; the explorer's markers use
+  `--layer-raised`.
+
+If any of these change, the tiles keep working and only the markers and viewer
+stop appearing — a visible but harmless failure.
+
+### Two fixes in `custom.css` and `custom.js`
+
+- **Ken Burns** is scoped to `.slideshow-section`. Unscoped, it also slowly
+  zoomed the product gallery on mobile and product-card image carousels.
+- **`SKIP` in `custom.js`** includes `main` as well as `hero`. The scroll reveal
+  held every template's primary section at opacity 0 on load — on a product page
+  that is the product photo, the LCP element.
 
 ## Upstream
 
