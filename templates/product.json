@@ -323,10 +323,23 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
+            },
+            "detail_explorer": {
+              "type": "detail-explorer",
+              "settings": {
+                "heading": "Look closer",
+                "show_hotspots": true,
+                "hotspot_size": 32,
+                "mobile_position": "under_image",
+                "padding-block-start": 4,
+                "padding-block-end": 4
+              },
+              "blocks": {}
             }
           },
           "block_order": [
             "group_icgrde",
+            "detail_explorer",
             "divider_VJhene",
             "variant_picker_R3rGDr",
             "buy_buttons_eYQEYi",

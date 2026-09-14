@@ -314,6 +314,8 @@
     "description": "Description",
     // Block name for informational content containers
     "details": "Details",
+    // Product-page close-ups cropped from the product photo (custom block)
+    "detail_explorer": "Detail explorer",
     "divider": "Divider",
     "divider_section": "Divider",
     "drawers": "Drawers",
@@ -436,6 +438,9 @@
     "side_by_side": "Side by side",
     "above_carousel": "Above carousel",
     "accent": "Accent",
+    // Detail explorer: where the close-up chips sit on mobile (custom block)
+    "after_price": "After price",
+    "under_image": "Under image",
     "all": "All",
     "always": "Always",
     "apple": "Apple",
@@ -1103,6 +1108,10 @@
     "show_date": "Date",
     "show_filter_label": "Text labels for applied filters",
     "show_grid_layout_selector": "Show grid layout selector",
+    // Detail explorer (custom block)
+    "show_hotspots": "Show hotspots on the photo",
+    "hotspot_size": "Hotspot size",
+    "mobile_chip_position": "Close-ups on mobile",
     "show_inventory_quantity": "Show low stock quantity",
     "show_pickup_availability": "Show pickup availability",
     "show_powered_by_shopify": "Show \"Powered by Shopify\"",

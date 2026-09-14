@@ -1,0 +1,568 @@
+{% doc %}
+  Detail explorer: close-ups cropped from the product's own photo.
+
+  Reads the product's `detail.regions` JSON metafield, written by
+  scripts/build-detail-regions.mjs. Each region is a rectangle, in percent, of
+  the product photo, and Shopify's CDN crops that rectangle out of the original.
+  No extra image files exist, so a close-up can never show anything the photo
+  does not.
+
+  Renders:
+    - a "Look closer" row of close-up tiles -- plain images, works without JS
+    - with assets/detail-explorer.js: hotspot markers on the gallery photo, and
+      a close-up viewer over it
+
+  Renders nothing -- not even its script -- for a product with no regions, so
+  those product pages are unchanged.
+
+  UI strings are English and live in the data-strings script below, the same
+  way product-specs.liquid carries its "Care" label.
+{% enddoc %}
+
+{%- liquid
+  assign product = closest.product
+  assign data = product.metafields.detail.regions.value
+  assign regions = data.regions
+  assign source_media = nil
+  assign source_image = nil
+
+  if regions.size > 0
+    if data.source != blank
+      for media in product.media
+        if media.media_type == 'image'
+          if media.preview_image.src contains data.source
+            assign source_media = media
+            assign source_image = media.preview_image
+            break
+          endif
+        endif
+      endfor
+    endif
+
+    # No source named, or the named photo was removed: use the first photo.
+    if source_image == nil
+      for media in product.media
+        if media.media_type == 'image'
+          assign source_media = media
+          assign source_image = media.preview_image
+          break
+        endif
+      endfor
+    endif
+  endif
+-%}
+
+{%- if source_image -%}
+  {%- liquid
+    assign iw = source_image.width
+    assign ih = source_image.height
+    assign tile_widths = '120,180,240,360' | split: ','
+    assign stage_widths = '320,480,640,960' | split: ','
+    assign tiles = ''
+    assign regions_json = ''
+  -%}
+
+  {%- for region in regions -%}
+    {%- liquid
+      assign cl = iw | times: region.x | divided_by: 100.0 | round
+      assign ct = ih | times: region.y | divided_by: 100.0 | round
+      assign cw = iw | times: region.w | divided_by: 100.0 | round
+      assign ch = ih | times: region.h | divided_by: 100.0 | round
+      assign tile_h = 88 | times: ch | divided_by: cw
+    -%}
+
+    {%- comment -%}
+      Hand-built srcsets so the crop parameters are in every candidate. Widths stop
+      at the crop's own width: the CDN will not invent pixels the photo lacks.
+    {%- endcomment -%}
+    {%- capture tile_srcset -%}
+      {%- for w in tile_widths -%}
+        {%- assign wn = w | plus: 0 -%}
+        {%- if wn < cw -%}
+          {{- source_image | image_url: width: wn, crop: 'region', crop_left: cl, crop_top: ct, crop_width: cw, crop_height: ch }} {{ wn }}w, {% endif -%}
+      {%- endfor -%}
+      {{- source_image | image_url: width: cw, crop: 'region', crop_left: cl, crop_top: ct, crop_width: cw, crop_height: ch }} {{ cw }}w
+    {%- endcapture -%}
+
+    {%- capture stage_srcset -%}
+      {%- for w in stage_widths -%}
+        {%- assign wn = w | plus: 0 -%}
+        {%- if wn < cw -%}
+          {{- source_image | image_url: width: wn, crop: 'region', crop_left: cl, crop_top: ct, crop_width: cw, crop_height: ch }} {{ wn }}w, {% endif -%}
+      {%- endfor -%}
+      {{- source_image | image_url: width: cw, crop: 'region', crop_left: cl, crop_top: ct, crop_width: cw, crop_height: ch }} {{ cw }}w
+    {%- endcapture -%}
+
+    {%- capture tiles -%}
+      {{- tiles -}}
+      <button type="button" class="detail-explorer__chip" data-region-index="{{ forloop.index0 }}" aria-pressed="false">
+        <img
+          src="{{ source_image | image_url: width: 180, crop: 'region', crop_left: cl, crop_top: ct, crop_width: cw, crop_height: ch }}"
+          srcset="{{ tile_srcset | strip }}"
+          sizes="(min-width: 750px) 88px, 72px"
+          width="88"
+          height="{{ tile_h }}"
+          alt=""
+          loading="lazy"
+        >
+        <span class="detail-explorer__chip-label">{{ region.label | escape }}</span>
+      </button>
+    {%- endcapture -%}
+
+    {%- capture regions_json -%}
+      {{- regions_json -}}
+      {%- unless forloop.first -%},{%- endunless -%}
+      {"id":{{ region.id | json }},"label":{{ region.label | json }},"note":{{ region.note | default: '' | json }},"x":{{ region.x | json }},"y":{{ region.y | json }},"w":{{ region.w | json }},"h":{{ region.h | json }},"cw":{{ cw }},"ch":{{ ch }},"src":{{ source_image | image_url: width: cw, crop: 'region', crop_left: cl, crop_top: ct, crop_width: cw, crop_height: ch | json }},"srcset":{{ stage_srcset | strip | json }}}
+    {%- endcapture -%}
+  {%- endfor -%}
+
+  <script src="{{ 'detail-explorer.js' | asset_url }}" type="module" fetchpriority="low"></script>
+
+  <detail-explorer
+    class="detail-explorer spacing-style detail-explorer--mobile-{{ block.settings.mobile_position }}"
+    style="{% render 'spacing-style', settings: block.settings %}"
+    data-block-id="{{ block.id }}"
+    data-source-media-id="{{ source_media.id }}"
+    data-product-title="{{ product.title | escape }}"
+    data-show-hotspots="{{ block.settings.show_hotspots }}"
+    data-hotspot-size="{{ block.settings.hotspot_size }}"
+    {{ block.shopify_attributes }}
+  >
+    {%- if block.settings.heading != blank -%}
+      <h2 class="detail-explorer__heading" id="DetailExplorerHeading-{{ block.id }}">{{ block.settings.heading }}</h2>
+    {%- endif -%}
+
+    <div
+      class="detail-explorer__chips"
+      role="group"
+      {% if block.settings.heading != blank %}
+        aria-labelledby="DetailExplorerHeading-{{ block.id }}"
+      {% else %}
+        aria-label="Close-ups"
+      {% endif %}
+    >
+      {{ tiles }}
+    </div>
+
+    <p class="visually-hidden" aria-live="polite" data-live></p>
+
+    <script type="application/json" data-regions>[{{ regions_json }}]</script>
+    <script type="application/json" data-strings>
+      {
+        "closeUp": "Close-up",
+        "provenance": "Cropped from the product photo",
+        "of": "of",
+        "previous": "Previous close-up",
+        "next": "Next close-up",
+        "close": "Close close-up",
+        "full": "View full photo"
+      }
+    </script>
+  </detail-explorer>
+{%- endif -%}
+
+{% stylesheet %}
+  /* --- Tiles, in the product details column -------------------------------- */
+
+  .detail-explorer__heading {
+    font-size: var(--font-size--h6);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0 0 var(--padding-sm);
+  }
+
+  .detail-explorer__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--padding-sm);
+  }
+
+  .detail-explorer__chip {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    min-width: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .detail-explorer__chip img {
+    display: block;
+    width: 88px;
+    height: auto;
+    outline: 1px solid rgb(var(--color-foreground-rgb) / 0.15);
+    outline-offset: -1px;
+  }
+
+  .detail-explorer__chip-label {
+    font-size: 0.8125rem;
+  }
+
+  .detail-explorer__chip[aria-pressed='true'] img {
+    outline: 2px solid var(--color-foreground);
+    outline-offset: 2px;
+  }
+
+  .detail-explorer__chip:focus-visible {
+    outline: 2px solid var(--color-foreground);
+    outline-offset: 3px;
+  }
+
+  /* On a phone the gallery sits above the details column, so the first child of
+     the column is directly under the photo. A single swipeable row, not a wrap. */
+  @media screen and (max-width: 749px) {
+    .detail-explorer--mobile-under_image {
+      order: -1;
+    }
+
+    .detail-explorer__chips {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scroll-snap-type: x proximity;
+      scrollbar-width: none;
+    }
+
+    .detail-explorer__chip {
+      flex: none;
+      scroll-snap-align: start;
+    }
+
+    .detail-explorer__chip img {
+      width: 72px;
+    }
+  }
+
+  /* --- Overlay and viewer, injected into the gallery by detail-explorer.js ----
+     These nodes live inside Horizon's gallery, not under the block, so nothing
+     here can rely on inherited block variables. Colours are the theme's fixed
+     palette: gold only ever decorates -- #D9982F as text on ivory is 2.40:1. */
+
+  .detail-explorer__overlay {
+    position: absolute;
+    /* Above the gallery's full-size zoom button (--layer-flat). */
+    z-index: var(--layer-raised);
+    pointer-events: none;
+  }
+
+  .detail-explorer__rect {
+    position: absolute;
+    left: calc(var(--x) * 1%);
+    top: calc(var(--y) * 1%);
+    width: calc(var(--w) * 1%);
+    height: calc(var(--h) * 1%);
+    outline: 1px dashed #fdfbf7;
+    box-shadow: 0 0 0 1px rgb(34 30 26 / 0.45);
+    opacity: 0;
+    transition: opacity 150ms ease;
+  }
+
+  .detail-explorer__rect.is-previewing {
+    opacity: 1;
+  }
+
+  .detail-explorer__hotspot {
+    --size: var(--hotspot-size, 32px);
+
+    position: absolute;
+    left: calc(var(--cx) * 1%);
+    top: calc(var(--cy) * 1%);
+    width: var(--size);
+    height: var(--size);
+    margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(253 251 247 / 0.92);
+    box-shadow: 0 0 0 1px #221e1a, 0 1px 4px rgb(0 0 0 / 0.25);
+    cursor: pointer;
+    pointer-events: auto;
+    transition: box-shadow 150ms ease;
+  }
+
+  /* 44px hit area whatever the visible size. */
+  .detail-explorer__hotspot::before {
+    content: '';
+    position: absolute;
+    inset: calc((44px - var(--size)) / -2);
+    border-radius: 50%;
+  }
+
+  .detail-explorer__hotspot::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #3e2c10;
+  }
+
+  .detail-explorer__hotspot:hover,
+  .detail-explorer__hotspot:focus-visible,
+  .detail-explorer__hotspot[aria-expanded='true'] {
+    box-shadow: 0 0 0 1px #221e1a, 0 0 0 3px #d9982f, 0 1px 4px rgb(0 0 0 / 0.25);
+  }
+
+  .detail-explorer__hotspot:focus-visible {
+    outline: 2px solid #221e1a;
+    outline-offset: 4px;
+  }
+
+  .detail-explorer__hotspot-label {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 2px 8px;
+    white-space: nowrap;
+    font-size: 0.8125rem;
+    color: #221e1a;
+    background: #fdfbf7;
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 150ms ease;
+  }
+
+  .detail-explorer__hotspot:hover .detail-explorer__hotspot-label,
+  .detail-explorer__hotspot:focus-visible .detail-explorer__hotspot-label {
+    opacity: 1;
+  }
+
+  /* Markers are too small to aim at on a phone; the tiles do that job there. */
+  @media screen and (max-width: 749px) {
+    .detail-explorer__rect,
+    .detail-explorer__hotspot {
+      display: none;
+    }
+  }
+
+  .detail-explorer__stage {
+    position: absolute;
+    inset: 0;
+    z-index: var(--layer-heightened);
+    display: flex;
+    flex-direction: column;
+    background: rgb(253 251 247 / 0.97);
+    color: #221e1a;
+    cursor: default;
+  }
+
+  .detail-explorer__stage[hidden] {
+    display: none;
+  }
+
+  .detail-explorer__stage:focus {
+    outline: none;
+  }
+
+  .detail-explorer__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 8px 0 16px;
+  }
+
+  .detail-explorer__count {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .detail-explorer__nav {
+    display: flex;
+    gap: 4px;
+  }
+
+  .detail-explorer__btn {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 2px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 0.875rem;
+    cursor: pointer;
+  }
+
+  .detail-explorer__btn--icon {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .detail-explorer__btn:hover {
+    background: rgb(34 30 26 / 0.06);
+  }
+
+  .detail-explorer__btn:focus-visible {
+    outline: 2px solid #221e1a;
+    outline-offset: -2px;
+  }
+
+  .detail-explorer__strip {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .detail-explorer__strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .detail-explorer__slide {
+    flex: 0 0 100%;
+    margin: 0;
+    padding: 12px 16px;
+    display: grid;
+    place-items: center;
+    scroll-snap-align: center;
+    container-type: size;
+  }
+
+  /* Never wider than the crop can honestly fill (--cap), and never taller than
+     the space available. Leftover space stays ivory -- nothing is stretched. */
+  .detail-explorer__crop {
+    position: relative;
+    width: min(100cqw, var(--cap), calc(100cqh * var(--ratio)));
+    aspect-ratio: var(--ratio);
+    background-repeat: no-repeat;
+  }
+
+  .detail-explorer__crop img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+
+  .detail-explorer__crop img.is-loaded {
+    opacity: 1;
+  }
+
+  .detail-explorer__caption {
+    padding: 0 16px 16px;
+  }
+
+  .detail-explorer__title {
+    margin: 0;
+    font-family: var(--font-heading--family);
+    font-size: 1.375rem;
+    line-height: 1.2;
+  }
+
+  .detail-explorer__title:focus {
+    outline: none;
+  }
+
+  .detail-explorer__note {
+    margin: 2px 0 0;
+    font-size: 0.875rem;
+  }
+
+  .detail-explorer__note:empty {
+    display: none;
+  }
+
+  /* The honesty signal: this is a crop, not another photograph. #8B6914 on
+     ivory is 4.92:1. */
+  .detail-explorer__provenance {
+    margin: 4px 0 0;
+    font-size: 0.8125rem;
+    color: #8b6914;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .detail-explorer__rect,
+    .detail-explorer__hotspot,
+    .detail-explorer__hotspot-label,
+    .detail-explorer__crop img {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:names.detail_explorer",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:settings.heading",
+      "default": "Look closer"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hotspots",
+      "label": "t:settings.show_hotspots",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "hotspot_size",
+      "label": "t:settings.hotspot_size",
+      "min": 24,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "mobile_position",
+      "label": "t:settings.mobile_chip_position",
+      "options": [
+        { "value": "under_image", "label": "t:options.under_image" },
+        { "value": "after_price", "label": "t:options.after_price" }
+      ],
+      "default": "under_image"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.detail_explorer",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}
