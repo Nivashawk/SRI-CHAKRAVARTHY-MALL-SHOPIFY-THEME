@@ -266,7 +266,7 @@
       "settings": {
         "section_width": "page-width",
         "gap": 32,
-        "background_color": "#3E2C10",
+        "background_color": "#FDFAF0",
         "padding-block-start": 56,
         "padding-block-end": 40
       }
@@ -302,7 +302,7 @@
         "gap": 24,
         "divider_thickness": 1,
         "divider_color": "#6B5220",
-        "background_color": "#3E2C10",
+        "background_color": "#FDFAF0",
         "padding-block-start": 20,
         "padding-block-end": 40
       }

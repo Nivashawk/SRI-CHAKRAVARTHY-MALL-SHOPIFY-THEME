@@ -14,22 +14,28 @@
 # product images referenced by scripts/sarees-client-import.csv, so do not delete
 # it until the catalogue import is finished.
 
-# DEFAULT TARGET — the working theme. Not published, so previewing or pushing by
-# habit cannot change what shoppers see.
+# DEFAULT TARGET — and, since 2026-09-16, THE LIVE STOREFRONT.
+#
+# WARNING: 190107844893 is PUBLISHED. It serves https://srichakravarthymall.com
+# to real customers. It was unpublished when this file was first written; it was
+# published from the admin between sessions. Consequences:
+#
+#   * every `shopify theme push -e dev` is immediately customer-visible
+#   * pushing now REQUIRES --allow-live
+#   * README.md's safety check ("push must succeed WITHOUT --allow-live, or dev
+#     is pointing at the live theme") no longer holds — it now fails by design,
+#     because dev IS the live theme
+#
+# Preview with `shopify theme dev -e dev`, which touches nothing on the store.
 [environments.dev]
 store = "4qzxbq-rf"
-theme = "190107844893"  # "Sri Chakravarthy Mall" — unpublished
+theme = "190107844893"  # "Sri Chakravarthy Mall" — LIVE
 
-# THE LIVE STOREFRONT.
+# ROLLBACK TARGET.
 #
-# Deliberately unset. The live theme on this store is still stock Horizon
-# (#190107484445) — pushing this repo over it would replace Shopify's default
-# with a half-configured storefront while the client's own migration is still in
-# progress. Once "Sri Chakravarthy Mall" (190107844893) is published, set that id
-# here.
+# Stock Horizon (#190107484445) is now the *unpublished* theme — the roles
+# swapped when the mall theme went live. Republish it from the admin if the live
+# theme ever has to be pulled down in a hurry.
 #
-#   shopify theme push -e production --allow-live
-#
-# [environments.production]
-# store = "4qzxbq-rf"
-# theme = "<id of the published theme>"
+# `production` is deliberately left unset: `dev` already points at the live
+# theme, and a second alias for the same id would only invite a double push.

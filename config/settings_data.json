@@ -90,8 +90,8 @@
     "currency_code_enabled_cart_items": true,
     "currency_code_enabled_cart_total": true,
     "mobile_quick_add": true,
-    "quick_add_background": "#3E2C10",
-    "quick_add_text": "#FDFBF7",
+    "quick_add_background": "#FDFAF0",
+    "quick_add_text": "#3E2C10",
     "show_second_image_on_hover": true,
     "product_corner_radius": 0,
     "card_corner_radius": 0,
@@ -120,7 +120,7 @@
       }
     },
     "color_palette": {
-      "background": "#FDFBF7",
+      "background": "#FDFAF0",
       "foreground": "#221E1A",
       "color1": "#D9982F",
       "color2": "#E7DFD2"

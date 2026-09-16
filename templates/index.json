@@ -30,7 +30,7 @@
             "gap": 12,
             "background_color": "",
             "toggle_overlay": true,
-            "overlay_color": "#fdfbf73b",
+            "overlay_color": "#fdfaf03b",
             "overlay_style": "solid",
             "gradient_direction": "to right",
             "padding-block-start": 48,
@@ -132,7 +132,7 @@
             "gap": 12,
             "background_color": "",
             "toggle_overlay": true,
-            "overlay_color": "#fdfbf73b",
+            "overlay_color": "#fdfaf03b",
             "overlay_style": "solid",
             "gradient_direction": "to right",
             "padding-block-start": 48,
@@ -273,7 +273,7 @@
       ],
       "settings": {
         "movement_direction": "normal",
-        "background_color": "#3e2c10",
+        "background_color": "#fdfaf0",
         "padding-block-start": 16,
         "padding-block-end": 16,
         "gap_between_elements": 72
@@ -1820,7 +1820,7 @@
         "section_height": "",
         "section_height_custom": 50,
         "background_media": "none",
-        "background_color": "#3e2c10",
+        "background_color": "#fdfaf0",
         "video_position": "cover",
         "background_image_position": "cover",
         "toggle_overlay": false,
@@ -2219,7 +2219,7 @@
             "case": "none",
             "text_effect": "reveal",
             "animation_repeat": false,
-            "text_color": "#fdfbf7"
+            "text_color": "#3e2c10"
           },
           "blocks": {}
         },
@@ -2266,7 +2266,7 @@
         "section_height": "",
         "section_height_custom": 50,
         "background_media": "none",
-        "background_color": "#3e2c10",
+        "background_color": "#fdfaf0",
         "video_position": "cover",
         "background_image_position": "cover",
         "toggle_overlay": false,
