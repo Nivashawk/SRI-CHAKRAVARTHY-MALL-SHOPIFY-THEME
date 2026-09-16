@@ -3,6 +3,34 @@
    Kept in one file so Horizon's own stylesheets can be updated cleanly.
    --------------------------------------------------------------------------- */
 
+/* Readability on Soft Ivory (#FDFAF0). Every piece of text should reach 7:1.
+   Horizon's muted text is the foreground at 0.6, which is only 4.33:1 on the
+   ivory; 0.75 reaches 7.08:1. The colour snippets read this variable where it
+   is used, so overriding it here lifts copyright links, card labels, spec
+   labels, placeholders and filters at once. Subdued text (0.8) is already 8.4:1.
+
+   Gold used as TEXT on ivory is #6B4E10 (7.39:1). The accent gold #D9982F is
+   2.37:1 there, so keep it for buttons, rules and dividers only. Gold icons and
+   stars, which need 3:1 rather than 7:1, use #9A6B17 (4.48:1). */
+:root {
+  --opacity-muted-text: 0.75;
+}
+
+/* Dark text on the gold primary button is 6.69:1 -- comfortably AA, and the
+   most the palette allows without a new near-black. A heavier label is what
+   makes a call to action easy to read, so primary buttons carry 600. */
+.button:not(.button-secondary, .button-unstyled),
+button.shopify-payment-button__button--unbranded {
+  font-weight: 600;
+}
+
+/* The logo PNG is drawn in the bright accent gold, which washes out on the
+   ivory header. Darkening it toward the antique text gold keeps the artwork
+   crisp until a logo asset made for a light background replaces it. */
+.header-logo__image {
+  filter: brightness(0.7) contrast(1.1);
+}
+
 /* Horizon fades carousel arrows in on hover only (slideshow-arrows.liquid sets
    opacity: 0, base.css animates it in on :hover / :focus-within). On a product
    carousel that hides the main affordance for browsing, so keep them visible at
@@ -98,20 +126,19 @@
 
 /* --- Product cards -------------------------------------------------------- */
 /* Gold reads as the brand on a short, bold price -- but the accent gold
-   #d9982f measures only 2.40:1 on the ivory page, which fails AA, and this rule
-   used to use it. #8B6914 is the same hue carried deeper: 4.92:1 on ivory, so it
-   passes and still reads as gold. Never put #d9982f on the light page as text;
-   it is only safe on the dark bands, where it reaches 5.39:1. */
+   #d9982f measures only 2.37:1 on the ivory page. #6B4E10 is the same hue
+   carried deeper: 7.39:1, so the price is easy to read and still reads as gold.
+   Never put #d9982f on the light page as text. */
 .product-card .price,
 .card-gallery + * .price,
 .product-card .price-item {
-  color: #8b6914;
+  color: #6b4e10;
 }
 
 /* Weave label above the product title. */
 .card-weave {
   display: block;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-foreground-muted, #6b625a);
@@ -150,7 +177,7 @@
 .stat-band__figure {
   margin: 0 0 10px;
   padding: 0;
-  color: #d9982f;
+  color: #6b4e10;
   font-family: var(--font-heading--family, serif);
   font-size: clamp(3rem, 11vw, 7rem);
   line-height: 1;
@@ -231,10 +258,13 @@
    only, so a theme update to that grid keeps working.
    --------------------------------------------------------------------------- */
 
+/* Work Sans at 600 rather than Cormorant: the display face turns spindly at
+   eyebrow sizes, and these headings need to hold up at 14px. */
 .footer-content .menu__heading,
 .footer-content .menu__heading__default {
-  color: #d9982f;
-  font-family: var(--font-heading--family);
+  color: #6b4e10;
+  font-family: var(--font-subheading--family);
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -306,8 +336,9 @@
    does not pick up the rule above — match it so all four columns read as one
    set rather than three headings and a stray line. */
 .footer-content .text-block h2 {
-  color: #d9982f;
-  font-family: var(--font-heading--family);
+  color: #6b4e10;
+  font-family: var(--font-subheading--family);
+  font-weight: 600;
   font-size: var(--font-size--h6);
   letter-spacing: 0.08em;
   text-transform: uppercase;
