@@ -38,10 +38,12 @@ button.shopify-payment-button__button--unbranded {
    The overlay is a left-to-right scrim on desktop, where the text sits on the
    left. On a phone the text runs along the bottom, so only the direction is
    flipped -- the colour and strength stay the theme setting and remain
-   editable in the theme editor. */
+   editable in the theme editor. --overlay-direction is inline on the element
+   and so cannot be overridden from here either; the gradient is rebuilt from
+   the theme's own colour variables instead. */
 @media screen and (max-width: 749px) {
-  [id$='__hero'] .overlay {
-    --overlay-direction: to top;
+  [id$='__hero'] .overlay--gradient {
+    background-image: linear-gradient(to top, var(--overlay-color), var(--overlay-color--end));
   }
 
   [id$='__hero'] .slide__content .layout-panel-flex.mobile-column {
