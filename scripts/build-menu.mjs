@@ -6,6 +6,7 @@
 // text-only with no error to tell you why.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { gql } from './shopify-api.mjs';
+import { MAIN_MENU } from './taxonomy.mjs';
 
 const OUT = process.argv[2] ?? '/tmp';
 const gids = JSON.parse(readFileSync(`${OUT}/gidmap.json`, 'utf8'));
@@ -25,25 +26,21 @@ const col = (handle, title) => {
   return { title: title ?? c.title, type: 'COLLECTION', resourceId: c.id };
 };
 
-const items = [
-  { title: 'Collections', type: 'HTTP', url: '/collections/all', items: [
-      col('kanchipuram'), col('banarasi'), col('soft-silk'), col('chanderi'),
-      col('tussar'), col('organza'), col('ikat'), col('gadwal'),
-      col('silk-cotton'), col('georgette'),
-  ]},
-  { title: 'Occasions', type: 'HTTP', url: '/collections/all', items: [
-      col('wedding'), col('festive'), col('everyday'),
-  ]},
-  { title: 'Shop by Price', type: 'HTTP', url: '/collections/all', items: [
-      col('under-5000', 'Under ₹5,000'),
-      col('5000-10000', '₹5,000 – ₹10,000'),
-      col('10000-25000', '₹10,000 – ₹25,000'),
-      col('above-25000', 'Above ₹25,000'),
-  ]},
-  // Every product was created the same day, so this is not yet a real
-  // distinction — but the sort keeps it correct as the catalogue grows.
-  { title: 'New Arrivals', type: 'HTTP', url: '/collections/all?sort_by=created-descending' },
-];
+// The structure itself lives in taxonomy.mjs, alongside the collections it points
+// at, so a menu entry can never name a collection that was never created -- col()
+// throws on a missing handle rather than rendering an empty dropdown.
+//
+// The older weave collections (kanchipuram, chanderi, silk-cotton, georgette, ikat,
+// gadwal, organza, tussar, mysore-crepe) are deliberately absent: they stay live and
+// published, and templates/index.json still links them from the homepage, but the
+// client's navigation replaces them in the menu.
+const items = MAIN_MENU.map((entry) => {
+  const node = entry.col
+    ? col(entry.col, entry.title)
+    : { title: entry.title, type: 'HTTP', url: entry.url };
+  if (entry.children) node.items = entry.children.map((c) => col(c.col, c.title));
+  return node;
+});
 
 writeFileSync(`${OUT}/menuvars.json`, JSON.stringify({
   id: menu.id,
