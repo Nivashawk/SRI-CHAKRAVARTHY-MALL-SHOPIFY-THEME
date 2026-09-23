@@ -24,6 +24,36 @@ button.shopify-payment-button__button--unbranded {
   font-weight: 600;
 }
 
+/* --- Hero, phone layout ---------------------------------------------------
+   The model's face sits in the top fifth of the mobile hero photos, so on a
+   phone the slide text drops to the bottom and shrinks, leaving the face clear.
+
+   Phone only, and deliberately done here rather than in the theme editor: the
+   slides are laid out as a column at every width, so the block's own vertical
+   alignment setting moves the desktop text too. Desktop stays centred.
+   base.css:1184 switches .mobile-column to --vertical-alignment-mobile under
+   750px, but that variable is written inline on each block, which a stylesheet
+   cannot outrank, so justify-content is set directly instead.
+
+   The overlay is a left-to-right scrim on desktop, where the text sits on the
+   left. On a phone the text runs along the bottom, so only the direction is
+   flipped -- the colour and strength stay the theme setting and remain
+   editable in the theme editor. */
+@media screen and (max-width: 749px) {
+  [id$='__hero'] .overlay {
+    --overlay-direction: to top;
+  }
+
+  [id$='__hero'] .slide__content .layout-panel-flex.mobile-column {
+    justify-content: flex-end;
+  }
+
+  [id$='__hero'] .slide__content h2 {
+    font-size: clamp(1.625rem, 7vw, 2rem);
+    line-height: 1.15;
+  }
+}
+
 /* The logo PNG is drawn in the bright accent gold, which washes out on the
    ivory header. Darkening it toward the antique text gold keeps the artwork
    crisp until a logo asset made for a light background replaces it. */
