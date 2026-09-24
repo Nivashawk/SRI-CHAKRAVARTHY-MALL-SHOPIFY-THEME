@@ -63,9 +63,19 @@
     endcase
   -%}
 
-  {%- if has_video -%}
+  {%- comment -%}
+    Shown when a video is set, and always in the theme editor -- the same rule
+    blocks/_social-link.liquid uses for an unconfigured social link.
+
+    In the editor an empty slot renders Horizon's own video placeholder, a framed
+    play icon (snippets/video.liquid:187), so the row can be designed and the videos
+    dropped in later. Shoppers never see an empty frame: on the live storefront the
+    slot simply is not there until a real video exists, and the testimonial reads as
+    a normal written one.
+  {%- endcomment -%}
+  {%- if has_video or request.design_mode -%}
     <div
-      class="testimonial__video"
+      class="testimonial__video{% unless has_video %} testimonial__video--placeholder{% endunless %}"
       style="--testimonial-video-ratio: {{ video_ratio }}; --testimonial-video-max: {{ video_max_width }};"
     >
       {%- if block_settings.video_source == 'url' -%}
@@ -165,6 +175,13 @@
     overflow: hidden;
     border-radius: 2px;
     background: rgb(var(--color-foreground-rgb) / var(--opacity-5-15, 0.05));
+  }
+
+  /* Editor-only empty slot. Dashed so it reads as "a video goes here" rather than
+     as a video that failed to load. Never reaches the storefront. */
+  .testimonial__video--placeholder {
+    outline: 1px dashed rgb(var(--color-foreground-rgb) / 0.35);
+    outline-offset: -1px;
   }
 
   .testimonial__video :is(video, iframe, .testimonial__video-media) {
