@@ -18,6 +18,77 @@
   "
   {{ block.shopify_attributes }}
 >
+  {%- comment -%}
+    Video testimonial. Rendered through Horizon's own snippets/video.liquid, the same
+    one blocks/video.liquid uses, so uploaded video and YouTube/Vimeo both work and
+    stay consistent with the rest of the theme.
+
+    A testimonial with no video set renders exactly as before -- the star rating,
+    quote and author are untouched -- so this ships safely ahead of the client's
+    footage.
+
+    Deliberately not autoplaying: these sit three-to-a-row and carry speech, so
+    several playing at once would be unusable. The customer presses play.
+  {%- endcomment -%}
+  {%- liquid
+    assign has_video = false
+    if block_settings.video_source == 'url' and block_settings.video_url != blank
+      assign has_video = true
+    elsif block_settings.video_source != 'url' and block_settings.video != blank
+      assign has_video = true
+    endif
+
+    # render arguments take no filters, so the poster is resolved here. An uploaded
+    # video falls back to the frame Shopify generates for it.
+    assign video_poster = block_settings.video_cover_image
+    if video_poster == blank
+      assign video_poster = block_settings.video.preview_image
+    endif
+
+    # Cap the width by orientation. Left to fill the column, a 9:16 clip in a
+    # three-up desktop row renders about 1050px tall, towering over the text
+    # testimonials beside it and dragging the whole row to that height. Capping
+    # width is what keeps the row balanced; the taller the clip, the narrower it
+    # is allowed to be.
+    assign video_ratio = block_settings.video_aspect_ratio | default: '9 / 16'
+    case video_ratio
+      when '9 / 16'
+        assign video_max_width = '300px'
+      when '3 / 4'
+        assign video_max_width = '360px'
+      when '1 / 1'
+        assign video_max_width = '440px'
+      else
+        assign video_max_width = '100%'
+    endcase
+  -%}
+
+  {%- if has_video -%}
+    <div
+      class="testimonial__video"
+      style="--testimonial-video-ratio: {{ video_ratio }}; --testimonial-video-max: {{ video_max_width }};"
+    >
+      {%- if block_settings.video_source == 'url' -%}
+        {% render 'video',
+          video_from_url: true,
+          video: block_settings.video_url.id,
+          video_type: block_settings.video_url.type,
+          video_class: 'testimonial__video-media',
+          video_alt: block_settings.video_alt,
+          video_preview_image: video_poster,
+          video_autoplay: false
+        %}
+      {%- else -%}
+        {% render 'video',
+          video: block_settings.video,
+          video_class: 'testimonial__video-media',
+          video_preview_image: video_poster,
+          video_autoplay: false
+        %}
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
   {%- if rating > 0 -%}
     <div
       class="testimonial__rating"
@@ -83,6 +154,25 @@
 
   .testimonial__quote {
     margin: 0;
+  }
+
+  /* Phone-shot testimonials are usually vertical, so the ratio is a setting and
+     defaults to 9 / 16. object-fit keeps a landscape clip from letterboxing. */
+  .testimonial__video {
+    width: 100%;
+    max-width: var(--testimonial-video-max, 100%);
+    aspect-ratio: var(--testimonial-video-ratio, 9 / 16);
+    overflow: hidden;
+    border-radius: 2px;
+    background: rgb(var(--color-foreground-rgb) / var(--opacity-5-15, 0.05));
+  }
+
+  .testimonial__video :is(video, iframe, .testimonial__video-media) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border: 0;
   }
 
   .testimonial__rating {
@@ -174,6 +264,57 @@
       "id": "star_color",
       "label": "t:settings.star_color",
       "placeholder": "t:settings.default"
+    },
+    {
+      "type": "header",
+      "content": "Video testimonial"
+    },
+    {
+      "type": "select",
+      "id": "video_source",
+      "label": "t:settings.video_source",
+      "options": [
+        { "value": "uploaded", "label": "t:options.video_uploaded" },
+        { "value": "url", "label": "t:options.video_external_url" }
+      ],
+      "default": "uploaded"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "t:settings.video",
+      "visible_if": "{{ block.settings.video_source == 'uploaded' }}"
+    },
+    {
+      "type": "video_url",
+      "id": "video_url",
+      "label": "t:settings.video_external_url",
+      "accept": ["youtube", "vimeo"],
+      "visible_if": "{{ block.settings.video_source == 'url' }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "video_cover_image",
+      "label": "t:settings.cover_image"
+    },
+    {
+      "type": "text",
+      "id": "video_alt",
+      "label": "t:settings.video_alt_text",
+      "visible_if": "{{ block.settings.video_source == 'url' }}"
+    },
+    {
+      "type": "select",
+      "id": "video_aspect_ratio",
+      "label": "Video shape",
+      "info": "Phone-recorded testimonials are usually portrait.",
+      "options": [
+        { "value": "9 / 16", "label": "Portrait (9:16)" },
+        { "value": "3 / 4", "label": "Tall (3:4)" },
+        { "value": "1 / 1", "label": "Square (1:1)" },
+        { "value": "16 / 9", "label": "Landscape (16:9)" }
+      ],
+      "default": "9 / 16"
     },
     {
       "type": "header",

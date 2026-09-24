@@ -31,29 +31,6 @@
           },
           "blocks": {}
         },
-        "brite_try_on_virtual_tryon_NLQRya": {
-          "type": "shopify://apps/brite-try-on/blocks/virtual-tryon/01a0c8c7-3832-7208-847a-70a461015fb7",
-          "settings": {
-            "enabled": true,
-            "api_base_url": "https://altbriterai.brite.app",
-            "api_key": "",
-            "timeout_seconds": 90,
-            "session_limit": 5,
-            "prompt_allowlist": "",
-            "button_label": "Try it on",
-            "button_caption": "See this on you in seconds",
-            "button_style": "feature",
-            "button_width": "fill",
-            "max_width": 0,
-            "accent_color": "",
-            "accent_text_color": "",
-            "consent_text": "I agree to my photo being used to generate this preview.",
-            "privacy_notice": "Your photo is sent to our try-on service to create this image, and is not shown to anyone else.",
-            "privacy_url": "",
-            "padding_block_start": 8,
-            "padding_block_end": 8
-          }
-        },
         "media-gallery": {
           "type": "_product-media-gallery",
           "static": true,
@@ -367,6 +344,29 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
+            },
+            "brite_try_on_virtual_tryon_NLQRya": {
+              "type": "shopify://apps/brite-try-on/blocks/virtual-tryon/01a0c8c7-3832-7208-847a-70a461015fb7",
+              "settings": {
+                "enabled": true,
+                "api_base_url": "https://altbriterai.brite.app",
+                "api_key": "",
+                "timeout_seconds": 90,
+                "session_limit": 5,
+                "prompt_allowlist": "",
+                "button_label": "Try it on",
+                "button_caption": "See this on you in seconds",
+                "button_style": "feature",
+                "button_width": "fill",
+                "max_width": 0,
+                "accent_color": "",
+                "accent_text_color": "",
+                "consent_text": "I agree to my photo being used to generate this preview.",
+                "privacy_notice": "Your photo is sent to our try-on service to create this image, and is not shown to anyone else.",
+                "privacy_url": "",
+                "padding_block_start": 8,
+                "padding_block_end": 8
+              }
             }
           },
           "block_order": [
@@ -375,14 +375,14 @@
             "divider_VJhene",
             "variant_picker_R3rGDr",
             "buy_buttons_eYQEYi",
+            "brite_try_on_virtual_tryon_NLQRya",
             "text_aEtTtq",
             "product_specs"
           ]
         }
       },
       "block_order": [
-        "disclosures_g9mWze",
-        "brite_try_on_virtual_tryon_NLQRya"
+        "disclosures_g9mWze"
       ],
       "settings": {
         "content_width": "content-center-aligned",
