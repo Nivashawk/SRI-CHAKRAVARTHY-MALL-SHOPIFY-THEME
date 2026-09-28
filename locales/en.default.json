@@ -164,6 +164,8 @@
   },
   "content": {
     "whatsapp_aria": "Chat with us on WhatsApp",
+    "call_aria": "Call us",
+    "call_whatsapp_aria": "Call us on WhatsApp",
     "cancel": "Cancel",
     "discount": "Discount",
     "account_title": "Account",

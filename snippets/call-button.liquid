@@ -1,0 +1,71 @@
+{% doc %}
+  Floating call button, stacked directly above the WhatsApp chat button.
+
+  Renders nothing unless it is switched on and a number is available, so the store
+  never ships a button that dials nowhere.
+
+  Two modes, set in Theme settings:
+
+  - Phone call (default) -> tel: link. Works on every device, today.
+  - WhatsApp call        -> wa.me/call/<number>. This is a real, documented Meta
+                            deep link, but it only works for a number on the
+                            WhatsApp Business PLATFORM (Cloud API) with calling
+                            adopted. On a free WhatsApp Business app number -- what
+                            this shop uses -- it does nothing. It is offered so the
+                            switch is one setting on the day that changes, not a
+                            rebuild.
+
+  Gold rather than WhatsApp green on purpose: two green circles stacked would leave
+  the customer guessing which one calls and which one chats.
+
+  @example
+  {% render 'call-button' %}
+{% enddoc %}
+
+{%- capture call_number -%}
+  {%- render 'whatsapp-number', number: settings.call_number -%}
+{%- endcapture -%}
+
+{%- liquid
+  assign call_number = call_number | strip
+  if settings.call_enabled != true or call_number == blank
+    break
+  endif
+
+  if settings.call_mode == 'whatsapp'
+    assign call_href = 'https://wa.me/call/' | append: call_number
+    assign call_aria = 'content.call_whatsapp_aria' | t | default: 'Call us on WhatsApp'
+  else
+    assign call_href = 'tel:+' | append: call_number
+    assign call_aria = 'content.call_aria' | t | default: 'Call us'
+  endif
+-%}
+
+<a
+  class="call-float"
+  href="{{ call_href }}"
+  aria-label="{{ call_aria }}"
+>
+  {%- comment -%}
+    No phone glyph ships with the theme -- snippets/icon.liquid has no 'phone' case
+    and there is no icon-phone.svg -- so it is inline here.
+  {%- endcomment -%}
+  <svg
+    class="call-float__icon"
+    aria-hidden="true"
+    focusable="false"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width="26"
+    height="26"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path
+      d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11.4 11.4 0 0 0 3.6.58 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .58 3.6 1 1 0 0 1-.25 1z"
+    ></path>
+  </svg>
+</a>

@@ -9,14 +9,25 @@
   treated as Indian and given a 91 prefix. Anything 11 digits or longer is
   assumed to already carry its country code and is passed through untouched.
 
+  Serves the call button too, which may dial a different number: pass one in and
+  it is normalised the same way, otherwise the WhatsApp number is used. The rule
+  about country codes lives here and only here, so the two buttons cannot drift.
+
+  Note the output carries no leading +, which is what wa.me wants. A tel: link
+  has to add one.
+
   Capture it, don't print it, when you need the value:
 
   @example
   {%- capture wa_number -%}{%- render 'whatsapp-number' -%}{%- endcapture -%}
+  {%- capture call_number -%}{%- render 'whatsapp-number', number: settings.call_number -%}{%- endcapture -%}
+
+  @param {string} [number] - A number to normalise instead of settings.whatsapp_number
 {% enddoc %}
 
 {%- liquid
-  assign wa = settings.whatsapp_number | remove: ' ' | remove: '-' | remove: '(' | remove: ')' | remove: '+' | strip
+  assign source = number | default: settings.whatsapp_number
+  assign wa = source | remove: ' ' | remove: '-' | remove: '(' | remove: ')' | remove: '+' | strip
   if wa == blank
     break
   endif

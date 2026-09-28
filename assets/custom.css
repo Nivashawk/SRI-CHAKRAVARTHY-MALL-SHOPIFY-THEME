@@ -292,11 +292,65 @@ button.shopify-payment-button__button--unbranded {
   }
 }
 
-/* Keep clear of the sticky add-to-cart bar on product pages. */
+/* --- Floating call button --------------------------------------------------- */
+/* Stacked directly above the WhatsApp button: 56px of button plus a 12px gap.
+   Gold rather than WhatsApp green on purpose -- two green circles would leave the
+   customer guessing which one calls. Brown on gold is 5.3:1, the same pairing the
+   cart bubble already uses. */
+.call-float {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: calc(max(16px, env(safe-area-inset-bottom)) + 68px);
+  z-index: 900; /* same layer as the WhatsApp button */
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #d9982f;
+  color: #3e2c10;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.22);
+  text-decoration: none;
+}
+
+.call-float:hover,
+.call-float:focus-visible {
+  background: #c4861f;
+  color: #3e2c10;
+}
+
+.call-float:focus-visible {
+  outline: 3px solid #fdfaf0;
+  outline-offset: 3px;
+}
+
+.call-float__icon {
+  display: block;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .call-float {
+    transition: background-color 180ms ease, transform 180ms ease;
+  }
+
+  .call-float:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* Keep clear of the sticky add-to-cart bar on product pages. Both buttons are
+   lifted by the same rule so the stack can never come apart: the call button keeps
+   its 68px clearance above the WhatsApp one. */
 @media screen and (max-width: 749px) {
   body:has(.product-form-buttons--sticky) .wa-float,
   body:has(sticky-add-to-cart) .wa-float {
     bottom: max(84px, calc(env(safe-area-inset-bottom) + 84px));
+  }
+
+  body:has(.product-form-buttons--sticky) .call-float,
+  body:has(sticky-add-to-cart) .call-float {
+    bottom: calc(max(84px, calc(env(safe-area-inset-bottom) + 84px)) + 68px);
   }
 }
 

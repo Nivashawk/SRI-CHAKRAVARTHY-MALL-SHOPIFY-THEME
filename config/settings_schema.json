@@ -2118,7 +2118,7 @@
     ]
   },
   {
-    "name": "WhatsApp",
+    "name": "WhatsApp & call buttons",
     "settings": [
       {
         "type": "paragraph",
@@ -2141,6 +2141,37 @@
         "id": "whatsapp_message",
         "label": "Pre-filled message",
         "default": "Hello, I would like to know more about your sarees."
+      },
+      {
+        "type": "header",
+        "content": "Call button"
+      },
+      {
+        "type": "paragraph",
+        "content": "A second floating button, stacked above the WhatsApp one, that calls the shop."
+      },
+      {
+        "type": "checkbox",
+        "id": "call_enabled",
+        "label": "Show the call button",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "call_number",
+        "label": "Number to call",
+        "info": "Leave blank to use the WhatsApp number above. Same format: country code and digits, e.g. 919876543210."
+      },
+      {
+        "type": "select",
+        "id": "call_mode",
+        "label": "Call type",
+        "info": "WhatsApp call needs a number on the WhatsApp Business Platform (Cloud API). It does NOT work on a free WhatsApp Business app number — use Phone call for that.",
+        "options": [
+          { "value": "phone", "label": "Phone call" },
+          { "value": "whatsapp", "label": "WhatsApp call" }
+        ],
+        "default": "phone"
       }
     ]
   }

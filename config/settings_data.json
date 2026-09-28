@@ -129,7 +129,10 @@
       "foreground": "#221E1A",
       "color1": "#D9982F",
       "color2": "#E7DFD2"
-    }
+    },
+    "call_enabled": true,
+    "call_number": "",
+    "call_mode": "phone"
   },
   "presets": {
     "Horizon": {
