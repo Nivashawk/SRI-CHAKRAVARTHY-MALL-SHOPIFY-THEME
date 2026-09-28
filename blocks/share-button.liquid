@@ -1,0 +1,229 @@
+{% doc %}
+  Share button.
+
+  Opens the device's native share sheet (WhatsApp, Instagram, Messages, mail --
+  whatever the customer has), falling back to copying the link where the Web Share
+  API is unavailable. Behaviour lives in assets/share-button.js.
+
+  Shares the canonical URL of the page it sits on, so it works on a product page
+  and anywhere else the block is placed.
+{% enddoc %}
+
+{%- liquid
+  assign block_settings = block.settings
+  assign product = closest.product
+
+  # canonical_url is the full absolute URL of the current page, which is what we
+  # want to hand to the share sheet. On a product page it is the product URL.
+  # shop.url + product.url is the fallback for contexts where it is unset.
+  assign share_url = canonical_url
+  if share_url == blank and product != blank
+    assign share_url = shop.url | append: product.url
+  endif
+
+  assign share_title = product.title | default: page_title | default: shop.name
+-%}
+
+{%- if share_url != blank -%}
+  <script src="{{ 'share-button.js' | asset_url }}" type="module" fetchpriority="low"></script>
+
+  <share-button
+    class="share-button spacing-style share-button--{{ block_settings.style }}"
+    style="{% render 'spacing-style', settings: block_settings %}--share-align: {{ block_settings.alignment }};"
+    data-url="{{ share_url }}"
+    data-title="{{ share_title | escape }}"
+    data-copied-label="{{ block_settings.copied_label | escape }}"
+    data-copy-prompt-label="{{ block_settings.copied_label | escape }}"
+    {{ block.shopify_attributes }}
+  >
+    <button
+      type="button"
+      class="share-button__trigger{% if block_settings.style != 'link' %} button{% endif %}{% if block_settings.style == 'outline' %} button-secondary{% endif %}{% if block_settings.full_width %} share-button__trigger--fill{% endif %}"
+      data-share-trigger
+    >
+      {%- comment -%} No share glyph ships with the theme, so it is inline here. {%- endcomment -%}
+      <svg
+        class="share-button__icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <circle cx="18" cy="5" r="3"></circle>
+        <circle cx="6" cy="12" r="3"></circle>
+        <circle cx="18" cy="19" r="3"></circle>
+        <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"></path>
+      </svg>
+      <span>{{ block_settings.label | default: 'Share' }}</span>
+    </button>
+
+    {%- comment -%}
+      aria-live so the copy fallback is announced, not just shown.
+    {%- endcomment -%}
+    <span class="share-button__feedback" data-share-feedback role="status" aria-live="polite"></span>
+  </share-button>
+{%- endif -%}
+
+{% stylesheet %}
+  .share-button {
+    display: flex;
+    align-items: center;
+    gap: var(--padding-xs, 8px);
+    justify-content: var(--share-align, flex-start);
+    flex-wrap: wrap;
+  }
+
+  .share-button__trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+
+  .share-button__trigger--fill {
+    width: 100%;
+  }
+
+  /* The plain-text variant: no button chrome, so it can sit under a stack of
+     real buttons without reading as a third call to action. */
+  .share-button--link .share-button__trigger {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  .share-button--link .share-button__trigger:hover {
+    opacity: 0.7;
+  }
+
+  .share-button__icon {
+    width: 1.1em;
+    height: 1.1em;
+    flex-shrink: 0;
+  }
+
+  .share-button__feedback {
+    font-size: var(--font-size--sm, 0.875rem);
+    color: var(--color-foreground-muted, inherit);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .share-button__feedback--visible {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .share-button__feedback {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Share button",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "default": "Share"
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Style",
+      "options": [
+        { "value": "link", "label": "Text link" },
+        { "value": "outline", "label": "Outlined button" },
+        { "value": "solid", "label": "Solid button" }
+      ],
+      "default": "outline"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "t:settings.alignment",
+      "options": [
+        { "value": "flex-start", "label": "t:options.left" },
+        { "value": "center", "label": "t:options.center" },
+        { "value": "flex-end", "label": "t:options.right" }
+      ],
+      "default": "flex-start"
+    },
+    {
+      "type": "text",
+      "id": "copied_label",
+      "label": "Copied confirmation",
+      "info": "Shown when the device cannot open a share sheet and the link is copied instead.",
+      "default": "Link copied"
+    },
+    {
+      "type": "header",
+      "content": "t:content.padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "t:settings.top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "t:settings.bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "t:settings.left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "t:settings.right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Share button"
+    }
+  ]
+}
+{% endschema %}
