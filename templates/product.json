@@ -35,16 +35,16 @@
           "type": "_product-media-gallery",
           "static": true,
           "settings": {
-            "media_presentation": "grid",
+            "media_presentation": "carousel",
             "media_columns": "one",
             "image_gap": 4,
             "large_first_image": false,
-            "icons_style": "arrow",
-            "slideshow_controls_style": "counter",
-            "slideshow_mobile_controls_style": "dots",
-            "thumbnail_position": "right",
-            "thumbnail_width": 44,
-            "thumbnail_radius": 0,
+            "icons_style": "chevron",
+            "slideshow_controls_style": "thumbnails",
+            "slideshow_mobile_controls_style": "thumbnails",
+            "thumbnail_position": "bottom",
+            "thumbnail_width": 72,
+            "thumbnail_radius": 15,
             "aspect_ratio": "adapt",
             "constrain_to_viewport": true,
             "media_fit": "contain",
@@ -53,7 +53,7 @@
             "zoom": true,
             "video_loop": false,
             "hide_variants": true,
-            "padding-block-start": 0,
+            "padding-block-start": 10,
             "padding-block-end": 0,
             "padding-inline-start": 0,
             "padding-inline-end": 0
@@ -307,6 +307,29 @@
               },
               "block_order": []
             },
+            "brite_try_on_virtual_tryon_NLQRya": {
+              "type": "shopify://apps/brite-try-on/blocks/virtual-tryon/01a0c8c7-3832-7208-847a-70a461015fb7",
+              "settings": {
+                "enabled": true,
+                "api_base_url": "https://altbriterai.brite.app",
+                "api_key": "",
+                "timeout_seconds": 90,
+                "session_limit": 5,
+                "prompt_allowlist": "",
+                "button_label": "Try it on",
+                "button_caption": "See this on you in seconds",
+                "button_style": "feature",
+                "button_width": "fill",
+                "max_width": 0,
+                "accent_color": "",
+                "accent_text_color": "",
+                "consent_text": "I agree to my photo being used to generate this preview.",
+                "privacy_notice": "Your photo is sent to our try-on service to create this image, and is not shown to anyone else.",
+                "privacy_url": "",
+                "padding_block_start": 8,
+                "padding_block_end": 8
+              }
+            },
             "text_aEtTtq": {
               "type": "text",
               "name": "t:names.product_description",
@@ -344,29 +367,6 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
-            },
-            "brite_try_on_virtual_tryon_NLQRya": {
-              "type": "shopify://apps/brite-try-on/blocks/virtual-tryon/01a0c8c7-3832-7208-847a-70a461015fb7",
-              "settings": {
-                "enabled": true,
-                "api_base_url": "https://altbriterai.brite.app",
-                "api_key": "",
-                "timeout_seconds": 90,
-                "session_limit": 5,
-                "prompt_allowlist": "",
-                "button_label": "Try it on",
-                "button_caption": "See this on you in seconds",
-                "button_style": "feature",
-                "button_width": "fill",
-                "max_width": 0,
-                "accent_color": "",
-                "accent_text_color": "",
-                "consent_text": "I agree to my photo being used to generate this preview.",
-                "privacy_notice": "Your photo is sent to our try-on service to create this image, and is not shown to anyone else.",
-                "privacy_url": "",
-                "padding_block_start": 8,
-                "padding_block_end": 8
-              }
             }
           },
           "block_order": [
