@@ -167,6 +167,24 @@ button.shopify-payment-button__button--unbranded {
   color: #6b4e10;
 }
 
+/* The Wishlist by Square app pins its heart to the top-LEFT of a product card,
+   which is exactly where the theme puts the Sold out / Sale badge, so the two sat
+   on top of each other -- and the heart won, being z-index 10 against the badge's
+   1. The badge stays left and the heart moves right, which is where shoppers
+   expect a wishlist control anyway.
+
+   !important is needed because the app sets `left` with !important of its own;
+   without it the declaration is ignored, `right: 0` applies alone, and the wrapper
+   stretches across the whole card. Scoped to .product-card so the wishlist button
+   on the product page itself is untouched.
+
+   App-owned class, so treat it as a moving target: if a wishlist heart ever
+   reappears over the badge, the app has renamed Vtl-WishlistIcon__Wrapper. */
+.product-card .Vtl-WishlistIcon__Wrapper {
+  left: auto !important;
+  right: 0 !important;
+}
+
 /* Weave label above the product title. */
 .card-weave {
   display: block;
