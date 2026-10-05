@@ -1,0 +1,47 @@
+{% doc %}
+  The sign-in popup.
+
+  Rendered once per page from layout/theme.liquid so the header's account icon
+  can open it anywhere, without the customer losing the page they were on.
+
+  A native <dialog>: the browser gives focus trapping, Esc to close, inertness
+  of the page behind, and the ::backdrop pseudo-element. Hand-rolled modals get
+  all four of those wrong sooner or later.
+
+  assets/account.js fills [data-account-body] with the same sign-in screens the
+  account page uses, so there is one implementation, not two.
+{% enddoc %}
+
+{% liquid
+  assign account_mode = settings.account_mode | default: 'shopify'
+  if account_mode != 'custom'
+    break
+  endif
+%}
+
+{% if account_mode == 'custom' %}
+  <dialog class="scm-dialog" data-login-dialog aria-labelledby="scm-dialog-title">
+    <form method="dialog" class="scm-dialog__dismiss">
+      <button class="scm-dialog__close" value="close" aria-label="{{ 'accessibility.close_dialog' | t | default: 'Close' }}">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+          <path d="M1 1L15 15M15 1L1 15" stroke="currentColor" stroke-width="1.5" />
+        </svg>
+      </button>
+    </form>
+
+    <div
+      class="scm-dialog__body"
+      data-account-area
+      data-account-popup
+      data-api-base="{{ settings.account_api_base | default: 'https://altbriterai.brite.app' }}"
+      data-account-page-url="{{ settings.account_page_url | default: '/pages/account' }}"
+    >
+      <div data-account-body>
+        <noscript>
+          <h2 class="scm-account__title" id="scm-dialog-title">{{ 'account.signin_title' | t }}</h2>
+          <p class="scm-account__lead">{{ 'account.signin_noscript' | t }}</p>
+        </noscript>
+      </div>
+    </div>
+  </dialog>
+{% endif %}

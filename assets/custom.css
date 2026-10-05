@@ -462,3 +462,373 @@ button.shopify-payment-button__button--unbranded {
     padding-block-end: 44px;
   }
 }
+
+/* --- Customer account: sign-in popup and account screens -------------------
+
+   These live here rather than in sections/main-account.liquid because the
+   sign-in popup is rendered from layout/theme.liquid on every page, while a
+   section's stylesheet only loads on the page that uses it.
+
+   Colours are written out rather than taken from theme variables: this theme
+   has no --font-size-h3, and an earlier version fell back to body size because
+   of it. The values and their contrast ratios are the ones documented at the
+   top of this file.
+
+   Class names all carry the scm- prefix. `.account-button` belongs to the
+   theme's own header, which sets it transparent — reusing that name silently
+   stripped the gold off the submit button once already. */
+
+.scm-account,
+.scm-dialog {
+  --scm-ivory: #fdfaf0;
+  --scm-ink: #221e1a;
+  --scm-gold-text: #6b4e10; /* 7.39:1 on ivory */
+  --scm-gold-rule: #9a6b17; /* 4.48:1 — hairlines and icons only */
+  --scm-gold-fill: #d9982f; /* decorative; never as text on ivory */
+  --scm-measure: 26rem;
+}
+
+.scm-account__title {
+  max-width: var(--scm-measure);
+  margin: 0;
+  font-family: var(--font-heading--family, 'Cormorant', Georgia, serif);
+  font-weight: 600;
+  font-size: clamp(1.875rem, 4vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--scm-ink);
+  text-wrap: balance;
+}
+
+.scm-account__lead {
+  max-width: var(--scm-measure);
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--scm-ink);
+  opacity: 0.75; /* 7.08:1 on ivory */
+}
+
+.scm-account__form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  max-width: var(--scm-measure);
+  margin-block-start: 4px;
+}
+
+.scm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.scm-field__label {
+  font-size: 0.875rem;
+  color: var(--scm-gold-text);
+}
+
+.scm-field__input {
+  min-height: 52px;
+  padding: 12px 16px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--scm-ink);
+  background: #fff;
+  border: 1px solid rgb(34 30 26 / 28%);
+  border-radius: 4px;
+}
+
+.scm-field__input::placeholder {
+  color: rgb(34 30 26 / 45%);
+}
+
+.scm-field__input:focus-visible {
+  outline: 2px solid var(--scm-gold-rule);
+  outline-offset: 2px;
+  border-color: var(--scm-gold-rule);
+}
+
+.scm-field__input--code {
+  font-size: 1.75rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5em;
+  text-indent: 0.5em; /* keeps the tracking from pushing digits off-centre */
+  text-align: center;
+}
+
+.scm-button {
+  min-height: 52px;
+  padding: 14px 28px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--scm-ink); /* 6.69:1 on the gold; white would be 2.5:1 */
+  background: var(--scm-gold-fill);
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.scm-button:hover {
+  background: #c9892a;
+}
+
+.scm-button:focus-visible {
+  outline: 2px solid var(--scm-ink);
+  outline-offset: 2px;
+}
+
+.scm-button[disabled] {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.scm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 24px;
+  max-width: var(--scm-measure);
+}
+
+.scm-actions--stacked {
+  flex-direction: column;
+  gap: 14px;
+  margin-block-start: 12px;
+  padding-block-start: 22px;
+  border-block-start: 1px solid rgb(34 30 26 / 15%);
+}
+
+.scm-link {
+  align-self: flex-start;
+  min-height: 44px;
+  padding: 0;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  color: var(--scm-gold-text);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.scm-link--quiet {
+  color: var(--scm-ink);
+  opacity: 0.75;
+}
+
+.scm-link:focus-visible {
+  outline: 2px solid var(--scm-gold-rule);
+  outline-offset: 3px;
+}
+
+.scm-error {
+  max-width: var(--scm-measure);
+  margin: 0;
+  padding: 12px 16px;
+  font-size: 0.9375rem;
+  color: #7a1f12;
+  background: #fbede7;
+  border-inline-start: 3px solid #7a1f12;
+}
+
+.scm-note {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: #2f5d3a;
+}
+
+.scm-demo {
+  max-width: var(--scm-measure);
+  margin: 0 0 4px;
+  padding: 12px 16px;
+  font-size: 0.875rem;
+  color: #5a3e00;
+  background: #fff4d6;
+  border: 1px dashed var(--scm-gold-rule);
+}
+
+/* --- the popup --- */
+
+.scm-dialog {
+  width: min(29rem, calc(100vw - 32px));
+  max-width: none;
+  padding: 0;
+  color: var(--scm-ink);
+  background: var(--scm-ivory);
+  border: none;
+  border-radius: 2px;
+  box-shadow: 0 24px 60px rgb(34 30 26 / 22%);
+}
+
+.scm-dialog::backdrop {
+  background: rgb(27 26 22 / 55%);
+  backdrop-filter: blur(2px);
+}
+
+.scm-dialog__body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 40px clamp(24px, 5vw, 40px) 36px;
+}
+
+/* One gold hairline under the heading, as a seam rather than a flourish. */
+.scm-dialog__body .scm-account__title {
+  padding-block-end: 16px;
+  border-block-end: 1px solid rgb(154 107 23 / 35%);
+}
+
+.scm-dialog__dismiss {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  margin: 0;
+}
+
+.scm-dialog__close {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  color: var(--scm-ink);
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.scm-dialog__close:hover {
+  opacity: 1;
+}
+
+.scm-dialog__close:focus-visible {
+  outline: 2px solid var(--scm-gold-rule);
+  outline-offset: -4px;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .scm-dialog[open] {
+    animation: scm-dialog-in 180ms ease-out;
+  }
+}
+
+@keyframes scm-dialog-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* On a phone it sits at the bottom, within thumb reach. */
+@media screen and (max-width: 749px) {
+  .scm-dialog {
+    width: 100vw;
+    margin: auto auto 0;
+    border-radius: 2px 2px 0 0;
+  }
+}
+
+/* --- the account page (signed in: profile, orders) --- */
+
+.scm-account {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+  max-width: 44rem;
+  margin-inline: auto;
+  padding-block: 56px 72px;
+  padding-inline: 24px;
+}
+
+.scm-nav {
+  display: flex;
+  gap: 2px;
+  margin-block-end: 4px;
+  border-block-end: 1px solid rgb(34 30 26 / 15%);
+}
+
+.scm-tab {
+  min-height: 44px;
+  padding: 0 18px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--scm-ink);
+  opacity: 0.75;
+  background: none;
+  border: none;
+  border-block-end: 2px solid transparent;
+  cursor: pointer;
+}
+
+.scm-tab--current {
+  opacity: 1;
+  font-weight: 600;
+  color: var(--scm-gold-text);
+  border-block-end-color: var(--scm-gold-rule);
+}
+
+.scm-tab:focus-visible {
+  outline: 2px solid var(--scm-gold-rule);
+  outline-offset: -2px;
+}
+
+.scm-orders {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scm-order {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 18px 20px;
+  background: #fff;
+  border: 1px solid rgb(34 30 26 / 14%);
+}
+
+.scm-order__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.scm-order__number {
+  font-weight: 600;
+}
+
+.scm-order__status {
+  font-size: 0.875rem;
+  color: var(--scm-gold-text);
+}
+
+.scm-order__meta {
+  margin: 0;
+  font-size: 0.9375rem;
+  opacity: 0.75;
+}
+
+.scm-order__items {
+  margin: 0;
+  padding-inline-start: 1.1em;
+  font-size: 0.9375rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .scm-step {
+    animation: scm-step-in 200ms ease-out;
+  }
+}
+
+@keyframes scm-step-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

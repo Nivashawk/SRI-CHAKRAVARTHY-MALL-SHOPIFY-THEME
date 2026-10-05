@@ -173,6 +173,13 @@
 
     {% render 'search-modal' %}
 
+    {% comment %}
+      The sign-in popup. Rendered on every page so the header's account icon can
+      open it without the customer losing their place; it renders nothing unless
+      the phone sign-in is switched on in Theme settings → Customer account.
+    {% endcomment %}
+    {% render 'scm-login-dialog' %}
+
     {% if settings.quick_add or settings.mobile_quick_add %}
       {% render 'quick-add-modal' %}
     {% endif %}

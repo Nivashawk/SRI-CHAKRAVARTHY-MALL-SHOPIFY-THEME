@@ -2199,6 +2199,13 @@
         "label": "Account page",
         "default": "/pages/account",
         "info": "The page using the Customer account template. Only used when Phone sign-in is selected."
+      },
+      {
+        "type": "text",
+        "id": "account_api_base",
+        "label": "Odoo address",
+        "default": "https://altbriterai.brite.app",
+        "info": "Used by the sign-in popup. No trailing slash. Odoo must allow this store's domain (CORS) or every request fails."
       }
     ]
   }

@@ -8,6 +8,7 @@ import {
   isMockMode,
   sessionFromTokens,
   displayName,
+  shouldOpenSignInPopup,
 } from '../assets/account.js';
 
 // The account area runs entirely in the browser and talks straight to Odoo.
@@ -155,6 +156,26 @@ describe('displayName — Odoo defaults a new customer’s name to their phone n
     expect(displayName({ name: '', phone: '+91882' })).toBeNull();
     expect(displayName({ phone: '+91882' })).toBeNull();
     expect(displayName(null)).toBeNull();
+  });
+});
+
+describe('shouldOpenSignInPopup — what the header account icon does', () => {
+  const NOW = 1790000000000;
+  const live = { expiresAt: NOW + 600_000 };
+
+  it('opens the popup when nobody is signed in', () => {
+    expect(shouldOpenSignInPopup(null, NOW)).toBe(true);
+    expect(shouldOpenSignInPopup({ expiresAt: NOW - 1 }, NOW)).toBe(true);
+  });
+
+  it('lets the click through to the account page when signed in', () => {
+    expect(shouldOpenSignInPopup(live, NOW)).toBe(false);
+  });
+
+  it('lets the click through when the session only needs refreshing', () => {
+    // Still signed in; the account page renews the token on load. Interrupting
+    // with a sign-in popup here would be wrong.
+    expect(shouldOpenSignInPopup({ expiresAt: NOW + 30_000 }, NOW)).toBe(false);
   });
 });
 

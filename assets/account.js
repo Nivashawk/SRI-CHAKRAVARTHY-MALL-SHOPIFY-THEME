@@ -104,6 +104,21 @@ export function errorMessage(code) {
 }
 
 /**
+ * What the header's account icon should do when clicked.
+ *
+ * Signed out, it opens the sign-in popup over whatever the customer was
+ * looking at — most people sign in part-way through shopping, and sending
+ * them to another page loses their place. Signed in, the click goes through
+ * to the account page as an ordinary link.
+ *
+ * A session that merely needs refreshing is still a session: the account page
+ * renews it on load, so interrupting with a sign-in box would be wrong.
+ */
+export function shouldOpenSignInPopup(session, now = Date.now()) {
+  return sessionState(session, now) === 'expired';
+}
+
+/**
  * Demo mode, switched on by ?mock=1 in the URL.
  *
  * In demo mode nothing leaves the browser: no request reaches Odoo and no SMS
@@ -453,8 +468,15 @@ const FIELDS = [
 ];
 
 class AccountArea {
-  constructor(root) {
+  /**
+   * @param {HTMLElement} root - the container holding [data-account-body]
+   * @param {{popup?: boolean}} [options] - popup mode renders only the
+   *   sign-in screens; profile and orders belong on the account page, which
+   *   has the room for them.
+   */
+  constructor(root, { popup = false } = {}) {
     this.root = root;
+    this.popup = popup;
     this.body = root.querySelector('[data-account-body]') ?? root;
     this.mock = isMockMode(window.location.search);
     this.api = new OdooAccountApi({
@@ -479,7 +501,25 @@ class AccountArea {
       this.session = sessionFromTokens(refreshed.data);
       writeSession(this.session);
     }
+    if (this.popup) return this.showSignedInPrompt();
     return this.showAccount();
+  }
+
+  /**
+   * What the popup shows to someone already signed in — which happens when
+   * they open it from a second tab, or after signing in here.
+   */
+  showSignedInPrompt() {
+    const name = displayName(this.session.profile);
+    this.render(`
+      <h2 class="scm-account__title">${name ? `Hello, ${escapeHtml(name.split(' ')[0])}` : 'You are signed in'}</h2>
+      <p class="scm-account__lead">Your orders and details are in your account.</p>
+      <a class="scm-button" href="${escapeHtml(accountPageUrl())}" style="text-align:center;text-decoration:none;display:inline-grid;place-items:center;">Go to my account</a>
+      <div class="scm-actions">
+        <button class="scm-link" type="button" data-action="signout">Sign out</button>
+      </div>
+    `);
+    this.body.querySelector('[data-action="signout"]').addEventListener('click', () => this.signOut(false));
   }
 
   /* -- rendering -- */
@@ -621,6 +661,15 @@ class AccountArea {
 
     this.session = sessionFromTokens(result.data);
     writeSession(this.session);
+
+    if (this.popup) {
+      // Signed in mid-browse: close the popup and leave the customer where
+      // they were, rather than marching them off to an account page they
+      // did not ask for. The header updates itself on the next load.
+      this.showSignedInPrompt();
+      window.setTimeout(() => this.root.closest('dialog')?.close(), 1200);
+      return;
+    }
     this.showAccount();
   }
 
@@ -833,12 +882,58 @@ function deviceName() {
   return 'Browser';
 }
 
-/* --- boot ---------------------------------------------------------------- */
+/** Where the account page lives, as set in the theme settings. */
+function accountPageUrl() {
+  return document.querySelector('[data-account-page-url]')?.dataset.accountPageUrl || '/pages/account';
+}
+
+/* --- boot ----------------------------------------------------------------
+
+   Two things mount here:
+
+   * the account page, when one is on screen; and
+   * the sign-in popup, which lives in the layout on every page.
+
+   The header's account icon stays an ordinary link, so with JavaScript off,
+   or before this file loads, it still goes somewhere useful. The click is
+   intercepted only when nobody is signed in, and only to open the popup over
+   the page the customer is already on.
+   -------------------------------------------------------------------------- */
 
 if (typeof document !== 'undefined') {
   const boot = () => {
-    const root = document.querySelector('[data-account-area]');
-    if (root) new AccountArea(root).start();
+    for (const root of document.querySelectorAll('[data-account-area]')) {
+      const popup = root.hasAttribute('data-account-popup');
+      // The popup is filled when it opens, not on page load: no customer
+      // should pay for a sign-in screen they never look at.
+      if (!popup) new AccountArea(root).start();
+    }
+
+    const dialog = document.querySelector('[data-login-dialog]');
+    if (!dialog || typeof dialog.showModal !== 'function') return;
+
+    const dialogRoot = dialog.querySelector('[data-account-area]');
+    let area = null;
+
+    const open = () => {
+      area ??= new AccountArea(dialogRoot, { popup: true });
+      area.session = readSession();
+      area.start();
+      dialog.showModal();
+    };
+
+    for (const link of document.querySelectorAll('.account-button__link')) {
+      link.addEventListener('click', (event) => {
+        if (!shouldOpenSignInPopup(readSession())) return; // signed in: follow the link
+        event.preventDefault();
+        open();
+      });
+    }
+
+    // Clicking the dark area outside the card closes it, as people expect.
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
   };
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot, { once: true });
