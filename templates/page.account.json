@@ -3,7 +3,8 @@
     "account": {
       "type": "main-account",
       "settings": {
-        "api_base_url": "https://altbriterai.brite.app"
+        "api_base_url": "https://altbriterai.brite.app",
+        "border_crop": "center"
       }
     }
   },

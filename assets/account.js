@@ -455,6 +455,7 @@ const FIELDS = [
 class AccountArea {
   constructor(root) {
     this.root = root;
+    this.body = root.querySelector('[data-account-body]') ?? root;
     this.mock = isMockMode(window.location.search);
     this.api = new OdooAccountApi({
       baseUrl: root.dataset.apiBase,
@@ -483,12 +484,22 @@ class AccountArea {
 
   /* -- rendering -- */
 
-  render(html) {
+  /**
+   * Draw a step into the body column.
+   *
+   * Writes into `[data-account-body]`, never into the root — the root also
+   * holds the woven border, which must survive every re-render.
+   *
+   * `signedIn` narrows the border to a hairline: the door carries the weave,
+   * the room behind it does not, and the account screens want the width.
+   */
+  render(html, { signedIn = false } = {}) {
     const banner = this.mock
-      ? `<p class="account-demo" role="status">Demo mode — no real message is sent. The code is 123456. Remove <code>?mock=1</code> from the address to use the live sign-in.</p>`
+      ? `<p class="scm-demo" role="status">Demo mode — no real message is sent. The code is 123456. Remove <code>?mock=1</code> from the address to use the live sign-in.</p>`
       : '';
-    this.root.innerHTML = banner + html;
-    const focusTarget = this.root.querySelector('[data-autofocus]');
+    this.root.classList.toggle('scm-account--in', signedIn);
+    this.body.innerHTML = `<div class="scm-step">${banner}${html}</div>`;
+    const focusTarget = this.body.querySelector('[data-autofocus]');
     if (focusTarget) focusTarget.focus();
   }
 
@@ -500,7 +511,7 @@ class AccountArea {
   }
 
   showError(message) {
-    const slot = this.root.querySelector('[data-error]');
+    const slot = this.body.querySelector('[data-error]');
     if (!slot) return;
     slot.textContent = message ?? '';
     slot.hidden = !message;
@@ -508,23 +519,21 @@ class AccountArea {
 
   showSignIn(prefill = '') {
     this.render(`
-      <div class="account-card">
-        <h1 class="account-card__title">Sign in</h1>
-        <p class="account-card__lead">Enter your mobile number and we'll send you a code.</p>
-        <form class="account-form" data-form="signin" novalidate>
-          <label class="account-field">
-            <span class="account-field__label">Mobile number or email</span>
-            <input class="account-field__input" name="identifier" type="text"
-                   inputmode="tel" autocomplete="tel" value="${escapeHtml(prefill)}"
-                   placeholder="98765 43210" data-autofocus required>
-          </label>
-          <p class="account-error" data-error hidden></p>
-          <button class="account-button" type="submit">Send code</button>
-        </form>
-      </div>
+      <h1 class="scm-account__title">Welcome back</h1>
+      <p class="scm-account__lead">Sign in with your mobile number.</p>
+      <form class="scm-account__form" data-form="signin" novalidate>
+        <label class="scm-field">
+          <span class="scm-field__label">Mobile number or email</span>
+          <input class="scm-field__input" name="identifier" type="text"
+                 inputmode="tel" autocomplete="tel" value="${escapeHtml(prefill)}"
+                 placeholder="98765 43210" data-autofocus required>
+        </label>
+        <p class="scm-error" data-error hidden></p>
+        <button class="scm-button" type="submit">Send code</button>
+      </form>
     `);
 
-    const form = this.root.querySelector('[data-form="signin"]');
+    const form = this.body.querySelector('[data-form="signin"]');
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       this.submitIdentifier(form);
@@ -555,27 +564,25 @@ class AccountArea {
       this.identifier.kind === 'phone' ? maskPhone(this.identifier.value) : this.identifier.value;
 
     this.render(`
-      <div class="account-card">
-        <h1 class="account-card__title">Enter the code</h1>
-        <p class="account-card__lead">We sent a ${CODE_LENGTH}-digit code to ${escapeHtml(sentTo)}.</p>
-        <form class="account-form" data-form="code" novalidate>
-          <label class="account-field">
-            <span class="account-field__label">Code</span>
-            <input class="account-field__input account-field__input--code" name="code"
-                   type="text" inputmode="numeric" autocomplete="one-time-code"
-                   maxlength="${CODE_LENGTH}" pattern="[0-9]*" data-autofocus required>
-          </label>
-          <p class="account-error" data-error hidden></p>
-          <button class="account-button" type="submit">Sign in</button>
-          <div class="account-actions">
-            <button class="account-link" type="button" data-action="resend">Send a new code</button>
-            <button class="account-link" type="button" data-action="change">Use a different number</button>
-          </div>
-        </form>
-      </div>
+      <h1 class="scm-account__title">Enter the code</h1>
+      <p class="scm-account__lead">We sent a ${CODE_LENGTH}-digit code to ${escapeHtml(sentTo)}.</p>
+      <form class="scm-account__form" data-form="code" novalidate>
+        <label class="scm-field">
+          <span class="scm-field__label">Code</span>
+          <input class="scm-field__input scm-field__input--code" name="code"
+                 type="text" inputmode="numeric" autocomplete="one-time-code"
+                 maxlength="${CODE_LENGTH}" pattern="[0-9]*" data-autofocus required>
+        </label>
+        <p class="scm-error" data-error hidden></p>
+        <button class="scm-button" type="submit">Sign in</button>
+        <div class="scm-actions">
+          <button class="scm-link" type="button" data-action="resend">Send a new code</button>
+          <button class="scm-link" type="button" data-action="change">Use a different number</button>
+        </div>
+      </form>
     `);
 
-    const form = this.root.querySelector('[data-form="code"]');
+    const form = this.body.querySelector('[data-form="code"]');
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       this.submitCode(form);
@@ -618,7 +625,7 @@ class AccountArea {
   }
 
   async showAccount(tab = 'profile') {
-    this.render('<div class="account-card"><p class="account-card__lead">Loading your account…</p></div>');
+    this.render('<p class="scm-account__lead">Loading your account…</p>', { signedIn: true });
 
     const result = await this.api.profile(this.session.accessToken);
     if (!result.ok) {
@@ -636,14 +643,14 @@ class AccountArea {
 
   navHtml(current) {
     const tab = (key, label) =>
-      `<button class="account-tab${current === key ? ' account-tab--current' : ''}"
+      `<button class="scm-tab${current === key ? ' account-tab--current' : ''}"
                type="button" data-tab="${key}"
                ${current === key ? 'aria-current="page"' : ''}>${label}</button>`;
-    return `<nav class="account-nav" aria-label="Account">${tab('profile', 'Profile')}${tab('orders', 'Orders')}</nav>`;
+    return `<nav class="scm-nav" aria-label="Account">${tab('profile', 'Profile')}${tab('orders', 'Orders')}</nav>`;
   }
 
   wireNav() {
-    for (const button of this.root.querySelectorAll('[data-tab]')) {
+    for (const button of this.body.querySelectorAll('[data-tab]')) {
       button.addEventListener('click', () => {
         const tab = button.dataset.tab;
         if (tab === 'orders') this.showOrders(this.session.profile);
@@ -654,12 +661,10 @@ class AccountArea {
 
   async showOrders(profile) {
     this.render(`
-      <div class="account-card">
-        ${this.navHtml('orders')}
-        <h1 class="account-card__title">Your orders</h1>
-        <p class="account-card__lead">Loading…</p>
-      </div>
-    `);
+      ${this.navHtml('orders')}
+      <h1 class="scm-account__title">Your orders</h1>
+      <p class="scm-account__lead">Loading…</p>
+    `, { signedIn: true });
     this.wireNav();
 
     const result = await this.api.orders(this.session.accessToken);
@@ -671,30 +676,28 @@ class AccountArea {
     let body;
     if (notBuilt) {
       body = `
-        <p class="account-card__lead">Order history is being connected. In the meantime we can look up
+        <p class="scm-account__lead">Order history is being connected. In the meantime we can look up
         any order for you — message us on WhatsApp or call the shop and we'll help.</p>`;
     } else if (!result.ok) {
-      body = `<p class="account-error">${escapeHtml(errorMessage(result.code))}</p>`;
+      body = `<p class="scm-error">${escapeHtml(errorMessage(result.code))}</p>`;
     } else {
       const orders = result.data.orders ?? [];
       body = orders.length === 0
-        ? `<p class="account-card__lead">You haven't placed an order yet.</p>`
-        : `<ul class="account-orders">${orders.map((order) => this.orderHtml(order)).join('')}</ul>`;
+        ? `<p class="scm-account__lead">You haven't placed an order yet.</p>`
+        : `<ul class="scm-orders">${orders.map((order) => this.orderHtml(order)).join('')}</ul>`;
     }
 
     this.render(`
-      <div class="account-card">
-        ${this.navHtml('orders')}
-        <h1 class="account-card__title">Your orders</h1>
-        ${body}
-      </div>
-    `);
+      ${this.navHtml('orders')}
+      <h1 class="scm-account__title">Your orders</h1>
+      ${body}
+    `, { signedIn: true });
     this.wireNav();
   }
 
   orderHtml(order) {
     const tracking = order.tracking?.url
-      ? `<a class="account-link" href="${escapeHtml(order.tracking.url)}" target="_blank" rel="noopener">
+      ? `<a class="scm-link" href="${escapeHtml(order.tracking.url)}" target="_blank" rel="noopener">
            Track with ${escapeHtml(order.tracking.carrier ?? 'the courier')}
          </a>`
       : '';
@@ -704,16 +707,16 @@ class AccountArea {
       .join('');
 
     return `
-      <li class="account-order">
-        <div class="account-order__head">
-          <span class="account-order__number">${escapeHtml(order.number ?? '')}</span>
-          <span class="account-order__status">${escapeHtml(orderStatusLabel(order.status))}</span>
+      <li class="scm-order">
+        <div class="scm-order__head">
+          <span class="scm-order__number">${escapeHtml(order.number ?? '')}</span>
+          <span class="scm-order__status">${escapeHtml(orderStatusLabel(order.status))}</span>
         </div>
-        <p class="account-order__meta">
+        <p class="scm-order__meta">
           ${escapeHtml(formatOrderDate(order.placed_at))} ·
           ${escapeHtml(formatMoney(order.total, order.currency))}
         </p>
-        ${items ? `<ul class="account-order__items">${items}</ul>` : ''}
+        ${items ? `<ul class="scm-order__items">${items}</ul>` : ''}
         ${tracking}
       </li>
     `;
@@ -727,49 +730,47 @@ class AccountArea {
       : `${escapeHtml(profile.phone ?? '')} — add your name below so we know who to address.`;
 
     this.render(`
-      <div class="account-card">
-        ${this.navHtml('profile')}
-        <h1 class="account-card__title">${greeting}</h1>
-        <p class="account-card__lead">${lead}</p>
+      ${this.navHtml('profile')}
+      <h1 class="scm-account__title">${greeting}</h1>
+      <p class="scm-account__lead">${lead}</p>
 
-        <form class="account-form" data-form="profile" novalidate>
-          ${FIELDS.map((field) => {
-            // Leave Name empty rather than pre-filling the phone number Odoo
-            // used as a placeholder — otherwise the customer has to delete
-            // their own number before they can type their name.
-            const value = field.key === 'name' ? (name ?? '') : (profile[field.key] ?? '');
-            return `
-            <label class="account-field">
-              <span class="account-field__label">${field.label}</span>
-              <input class="account-field__input" name="${field.key}" type="${field.type}"
-                     autocomplete="${field.autocomplete}"
-                     ${field.inputmode ? `inputmode="${field.inputmode}"` : ''}
-                     value="${escapeHtml(value)}">
-            </label>
-          `;
-          }).join('')}
-          <p class="account-error" data-error hidden></p>
-          <p class="account-note" data-saved hidden>Saved.</p>
-          <button class="account-button" type="submit">Save changes</button>
-        </form>
+      <form class="scm-account__form" data-form="profile" novalidate>
+        ${FIELDS.map((field) => {
+          // Leave Name empty rather than pre-filling the phone number Odoo
+          // used as a placeholder — otherwise the customer has to delete
+          // their own number before they can type their name.
+          const value = field.key === 'name' ? (name ?? '') : (profile[field.key] ?? '');
+          return `
+          <label class="scm-field">
+            <span class="scm-field__label">${field.label}</span>
+            <input class="scm-field__input" name="${field.key}" type="${field.type}"
+                   autocomplete="${field.autocomplete}"
+                   ${field.inputmode ? `inputmode="${field.inputmode}"` : ''}
+                   value="${escapeHtml(value)}">
+          </label>
+        `;
+        }).join('')}
+        <p class="scm-error" data-error hidden></p>
+        <p class="scm-note" data-saved hidden>Saved.</p>
+        <button class="scm-button" type="submit">Save changes</button>
+      </form>
 
-        <div class="account-actions account-actions--stacked">
-          <button class="account-link" type="button" data-action="signout">Sign out</button>
-          <button class="account-link" type="button" data-action="signout-all">Sign out on all devices</button>
-          <button class="account-link account-link--quiet" type="button" data-action="delete">Delete my account</button>
-        </div>
+      <div class="scm-actions scm-actions--stacked">
+        <button class="scm-link" type="button" data-action="signout">Sign out</button>
+        <button class="scm-link" type="button" data-action="signout-all">Sign out on all devices</button>
+        <button class="scm-link scm-link--quiet" type="button" data-action="delete">Delete my account</button>
       </div>
-    `);
+    `, { signedIn: true });
 
-    const form = this.root.querySelector('[data-form="profile"]');
+    const form = this.body.querySelector('[data-form="profile"]');
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       this.saveProfile(form);
     });
     this.wireNav();
-    this.root.querySelector('[data-action="signout"]').addEventListener('click', () => this.signOut(false));
-    this.root.querySelector('[data-action="signout-all"]').addEventListener('click', () => this.signOut(true));
-    this.root.querySelector('[data-action="delete"]').addEventListener('click', () => this.deleteAccount());
+    this.body.querySelector('[data-action="signout"]').addEventListener('click', () => this.signOut(false));
+    this.body.querySelector('[data-action="signout-all"]').addEventListener('click', () => this.signOut(true));
+    this.body.querySelector('[data-action="delete"]').addEventListener('click', () => this.deleteAccount());
   }
 
   async saveProfile(form) {
@@ -791,7 +792,7 @@ class AccountArea {
     this.session.profile = result.data.profile ?? { ...this.session.profile, ...fields };
     writeSession(this.session);
 
-    const saved = this.root.querySelector('[data-saved]');
+    const saved = this.body.querySelector('[data-saved]');
     saved.hidden = false;
     window.setTimeout(() => { saved.hidden = true; }, 3000);
   }
