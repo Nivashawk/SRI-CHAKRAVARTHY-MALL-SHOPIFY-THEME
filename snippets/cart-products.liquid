@@ -58,9 +58,22 @@
   "
 >
   {% if cart.empty? or force_empty %}
-    {%- if shop.customer_accounts_enabled and customer == null -%}
+    {%- liquid
+      # Point the sign-in nudge at whichever account area is switched on.
+      # See settings_schema.json → Customer account.
+      assign account_mode = settings.account_mode | default: 'shopify'
+      assign cart_account_url = routes.account_login_url
+      if account_mode == 'custom'
+        assign cart_account_url = settings.account_page_url | default: '/pages/account'
+      endif
+    -%}
+    {%- if account_mode == 'custom' -%}
       <p>
-        {{ 'actions.log_in_html' | t: link: routes.account_login_url }}
+        {{ 'actions.log_in_html' | t: link: cart_account_url }}
+      </p>
+    {%- elsif account_mode == 'shopify' and shop.customer_accounts_enabled and customer == null -%}
+      <p>
+        {{ 'actions.log_in_html' | t: link: cart_account_url }}
       </p>
     {%- endif -%}
 
