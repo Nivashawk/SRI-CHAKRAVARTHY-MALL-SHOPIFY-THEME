@@ -2174,5 +2174,32 @@
         "default": "phone"
       }
     ]
+  },
+  {
+    "name": "Customer account",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Which account the header, cart and menus link to. Leave this on Shopify's own accounts until the phone sign-in has been tested on a preview theme."
+      },
+      {
+        "type": "select",
+        "id": "account_mode",
+        "label": "Account area",
+        "options": [
+          { "value": "shopify", "label": "Shopify's own accounts" },
+          { "value": "custom", "label": "Phone sign-in on this store" },
+          { "value": "hidden", "label": "No account link" }
+        ],
+        "default": "shopify"
+      },
+      {
+        "type": "text",
+        "id": "account_page_url",
+        "label": "Account page",
+        "default": "/pages/account",
+        "info": "The page using the Customer account template. Only used when Phone sign-in is selected."
+      }
+    ]
   }
 ]

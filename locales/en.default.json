@@ -8,6 +8,10 @@
  * ------------------------------------------------------------
  */
 {
+  "account": {
+    "signin_title": "Sign in",
+    "signin_noscript": "Signing in needs JavaScript. Please turn it on, or call us and we'll help."
+  },
   "accessibility": {
     "account": "Account",
     "active_filters": "Active filters:",

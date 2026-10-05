@@ -1,0 +1,295 @@
+{% comment %}
+  The customer account area.
+
+  Everything inside is rendered by assets/account.js, which talks straight to
+  Odoo — the shop's identity provider, shared with their POS, rewards and
+  invoicing. Shopify's own customer accounts are not used here: on this plan
+  they cannot accept an outside login, and they always require an email, which
+  a phone-first customer may not have.
+
+  The markup below is only the shell and the no-JavaScript fallback.
+{% endcomment %}
+
+<div
+  class="account-area section-spacing"
+  data-account-area
+  data-api-base="{{ section.settings.api_base_url }}"
+>
+  <noscript>
+    <div class="account-card">
+      <h1 class="account-card__title">{{ 'account.signin_title' | t }}</h1>
+      <p class="account-card__lead">{{ 'account.signin_noscript' | t }}</p>
+    </div>
+  </noscript>
+</div>
+
+<script src="{{ 'account.js' | asset_url }}" type="module"></script>
+
+{% stylesheet %}
+  /* Scoped to the account area so nothing here can reach the rest of the
+     storefront. Colours come from the theme's own tokens — see assets/custom.css
+     for why the gold is #6B4E10 as text rather than the decorative #D9982F. */
+  .account-area {
+    display: flex;
+    justify-content: center;
+    padding-inline: 16px;
+  }
+
+  .account-card {
+    width: 100%;
+    max-width: 30rem;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .account-card__title {
+    font-family: var(--font-heading--family);
+    font-weight: var(--font-heading--weight);
+    font-size: var(--font-size-h3);
+    color: var(--color-foreground);
+    margin: 0;
+  }
+
+  .account-card__lead {
+    margin: 0;
+    color: var(--color-foreground);
+    opacity: var(--opacity-muted-text, 0.75);
+  }
+
+  .account-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-block-start: 8px;
+  }
+
+  .account-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .account-field__label {
+    font-size: var(--font-size-sm);
+    color: var(--color-foreground);
+    opacity: var(--opacity-muted-text, 0.75);
+  }
+
+  .account-field__input {
+    min-height: var(--minimum-touch-target, 44px);
+    padding: 10px 14px;
+    font-family: var(--font-body--family);
+    font-size: var(--font-size-base, 1rem);
+    color: var(--color-foreground);
+    background: var(--color-background);
+    border: 1px solid var(--color-border, rgb(from var(--color-foreground) r g b / 25%));
+    border-radius: var(--style-border-radius-buttons-primary, 4px);
+  }
+
+  .account-field__input:focus-visible {
+    outline: 2px solid #6b4e10;
+    outline-offset: 1px;
+  }
+
+  .account-field__input--code {
+    font-size: 1.5rem;
+    letter-spacing: 0.4em;
+    text-align: center;
+  }
+
+  .account-button {
+    min-height: var(--minimum-touch-target, 44px);
+    padding: 12px 20px;
+    font-family: var(--font-body--family);
+    font-weight: 600;
+    font-size: var(--font-size-base, 1rem);
+    /* Dark text on gold: white on this gold is 2.5:1 and fails to be readable. */
+    color: var(--color-primary-button-text, #221e1a);
+    background: var(--color-primary-button-background, #d9982f);
+    border: none;
+    border-radius: var(--style-border-radius-buttons-primary, 4px);
+    cursor: pointer;
+  }
+
+  .account-button[disabled] {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .account-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin-block-start: 8px;
+  }
+
+  .account-actions--stacked {
+    flex-direction: column;
+    gap: 12px;
+    padding-block-start: 20px;
+    border-block-start: 1px solid rgb(from var(--color-foreground) r g b / 15%);
+  }
+
+  .account-link {
+    align-self: flex-start;
+    min-height: var(--minimum-touch-target, 44px);
+    padding: 0;
+    font-family: var(--font-body--family);
+    font-size: var(--font-size-sm);
+    /* 7.4:1 on Soft Ivory. The decorative gold would be 2.4:1 and unreadable. */
+    color: #6b4e10;
+    background: none;
+    border: none;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .account-link--quiet {
+    color: var(--color-foreground);
+    opacity: var(--opacity-muted-text, 0.75);
+  }
+
+  .account-nav {
+    display: flex;
+    gap: 4px;
+    margin-block-end: 8px;
+    border-block-end: 1px solid rgb(from var(--color-foreground) r g b / 15%);
+  }
+
+  .account-tab {
+    min-height: var(--minimum-touch-target, 44px);
+    padding: 0 16px;
+    font-family: var(--font-body--family);
+    font-size: var(--font-size-base, 1rem);
+    color: var(--color-foreground);
+    opacity: var(--opacity-muted-text, 0.75);
+    background: none;
+    border: none;
+    border-block-end: 2px solid transparent;
+    cursor: pointer;
+  }
+
+  .account-tab--current {
+    opacity: 1;
+    font-weight: 600;
+    /* 7.4:1 on Soft Ivory — the decorative gold would be unreadable here. */
+    color: #6b4e10;
+    border-block-end-color: #9a6b17;
+  }
+
+  .account-orders {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .account-order {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px;
+    border: 1px solid rgb(from var(--color-foreground) r g b / 15%);
+    border-radius: var(--style-border-radius-popover, 8px);
+  }
+
+  .account-order__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .account-order__number {
+    font-weight: 600;
+  }
+
+  .account-order__status {
+    font-size: var(--font-size-sm);
+    color: #6b4e10;
+  }
+
+  .account-order__meta {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    opacity: var(--opacity-muted-text, 0.75);
+  }
+
+  .account-order__items {
+    margin: 0;
+    padding-inline-start: 1.1em;
+    font-size: var(--font-size-sm);
+  }
+
+  .account-error {
+    margin: 0;
+    padding: 10px 14px;
+    font-size: var(--font-size-sm);
+    color: #7a1f12;
+    background: #fbede7;
+    border-radius: var(--style-border-radius-buttons-primary, 4px);
+  }
+
+  .account-note {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: #2f5d3a;
+  }
+
+  /* Demo mode. Deliberately loud: a page that quietly pretends is worse than
+     no demo at all, because "the code never arrived" then looks like a fault. */
+  .account-demo {
+    width: 100%;
+    max-width: 30rem;
+    margin: 0 auto 20px;
+    padding: 12px 16px;
+    font-size: var(--font-size-sm);
+    color: #5a3e00;
+    background: #fff4d6;
+    border: 1px dashed #9a6b17;
+    border-radius: var(--style-border-radius-buttons-primary, 4px);
+  }
+
+  .account-demo code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .account-card {
+      animation: account-fade-in 180ms ease-out;
+    }
+  }
+
+  @keyframes account-fade-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: none; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Customer account",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Sign-in and profile, served by the shop's Odoo system. Add ?mock=1 to the page URL to demo the screens with sample data."
+    },
+    {
+      "type": "text",
+      "id": "api_base_url",
+      "label": "Odoo address",
+      "default": "https://altbriterai.brite.app",
+      "info": "No trailing slash. Odoo must allow this store's domain (CORS) or every request fails."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer account"
+    }
+  ]
+}
+{% endschema %}

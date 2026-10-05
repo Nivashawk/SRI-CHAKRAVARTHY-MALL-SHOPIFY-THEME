@@ -63,7 +63,44 @@
   {% endif %}
   {{- block.shopify_attributes -}}
 >
-  {% if shop.customer_accounts_enabled %}
+  {% comment %}
+    Which account the header points at.
+
+      shopify — Shopify's own accounts (the default, and what the store did
+                before the Odoo sign-in existed)
+      custom  — the phone sign-in on this store, served by sections/main-account
+      hidden  — no account link at all
+
+    The Shopify markup below is deliberately kept rather than replaced: setting
+    this back to "shopify" is the instant rollback if the Odoo sign-in has a bad
+    day. Do not switch customer accounts off in the admin instead — that strips
+    this block store-wide and disables self-serve returns.
+  {% endcomment %}
+  {% liquid
+    assign account_mode = settings.account_mode | default: 'shopify'
+  %}
+
+  {% if account_mode == 'custom' %}
+    <div class="account-button header-actions__action{% if display_style == 'text' %} account-button--text{% endif %}">
+      <a
+        class="account-button__link"
+        href="{{ settings.account_page_url | default: '/pages/account' }}"
+      >
+        <span
+          class="account-button__text header-actions__text-style {% if display_style == 'icon' %}hidden{% else %}mobile:hidden{% endif %}"
+        >
+          {{ 'content.account_title' | t }}
+        </span>
+        <span
+          class="{% if display_style != 'icon' %}desktop:hidden{% endif %}"
+          aria-hidden="true"
+        >
+          {{ account_icon }}
+        </span>
+        <span class="visually-hidden">{{ 'content.account_title' | t }}</span>
+      </a>
+    </div>
+  {% elsif account_mode == 'shopify' and shop.customer_accounts_enabled %}
     {% liquid
       assign account_actions_style = ''
       if display_style == 'text' and section
@@ -172,6 +209,18 @@
     color: var(--color-account-icon);
     transition: color var(--header-content-transition-timing);
     -webkit-font-smoothing: antialiased;
+  }
+
+  /* The custom account link, used when settings.account_mode is "custom".
+     It borrows the icon and text colour above so the header looks identical
+     whichever account system is switched on. */
+  .account-button__link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: var(--minimum-touch-target, 44px);
+    color: var(--color-account-icon);
+    text-decoration: none;
   }
 
   shopify-account {

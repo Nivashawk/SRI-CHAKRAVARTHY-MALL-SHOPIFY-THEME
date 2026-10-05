@@ -1,0 +1,13 @@
+{
+  "name": "sri-chakravarthy-mall-theme",
+  "private": true,
+  "type": "module",
+  "description": "Dev tooling for the theme. Shopify's CLI ignores this file and node_modules; nothing here is uploaded to the store.",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.8"
+  }
+}
