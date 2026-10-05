@@ -672,7 +672,28 @@ button.shopify-payment-button__button--unbranded {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: 40px clamp(24px, 5vw, 40px) 36px;
+  padding: 36px clamp(24px, 5vw, 40px) 36px;
+}
+
+/* The shop's mark. Centred — the logo file is a square canvas with transparent
+   padding around a round emblem, so left-aligning it leaves a ragged gap
+   against the flush-left heading beneath.
+
+   84px tall, checked by rendering it: the wordmark under the emblem is not
+   legible much below 80px, and the padding means the visible mark is smaller
+   than the box. */
+.scm-dialog__logo {
+  width: auto;
+  height: 84px;
+  margin-block-end: -6px;
+  object-fit: contain;
+  align-self: center;
+}
+
+@media screen and (max-width: 749px) {
+  .scm-dialog__logo {
+    height: 72px;
+  }
 }
 
 /* One gold hairline under the heading, as a seam rather than a flourish. */

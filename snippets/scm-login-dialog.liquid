@@ -33,6 +33,30 @@
       data-api-base="{{ settings.account_api_base | default: 'https://altbriterai.brite.app' }}"
       data-account-page-url="{{ settings.account_page_url | default: '/pages/account' }}"
     >
+      {%- comment -%}
+        The shop's own mark, so the popup reads as this shop rather than as a
+        generic sign-in box. It sits outside [data-account-body], which the
+        script rewrites on every step, so it survives each screen.
+
+        Decorative: alt is empty because the heading beneath already says where
+        the customer is, and a screen reader announcing the logo as well would
+        only repeat it.
+      {%- endcomment -%}
+      {% if settings.logo %}
+        {% assign logo_alt = '' %}
+        <img
+          class="scm-dialog__logo"
+          src="{{ settings.logo | image_url: width: 260 }}"
+          srcset="{{ settings.logo | image_url: width: 260 }} 260w, {{ settings.logo | image_url: width: 520 }} 520w"
+          sizes="180px"
+          alt="{{ logo_alt }}"
+          width="{{ settings.logo.width }}"
+          height="{{ settings.logo.height }}"
+          loading="lazy"
+          aria-hidden="true"
+        >
+      {% endif %}
+
       <div data-account-body>
         <noscript>
           <h2 class="scm-account__title" id="scm-dialog-title">{{ 'account.signin_title' | t }}</h2>
