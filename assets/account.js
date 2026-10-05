@@ -425,8 +425,10 @@ export function createMockFetch() {
             status: 'out_for_delivery',
             tracking: { carrier: 'ST Courier', number: 'TN123456789', url: 'https://example.com/track' },
             items: [
-              { title: 'Kanchipuram silk saree — deep maroon', quantity: 1, price: '9800.00' },
-              { title: 'Matching blouse piece', quantity: 1, price: '2650.00' },
+              { title: 'Kanchipuram silk saree', variant_title: 'Deep maroon', quantity: 1,
+                price: '9800.00', line_total: '9800.00', sku: 'SAR-MRN-01',
+                image_url: '/cdn/shop/files/saree-mustard-navy-border-1.jpg?width=200' },
+              { title: 'Matching blouse piece', quantity: 1, price: '2650.00', line_total: '2650.00' },
             ],
           },
           {
@@ -438,7 +440,9 @@ export function createMockFetch() {
             item_count: 1,
             status: 'delivered',
             tracking: null,
-            items: [{ title: 'Soft silk saree — parrot green', quantity: 1, price: '4999.00' }],
+            items: [{ title: 'Soft silk saree', variant_title: 'Parrot green', quantity: 1,
+                       price: '4999.00', line_total: '4999.00',
+                       image_url: '/cdn/shop/files/saree-parrot-green-maroon-1.jpg?width=200' }],
           },
         ],
       });
@@ -744,16 +748,52 @@ class AccountArea {
     this.wireNav();
   }
 
+  /**
+   * One order in the list.
+   *
+   * Odoo sends more than the bare essentials — a product image, the variant,
+   * a link back to the product, the AWB number — and a saree is remembered by
+   * its photograph, not its SKU, so the picture carries the row.
+   *
+   * Everything optional is treated as optional: `tracking` can be null, the
+   * tracking `url` can be null while the number exists, and an item may have
+   * no image. Each piece appears only when it is there.
+   */
   orderHtml(order) {
-    const tracking = order.tracking?.url
-      ? `<a class="scm-link" href="${escapeHtml(order.tracking.url)}" target="_blank" rel="noopener">
-           Track with ${escapeHtml(order.tracking.carrier ?? 'the courier')}
-         </a>`
-      : '';
+    const carrier = order.tracking?.carrier ?? 'the courier';
+    let tracking = '';
+    if (order.tracking?.url) {
+      tracking = `<a class="scm-link" href="${escapeHtml(order.tracking.url)}" target="_blank" rel="noopener">Track with ${escapeHtml(carrier)}</a>`;
+    } else if (order.tracking?.number) {
+      // Booked, but the courier has given no tracking page yet.
+      tracking = `<p class="scm-order__meta">${escapeHtml(carrier)} · ${escapeHtml(order.tracking.number)}</p>`;
+    }
 
-    const items = (order.items ?? [])
-      .map((item) => `<li>${escapeHtml(item.title)}${item.quantity > 1 ? ` × ${item.quantity}` : ''}</li>`)
-      .join('');
+    const items = (order.items ?? []).map((item) => {
+      const image = item.image_url
+        ? `<img class="scm-item__image" src="${escapeHtml(item.image_url)}" alt="" loading="lazy" width="64" height="85">`
+        : `<span class="scm-item__image scm-item__image--none" aria-hidden="true"></span>`;
+
+      const title = item.product_url
+        ? `<a class="scm-item__title" href="${escapeHtml(item.product_url)}">${escapeHtml(item.title ?? '')}</a>`
+        : `<span class="scm-item__title">${escapeHtml(item.title ?? '')}</span>`;
+
+      const detail = [
+        item.variant_title,
+        item.quantity > 1 ? `Qty ${item.quantity}` : null,
+      ].filter(Boolean).map(escapeHtml).join(' · ');
+
+      return `
+        <li class="scm-item">
+          ${image}
+          <div class="scm-item__text">
+            ${title}
+            ${detail ? `<span class="scm-item__detail">${detail}</span>` : ''}
+          </div>
+          <span class="scm-item__price">${escapeHtml(formatMoney(item.line_total ?? item.price, order.currency))}</span>
+        </li>
+      `;
+    }).join('');
 
     return `
       <li class="scm-order">

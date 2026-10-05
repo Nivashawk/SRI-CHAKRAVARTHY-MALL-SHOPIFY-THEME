@@ -838,9 +838,60 @@ button.shopify-payment-button__button--unbranded {
 }
 
 .scm-order__items {
-  margin: 0;
-  padding-inline-start: 1.1em;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
   font-size: 0.9375rem;
+}
+
+/* A saree is remembered by its photograph, so the picture leads the row. */
+.scm-item {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+}
+
+.scm-item__image {
+  width: 64px;
+  height: 85px;
+  object-fit: cover;
+  background: #f1ece0;
+}
+
+.scm-item__image--none {
+  display: block;
+  border: 1px solid rgb(34 30 26 / 12%);
+}
+
+.scm-item__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.scm-item__title {
+  color: var(--scm-ink);
+  text-decoration: none;
+}
+
+a.scm-item__title:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.scm-item__detail {
+  font-size: 0.875rem;
+  opacity: 0.75;
+}
+
+.scm-item__price {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 @media (prefers-reduced-motion: no-preference) {
