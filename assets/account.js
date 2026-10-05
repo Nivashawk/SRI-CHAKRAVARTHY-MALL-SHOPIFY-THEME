@@ -103,6 +103,43 @@ export function errorMessage(code) {
   return MESSAGES[code] ?? 'Something went wrong. Please try again.';
 }
 
+// Odoo's codes for "this session is over". Anything else — a 500, a timeout, a
+// train tunnel — is a problem with the request, not with being signed in.
+const AUTH_FAILURE_CODES = new Set([
+  'missing_token',
+  'token_invalid',
+  'session_revoked',
+  'signed_out_everywhere',
+  'invalid_refresh_token',
+  'token_reuse_detected',
+]);
+
+/**
+ * Did this request fail because the customer is no longer signed in?
+ *
+ * Only a yes here may clear the session. Treating every failure as a sign-out
+ * is how a moment without signal used to throw a customer back to the sign-in
+ * screen and lose their place.
+ */
+export function isAuthFailure(result) {
+  if (!result || result.ok) return false;
+  if (result.status === 401 || result.status === 403) return true;
+  return AUTH_FAILURE_CODES.has(result.code);
+}
+
+/**
+ * Should we try the refresh token before asking the customer to sign in again?
+ *
+ * Odoo issues tokens with no expiry and reports `expires_in: 0`, so we assume a
+ * short life (see sessionFromTokens) and renew quietly. The refresh token is
+ * good for 60 days — an access token that has lapsed is a reason to use it, not
+ * a reason to throw the customer out.
+ */
+export function canRefresh(session, now = Date.now()) {
+  if (!session?.refreshToken) return false;
+  return sessionState(session, now) !== 'valid';
+}
+
 /**
  * What the header's account icon should do when clicked.
  *
@@ -493,18 +530,26 @@ class AccountArea {
   }
 
   async start() {
-    const state = sessionState(this.session);
-    if (state === 'expired') return this.showSignIn();
-
-    if (state === 'refresh') {
+    // An expired access token is not a signed-out customer. Odoo's tokens have
+    // no expiry of their own, so ours is an assumption; the refresh token lasts
+    // 60 days and is the thing that actually decides. Try it before giving up.
+    if (canRefresh(this.session)) {
       const refreshed = await this.api.refresh(this.session.refreshToken);
-      if (!refreshed.ok) {
+      if (refreshed.ok) {
+        this.session = sessionFromTokens(refreshed.data);
+        writeSession(this.session);
+      } else if (isAuthFailure(refreshed)) {
         clearSession();
         return this.showSignIn();
       }
-      this.session = sessionFromTokens(refreshed.data);
-      writeSession(this.session);
+      // Anything else — Odoo down, no signal — leaves the session alone. The
+      // call below will fail too, and says so without logging anyone out.
     }
+
+    if (sessionState(this.session) === 'expired' && !this.session?.refreshToken) {
+      return this.showSignIn();
+    }
+
     if (this.popup) return this.showSignedInPrompt();
     return this.showAccount();
   }
@@ -677,13 +722,32 @@ class AccountArea {
     this.showAccount();
   }
 
+  /**
+   * Shown when we could not reach Odoo, or it answered badly. Deliberately not
+   * a sign-in screen: the customer is still signed in, and telling them
+   * otherwise would be both wrong and a nuisance.
+   */
+  showUnavailable(retry) {
+    this.render(`
+      <h1 class="scm-account__title">Your account</h1>
+      <p class="scm-account__lead">We couldn't load your details just now. Your sign-in is still valid — this is on our side.</p>
+      <button class="scm-button" type="button" data-action="retry">Try again</button>
+    `, { signedIn: true });
+    this.body.querySelector('[data-action="retry"]').addEventListener('click', retry);
+  }
+
   async showAccount(tab = 'profile') {
     this.render('<p class="scm-account__lead">Loading your account…</p>', { signedIn: true });
 
     const result = await this.api.profile(this.session.accessToken);
     if (!result.ok) {
-      clearSession();
-      return this.showSignIn();
+      // Only a rejected token means "signed out". A server error or a lost
+      // connection means "try again" — the customer stays signed in.
+      if (isAuthFailure(result)) {
+        clearSession();
+        return this.showSignIn();
+      }
+      return this.showUnavailable(() => this.showAccount(tab));
     }
 
     const profile = result.data.profile ?? result.data;

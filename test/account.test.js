@@ -9,6 +9,8 @@ import {
   sessionFromTokens,
   displayName,
   shouldOpenSignInPopup,
+  isAuthFailure,
+  canRefresh,
 } from '../assets/account.js';
 
 // The account area runs entirely in the browser and talks straight to Odoo.
@@ -156,6 +158,67 @@ describe('displayName — Odoo defaults a new customer’s name to their phone n
     expect(displayName({ name: '', phone: '+91882' })).toBeNull();
     expect(displayName({ phone: '+91882' })).toBeNull();
     expect(displayName(null)).toBeNull();
+  });
+});
+
+describe('isAuthFailure — only a real rejection may sign a customer out', () => {
+  // The bug this prevents: every failed request used to clear the session, so a
+  // moment without signal logged the customer out and lost their place.
+
+  it('is true when the server rejects the token', () => {
+    expect(isAuthFailure({ ok: false, status: 401, code: 'missing_token' })).toBe(true);
+    expect(isAuthFailure({ ok: false, status: 401, code: 'token_invalid' })).toBe(true);
+  });
+
+  it('is true for the codes Odoo uses when a session has been ended', () => {
+    for (const code of ['token_invalid', 'session_revoked', 'signed_out_everywhere', 'invalid_refresh_token', 'token_reuse_detected']) {
+      expect(isAuthFailure({ ok: false, code }), code).toBe(true);
+    }
+  });
+
+  it('is false when the network failed — the customer is still signed in', () => {
+    expect(isAuthFailure({ ok: false, code: 'network' })).toBe(false);
+  });
+
+  it('is false when the server broke', () => {
+    expect(isAuthFailure({ ok: false, status: 500, code: 'server_error' })).toBe(false);
+    expect(isAuthFailure({ ok: false, status: 502, code: 'network' })).toBe(false);
+  });
+
+  it('is false when the request was merely rate limited', () => {
+    expect(isAuthFailure({ ok: false, status: 429, code: 'too_many_requests' })).toBe(false);
+  });
+
+  it('is false for a success', () => {
+    expect(isAuthFailure({ ok: true, data: {} })).toBe(false);
+  });
+});
+
+describe('canRefresh — an expired session is not necessarily a signed-out one', () => {
+  const NOW = 1790000000000;
+
+  it('is true when the access token lapsed but a refresh token remains', () => {
+    // Odoo's refresh token lasts 60 days; ours lapses after the 15 minutes we
+    // assume. Reaching for the refresh token is the whole point of having one.
+    expect(canRefresh({ expiresAt: NOW - 1, refreshToken: 'r' }, NOW)).toBe(true);
+  });
+
+  it('is true inside the renewal window, before anything has lapsed', () => {
+    expect(canRefresh({ expiresAt: NOW + 30_000, refreshToken: 'r' }, NOW)).toBe(true);
+  });
+
+  it('is false when there is no refresh token to use', () => {
+    expect(canRefresh({ expiresAt: NOW - 1 }, NOW)).toBe(false);
+    expect(canRefresh({ expiresAt: NOW - 1, refreshToken: '' }, NOW)).toBe(false);
+  });
+
+  it('is false when there is no session at all', () => {
+    expect(canRefresh(null, NOW)).toBe(false);
+    expect(canRefresh(undefined, NOW)).toBe(false);
+  });
+
+  it('is false while the token is still comfortably valid', () => {
+    expect(canRefresh({ expiresAt: NOW + 600_000, refreshToken: 'r' }, NOW)).toBe(false);
   });
 });
 
