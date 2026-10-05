@@ -14,9 +14,6 @@
 
 {% liquid
   assign account_mode = settings.account_mode | default: 'shopify'
-  if account_mode != 'custom'
-    break
-  endif
 %}
 
 {% if account_mode == 'custom' %}
@@ -44,4 +41,16 @@
       </div>
     </div>
   </dialog>
+
+  {% comment %}
+    Loaded here, with the dialog, so the header's account icon works on every
+    page. It used to be loaded only by sections/main-account, which meant the
+    first click anywhere else fell through to the account page as a plain link
+    and only the second click — now on the page that loads this file — opened
+    the popup.
+
+    The account page renders this tag too. Module scripts are fetched and run
+    once per URL, so the duplicate costs nothing.
+  {% endcomment %}
+  <script src="{{ 'account.js' | asset_url }}" type="module"></script>
 {% endif %}
