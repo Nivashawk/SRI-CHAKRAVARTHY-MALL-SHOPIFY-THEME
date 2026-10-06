@@ -894,6 +894,154 @@ a.scm-item__title:hover {
   white-space: nowrap;
 }
 
+/* --- one order, opened ---------------------------------------------------- */
+
+.scm-order__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  margin-block-start: 4px;
+}
+
+.scm-order__back {
+  align-self: flex-start;
+  margin-block-end: 10px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.scm-track {
+  margin: 18px 0 22px;
+  padding: 18px 20px;
+  background: #fff;
+  border: 1px solid rgb(34 30 26 / 14%);
+}
+
+.scm-track__title {
+  margin: 0 0 14px;
+  font-size: 1.0625rem;
+  color: var(--scm-gold-text);
+}
+
+/* The journey reads top to bottom, each step tied to the next by a hairline
+   so the parcel's road is one object rather than five loose labels. */
+.scm-track__steps {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scm-track__step {
+  position: relative;
+  padding: 0 0 16px 26px;
+  font-size: 0.9375rem;
+}
+
+.scm-track__step::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 4px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid var(--scm-gold-rule);
+  background: var(--scm-ivory);
+}
+
+.scm-track__step::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 5px;
+  inset-block-start: 15px;
+  bottom: 0;
+  width: 1px;
+  background: rgb(34 30 26 / 16%);
+}
+
+.scm-track__step:last-child {
+  padding-block-end: 0;
+}
+
+.scm-track__step:last-child::after {
+  display: none;
+}
+
+.scm-track__step--done::before {
+  background: var(--scm-gold-rule);
+}
+
+.scm-track__step--current::before {
+  background: var(--scm-gold-fill);
+  box-shadow: 0 0 0 3px rgb(217 152 47 / 28%);
+}
+
+.scm-track__step--current .scm-track__label {
+  font-weight: 600;
+  color: var(--scm-gold-text);
+}
+
+/* Not yet reached: visibly ahead of the parcel, still readable. */
+.scm-track__step--todo {
+  opacity: 0.6;
+}
+
+.scm-track__step--todo::before {
+  border-color: rgb(34 30 26 / 28%);
+}
+
+.scm-track__carrier {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0 0;
+  padding-block-start: 14px;
+  border-block-start: 1px solid rgb(34 30 26 / 12%);
+  font-size: 0.9375rem;
+}
+
+.scm-track__awb {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+
+/* The courier's own history, shown only once Odoo sends it. */
+.scm-track__events {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 14px 0 0;
+  padding: 14px 0 0;
+  border-block-start: 1px solid rgb(34 30 26 / 12%);
+  list-style: none;
+  font-size: 0.875rem;
+}
+
+.scm-track__event {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+  gap: 4px 12px;
+}
+
+.scm-track__when {
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}
+
+.scm-track__where {
+  grid-column: 2;
+  opacity: 0.7;
+}
+
+.scm-order__items--detail {
+  gap: 16px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .scm-step {
     animation: scm-step-in 200ms ease-out;

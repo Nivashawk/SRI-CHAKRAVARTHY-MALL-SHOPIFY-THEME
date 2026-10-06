@@ -237,6 +237,137 @@ export function orderStatusLabel(status) {
   return ORDER_STATUS[status] ?? 'In progress';
 }
 
+/* --- one order ------------------------------------------------------------ */
+
+/**
+ * The journey a parcel takes. Odoo's `status` is one of these, and the screen
+ * shows the whole road so a customer can see both where the parcel is and
+ * what is still to come.
+ */
+const JOURNEY = [
+  { key: 'placed', label: 'Order placed' },
+  { key: 'packed', label: 'Being packed' },
+  { key: 'shipped', label: 'Shipped' },
+  { key: 'out_for_delivery', label: 'Out for delivery' },
+  { key: 'delivered', label: 'Delivered' },
+];
+
+/** The order the customer tapped. Ids arrive as strings or numbers. */
+export function findOrder(orders, id) {
+  if (!Array.isArray(orders)) return undefined;
+  return orders.find((order) => String(order?.id) === String(id));
+}
+
+/**
+ * The journey, with each step marked done, current or still to come.
+ *
+ * A cancelled or returned order never finishes the road, and showing it the
+ * ordinary way would promise a delivery that is not coming — so those end on
+ * their own step instead.
+ */
+export function trackingSteps(order) {
+  const status = order?.status === 'paid' ? 'placed' : order?.status;
+  const step = (key, label, state) => ({ key, label, state });
+
+  if (status === 'cancelled') {
+    return [step('placed', 'Order placed', 'done'), step('cancelled', 'Cancelled', 'current')];
+  }
+  if (status === 'returned' || status === 'refunded') {
+    return [
+      step('placed', 'Order placed', 'done'),
+      step('shipped', 'Shipped', 'done'),
+      step(status, orderStatusLabel(status), 'current'),
+    ];
+  }
+
+  // An unrecognised status is treated as "only just placed" rather than
+  // guessed at — the list screen does the same.
+  const index = Math.max(0, JOURNEY.findIndex((entry) => entry.key === status));
+  return JOURNEY.map((entry, i) =>
+    step(entry.key, entry.label, i < index ? 'done' : i === index ? 'current' : 'todo'));
+}
+
+/** The items of an order, shared by the list row and the detail screen. */
+function orderItemsHtml(order) {
+  return (order.items ?? []).map((item) => {
+    const image = item.image_url
+      ? `<img class="scm-item__image" src="${escapeHtml(item.image_url)}" alt="" loading="lazy" width="64" height="85">`
+      : `<span class="scm-item__image scm-item__image--none" aria-hidden="true"></span>`;
+
+    const title = item.product_url
+      ? `<a class="scm-item__title" href="${escapeHtml(item.product_url)}">${escapeHtml(item.title ?? '')}</a>`
+      : `<span class="scm-item__title">${escapeHtml(item.title ?? '')}</span>`;
+
+    const detail = [
+      item.variant_title,
+      item.quantity > 1 ? `Qty ${item.quantity}` : null,
+    ].filter(Boolean).map(escapeHtml).join(' \u00b7 ');
+
+    return `
+      <li class="scm-item">
+        ${image}
+        <div class="scm-item__text">
+          ${title}
+          ${detail ? `<span class="scm-item__detail">${detail}</span>` : ''}
+        </div>
+        <span class="scm-item__price">${escapeHtml(formatMoney(item.line_total ?? item.price, order.currency))}</span>
+      </li>
+    `;
+  }).join('');
+}
+
+/**
+ * One order, opened.
+ *
+ * Odoo's customer endpoint sends the status and the AWB but not yet the
+ * courier's own history, so the journey above carries the screen. When
+ * `events` does arrive the history is added underneath, and until then no
+ * empty frame is drawn.
+ */
+export function orderDetailHtml(order) {
+  const carrier = order.tracking?.carrier ?? 'the courier';
+
+  const steps = trackingSteps(order).map((step) => `
+    <li class="scm-track__step scm-track__step--${step.state}"${step.state === 'current' ? ' aria-current="step"' : ''}>
+      <span class="scm-track__label">${escapeHtml(step.label)}</span>
+    </li>`).join('');
+
+  let tracking = '';
+  if (order.tracking?.number) {
+    const number = `<span class="scm-track__awb">${escapeHtml(carrier)} \u00b7 ${escapeHtml(order.tracking.number)}</span>`;
+    tracking = order.tracking.url
+      ? `<p class="scm-track__carrier">${number} <a class="scm-link" href="${escapeHtml(order.tracking.url)}" target="_blank" rel="noopener">Follow on ${escapeHtml(carrier)}</a></p>`
+      : `<p class="scm-track__carrier">${number}</p>`;
+  }
+
+  const events = (order.events ?? []).map((event) => `
+    <li class="scm-track__event">
+      <span class="scm-track__when">${escapeHtml(formatOrderDate(event.at))}</span>
+      <span class="scm-track__what">${escapeHtml(event.status ?? '')}</span>
+      ${event.location ? `<span class="scm-track__where">${escapeHtml(event.location)}</span>` : ''}
+    </li>`).join('');
+
+  const items = orderItemsHtml(order);
+
+  return `
+    <button class="scm-link scm-order__back" type="button" data-orders-back>\u2190 Back to orders</button>
+    <h1 class="scm-account__title">${escapeHtml(order.number ?? '')}</h1>
+    <p class="scm-account__lead">
+      ${escapeHtml(formatOrderDate(order.placed_at))}
+      ${order.total ? ` \u00b7 ${escapeHtml(formatMoney(order.total, order.currency))}` : ''}
+    </p>
+
+    <section class="scm-track" aria-label="Delivery">
+      <h2 class="scm-track__title">${escapeHtml(orderStatusLabel(order.status))}</h2>
+      <ol class="scm-track__steps">${steps}</ol>
+      ${tracking}
+      ${events ? `<ol class="scm-track__events">${events}</ol>` : ''}
+    </section>
+
+    ${items ? `<ul class="scm-order__items scm-order__items--detail">${items}</ul>` : ''}
+  `;
+}
+
 /* --- session storage ------------------------------------------------------ */
 
 // localStorage throws in some privacy modes, and a thrown error here would take
@@ -461,6 +592,13 @@ export function createMockFetch() {
             item_count: 2,
             status: 'out_for_delivery',
             tracking: { carrier: 'ST Courier', number: 'TN123456789', url: 'https://example.com/track' },
+            // The live endpoint does not send `events` yet; demo mode shows the
+            // shape we have asked Odoo for, so the screen can be reviewed now.
+            events: [
+              { at: '2026-09-29T12:30:00Z', status: 'Booked', location: 'Chennai' },
+              { at: '2026-09-30T04:10:00Z', status: 'In transit', location: 'TNKGR-Krishnagiri hub' },
+              { at: '2026-09-30T09:27:00Z', status: 'Out for delivery', location: 'TNABR-AMBUR \u2192 Gandhi Nagar' },
+            ],
             items: [
               { title: 'Kanchipuram silk saree', variant_title: 'Deep maroon', quantity: 1,
                 price: '9800.00', line_total: '9800.00', sku: 'SAR-MRN-01',
@@ -799,6 +937,7 @@ class AccountArea {
       body = `<p class="scm-error">${escapeHtml(errorMessage(result.code))}</p>`;
     } else {
       const orders = result.data.orders ?? [];
+      this.orders = orders;
       body = orders.length === 0
         ? `<p class="scm-account__lead">You haven't placed an order yet.</p>`
         : `<ul class="scm-orders">${orders.map((order) => this.orderHtml(order)).join('')}</ul>`;
@@ -810,6 +949,10 @@ class AccountArea {
       ${body}
     `, { signedIn: true });
     this.wireNav();
+
+    for (const button of this.body.querySelectorAll('[data-order]')) {
+      button.addEventListener('click', () => this.showOrderDetail(button.dataset.order));
+    }
   }
 
   /**
@@ -830,34 +973,10 @@ class AccountArea {
       tracking = `<a class="scm-link" href="${escapeHtml(order.tracking.url)}" target="_blank" rel="noopener">Track with ${escapeHtml(carrier)}</a>`;
     } else if (order.tracking?.number) {
       // Booked, but the courier has given no tracking page yet.
-      tracking = `<p class="scm-order__meta">${escapeHtml(carrier)} · ${escapeHtml(order.tracking.number)}</p>`;
+      tracking = `<p class="scm-order__meta">${escapeHtml(carrier)} \u00b7 ${escapeHtml(order.tracking.number)}</p>`;
     }
 
-    const items = (order.items ?? []).map((item) => {
-      const image = item.image_url
-        ? `<img class="scm-item__image" src="${escapeHtml(item.image_url)}" alt="" loading="lazy" width="64" height="85">`
-        : `<span class="scm-item__image scm-item__image--none" aria-hidden="true"></span>`;
-
-      const title = item.product_url
-        ? `<a class="scm-item__title" href="${escapeHtml(item.product_url)}">${escapeHtml(item.title ?? '')}</a>`
-        : `<span class="scm-item__title">${escapeHtml(item.title ?? '')}</span>`;
-
-      const detail = [
-        item.variant_title,
-        item.quantity > 1 ? `Qty ${item.quantity}` : null,
-      ].filter(Boolean).map(escapeHtml).join(' · ');
-
-      return `
-        <li class="scm-item">
-          ${image}
-          <div class="scm-item__text">
-            ${title}
-            ${detail ? `<span class="scm-item__detail">${detail}</span>` : ''}
-          </div>
-          <span class="scm-item__price">${escapeHtml(formatMoney(item.line_total ?? item.price, order.currency))}</span>
-        </li>
-      `;
-    }).join('');
+    const items = orderItemsHtml(order);
 
     return `
       <li class="scm-order">
@@ -866,13 +985,37 @@ class AccountArea {
           <span class="scm-order__status">${escapeHtml(orderStatusLabel(order.status))}</span>
         </div>
         <p class="scm-order__meta">
-          ${escapeHtml(formatOrderDate(order.placed_at))} ·
+          ${escapeHtml(formatOrderDate(order.placed_at))} \u00b7
           ${escapeHtml(formatMoney(order.total, order.currency))}
         </p>
         ${items ? `<ul class="scm-order__items">${items}</ul>` : ''}
-        ${tracking}
+        <div class="scm-order__actions">
+          <button class="scm-link" type="button" data-order="${escapeHtml(String(order.id ?? ''))}">View details</button>
+          ${tracking}
+        </div>
       </li>
     `;
+  }
+
+  /**
+   * One order, opened from the list.
+   *
+   * The list payload already carries everything this screen shows, so opening
+   * an order costs no second request and works offline-ish: tapping back and
+   * forth never reloads.
+   */
+  showOrderDetail(id) {
+    const order = findOrder(this.orders, id);
+    if (!order) return this.showOrders(this.session.profile);
+
+    this.render(`
+      ${this.navHtml('orders')}
+      ${orderDetailHtml(order)}
+    `, { signedIn: true });
+    this.wireNav();
+
+    const back = this.body.querySelector('[data-orders-back]');
+    if (back) back.addEventListener('click', () => this.showOrders(this.session.profile));
   }
 
   showProfile(profile) {
