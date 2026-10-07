@@ -25,6 +25,7 @@ Unchanged. Listed so the diff is readable.
 |---|---|---|---|
 | `order_id` | string | yes | Shopify GID, e.g. `gid://shopify/Order/5551234567`. Your idempotency key |
 | `order_number` | string | yes | `#1001` |
+| `order_name` | string | yes | `#1001` again. Added 7 October at your request; we send both names, since your reference documents `order_number` and the request asked for `order_name` |
 | `phone` | string | yes | The customer's own number, and how you find their partner. Always present — see §3.2 |
 | `email` | string | no | Optional. Many customers here shop without one |
 | `customer_name` | string | no | |

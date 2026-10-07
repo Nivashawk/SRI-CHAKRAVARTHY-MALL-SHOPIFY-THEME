@@ -29,7 +29,7 @@ reviewable one.
 ```
 Trigger   Order created
    │
-   ├─ Condition  shippingAddress.countryCode == IN      → otherwise stop
+   ├─ Condition  shippingAddress.countryCodeV2 == IN    → otherwise stop
    │
    └─ Action     Send HTTP request  (POST, see §3)
 ```
@@ -56,14 +56,14 @@ why the template has no quotation marks of its own around those values — the f
 `url_encode` and `json` are the two filters Flow allows in HTTP actions.
 
 ```liquid
-{% assign gw = order.paymentGatewayNames | join: "," | downcase %}
-{% if gw contains "cash on delivery" or gw contains "cod" %}{% assign pay = "cod" %}{% else %}{% assign pay = "prepaid" %}{% endif %}
 {% assign raw = order.customer.phone | default: order.phone | default: order.shippingAddress.phone %}
 {% assign digits = raw | remove: " " | remove: "-" | remove: "(" | remove: ")" | remove: "+" %}
 {% assign msisdn = digits | slice: -10, 10 %}
+{% if order.displayFinancialStatus == 'PAID' %}{% assign pay = 'prepaid' %}{% else %}{% assign pay = 'cod' %}{% endif %}
 {
   "order_id": {{ order.id | json }},
   "order_number": {{ order.name | json }},
+  "order_name": {{ order.name | json }},
   "phone": "+91{{ msisdn }}",
   "email": {{ order.email | json }},
   "customer_name": {{ order.customer.displayName | json }},
@@ -71,7 +71,7 @@ why the template has no quotation marks of its own around those values — the f
   "order_date": {{ order.createdAt | json }},
   "currency": {{ order.currencyCode | json }},
   "payment_method": "{{ pay }}",
-  "cod_amount": {% if pay == "cod" %}{{ order.totalPriceSet.shopMoney.amount }}{% else %}0{% endif %},
+  "cod_amount": {% if pay == 'cod' %}{{ order.totalPriceSet.shopMoney.amount }}{% else %}0{% endif %},
   "amount_total": {{ order.totalPriceSet.shopMoney.amount }},
   "subtotal": {{ order.subtotalPriceSet.shopMoney.amount }},
   "discount_total": {{ order.totalDiscountsSet.shopMoney.amount }},
@@ -89,8 +89,8 @@ why the template has no quotation marks of its own around those values — the f
     "state": {{ order.shippingAddress.province | json }},
     "zip": {{ order.shippingAddress.zip | json }},
     "country": {{ order.shippingAddress.country | json }},
-    "country_code": {{ order.shippingAddress.countryCode | json }},
-    "phone": {{ order.shippingAddress.phone | json }}
+    "country_code": {{ order.shippingAddress.countryCodeV2 | json }},
+    "phone": "+91{{ order.shippingAddress.phone | remove: ' ' | remove: '-' | remove: '+' | slice: -10, 10 }}"
   },
   "billing_address": {
     "name": {{ order.billingAddress.name | json }},
@@ -99,12 +99,12 @@ why the template has no quotation marks of its own around those values — the f
     "city": {{ order.billingAddress.city | json }},
     "state": {{ order.billingAddress.province | json }},
     "zip": {{ order.billingAddress.zip | json }},
-    "country_code": {{ order.billingAddress.countryCode | json }}
+    "country_code": {{ order.billingAddress.countryCodeV2 | json }}
   },
   "items": [
     {% for item in order.lineItems %}{
       "name": {{ item.name | json }},
-      "variant_title": {{ item.variant.title | json }},
+      "variant_title": {{ item.variantTitle | json }},
       "product_id": {{ item.product.id | json }},
       "variant_id": {{ item.variant.id | json }},
       "sku": {{ item.sku | json }},
@@ -113,7 +113,7 @@ why the template has no quotation marks of its own around those values — the f
       "price": {{ item.originalUnitPriceSet.shopMoney.amount }},
       "original_price": {{ item.originalUnitPriceSet.shopMoney.amount }},
       "line_total": {{ item.discountedTotalSet.shopMoney.amount }},
-      "image_url": {{ item.variant.image.url | json }},
+      "image_url": {{ item.image.url | json }},
       "product_url": {{ item.product.onlineStoreUrl | json }},
       "properties": { {% for a in item.customAttributes %}{{ a.key | json }}: {{ a.value | json }}{% unless forloop.last %},{% endunless %}{% endfor %} }
     }{% unless forloop.last %},{% endunless %}{% endfor %}
@@ -121,10 +121,12 @@ why the template has no quotation marks of its own around those values — the f
 }
 ```
 
-Build this in the Flow editor with its variable picker rather than pasting blind: the picker shows
-exactly which fields that shop's trigger exposes, and Flow validates the Liquid before it will
-save. The names above are the GraphQL Admin API `Order` object's, which is what the trigger hands
-over.
+The names above are the GraphQL Admin API `Order` object's, which is what the trigger hands over,
+and this template is the one running in the admin — not an untested draft. Two names caught us out
+when building it and are worth remembering: the address field is **`countryCodeV2`**, not
+`countryCode` (the plain one belongs to locations and the retail shop), and the line item's picture
+is `item.image.url`. When adding a field, use Flow's variable picker so the path is validated as it
+is inserted.
 
 ---
 
