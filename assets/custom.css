@@ -764,31 +764,82 @@ button.shopify-payment-button__button--unbranded {
   padding-inline: 24px;
 }
 
-.scm-nav {
+/* Signed in, the page opens out to the usual shop-account shape: a sidebar
+   saying who you are and where you are, the screen beside it. */
+.scm-account.scm-account--in {
+  max-width: 72rem;
+  padding-block: 40px 72px;
+}
+
+.scm-shell {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+}
+
+.scm-side {
+  position: sticky;
+  inset-block-start: 24px;
   display: flex;
-  gap: 2px;
-  margin-block-end: 4px;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.scm-side__who {
+  padding-block-end: 16px;
   border-block-end: 1px solid rgb(34 30 26 / 15%);
 }
 
+.scm-side__hello {
+  margin: 0;
+  font-family: var(--font-heading--family, 'Cormorant', Georgia, serif);
+  font-weight: 600;
+  font-size: 1.625rem;
+  line-height: 1.15;
+  color: var(--scm-ink);
+}
+
+.scm-side__phone {
+  margin: 4px 0 0;
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}
+
+.scm-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .scm-tab {
+  display: flex;
+  align-items: center;
   min-height: 44px;
-  padding: 0 18px;
+  padding: 0 14px;
   font-family: inherit;
   font-size: 1rem;
+  text-align: start;
   color: var(--scm-ink);
-  opacity: 0.75;
+  opacity: 0.8;
   background: none;
   border: none;
-  border-block-end: 2px solid transparent;
+  border-inline-start: 2px solid transparent;
   cursor: pointer;
+}
+
+.scm-tab:hover {
+  opacity: 1;
+  background: rgb(217 152 47 / 8%);
 }
 
 .scm-tab--current {
   opacity: 1;
   font-weight: 600;
   color: var(--scm-gold-text);
-  border-block-end-color: var(--scm-gold-rule);
+  background: rgb(217 152 47 / 12%);
+  border-inline-start-color: var(--scm-gold-rule);
 }
 
 .scm-tab:focus-visible {
@@ -796,10 +847,247 @@ button.shopify-payment-button__button--unbranded {
   outline-offset: -2px;
 }
 
+.scm-side__signout {
+  margin-block-start: 10px;
+  padding-block-start: 10px;
+  border-block-start: 1px solid rgb(34 30 26 / 15%);
+}
+
+.scm-main {
+  --scm-measure: none;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.scm-pane__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.scm-main .scm-account__form {
+  gap: 20px;
+  margin: 0;
+}
+
+/* On a phone the sidebar folds into one line of greeting and a tab row. */
+@media screen and (max-width: 749px) {
+  .scm-account.scm-account--in {
+    padding-block: 24px 56px;
+    padding-inline: 16px;
+  }
+
+  .scm-shell {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .scm-side {
+    position: static;
+    gap: 12px;
+  }
+
+  .scm-side__who {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 12px;
+    padding: 0;
+    border: none;
+  }
+
+  .scm-side__phone {
+    margin: 0;
+  }
+
+  .scm-nav {
+    flex-direction: row;
+    border-block-end: 1px solid rgb(34 30 26 / 15%);
+  }
+
+  .scm-tab {
+    padding: 0 14px;
+    border-inline-start: none;
+    border-block-end: 2px solid transparent;
+    background: none;
+  }
+
+  .scm-tab:hover,
+  .scm-tab--current {
+    background: none;
+  }
+
+  .scm-tab--current {
+    border-block-end-color: var(--scm-gold-rule);
+  }
+
+  .scm-side__signout {
+    margin: 0 0 0 auto;
+    padding: 0 0 0 14px;
+    border: none;
+    font-size: 0.9375rem;
+  }
+}
+
+/* A card: one group of things on the page. */
+.scm-card {
+  min-width: 0;
+  margin: 0;
+  padding: 24px;
+  background: #fff;
+  border: 1px solid rgb(34 30 26 / 14%);
+  border-radius: 4px;
+}
+
+.scm-card--quiet {
+  background: transparent;
+}
+
+/* A legend sits on a fieldset's border unless floated; floated, it lines up
+   with the h2 titles on the other cards. */
+.scm-card > legend {
+  float: inline-start;
+  width: 100%;
+  padding: 0;
+}
+
+.scm-card > legend + * {
+  clear: both;
+}
+
+.scm-card__title {
+  margin: 0 0 18px;
+  font-family: var(--font-heading--family, 'Cormorant', Georgia, serif);
+  font-weight: 600;
+  font-size: 1.375rem;
+  line-height: 1.2;
+  color: var(--scm-ink);
+}
+
+.scm-grid {
+  display: grid;
+  gap: 18px 20px;
+}
+
+.scm-grid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.scm-grid--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.scm-field--wide {
+  grid-column: 1 / -1;
+}
+
+@media screen and (max-width: 749px) {
+  .scm-card {
+    padding: 20px 16px;
+  }
+
+  .scm-grid--2,
+  .scm-grid--3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* The mobile number is the login, so it is shown, not edited. */
+.scm-field__static {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  min-height: 52px;
+  margin: 0;
+  padding: 12px 16px;
+  font-variant-numeric: tabular-nums;
+  background: #f7f1e3;
+  border-radius: 4px;
+}
+
+.scm-field__hint {
+  margin-inline-start: auto;
+  font-size: 0.8125rem;
+  opacity: 0.75;
+}
+
+.scm-save {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px 20px;
+}
+
+.scm-settings {
+  display: flex;
+  flex-direction: column;
+}
+
+.scm-setting {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 20px;
+  padding-block: 12px;
+}
+
+.scm-setting + .scm-setting {
+  border-block-start: 1px solid rgb(34 30 26 / 12%);
+}
+
+.scm-setting__text {
+  flex: 1 1 16rem;
+  margin: 0;
+  font-size: 0.9375rem;
+  opacity: 0.8;
+}
+
+.scm-link--danger {
+  align-self: center;
+  color: #7a1f12; /* 9.9:1 on ivory */
+}
+
+a.scm-button {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+/* The second-rank button: outlined, so one gold button per screen stays the
+   obvious next step. */
+.scm-button--ghost {
+  min-height: 44px;
+  padding: 10px 20px;
+  font-size: 0.9375rem;
+  color: var(--scm-gold-text);
+  background: transparent;
+  border: 1px solid var(--scm-gold-rule);
+}
+
+.scm-button--ghost:hover {
+  background: #f7f1e3;
+}
+
+.scm-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+/* --- orders --------------------------------------------------------------- */
+
 .scm-orders {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 20px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -808,43 +1096,130 @@ button.shopify-payment-button__button--unbranded {
 .scm-order {
   display: flex;
   flex-direction: column;
-  gap: 7px;
-  padding: 18px 20px;
   background: #fff;
   border: 1px solid rgb(34 30 26 / 14%);
+  border-radius: 4px;
+  overflow: hidden;
 }
 
-.scm-order__head {
+/* When, how much, which order — and where it has got to. */
+.scm-order__strip {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  align-items: baseline;
+  gap: 12px 20px;
+  padding: 14px 20px;
+  background: #f7f1e3;
+  border-block-end: 1px solid rgb(34 30 26 / 12%);
 }
 
-.scm-order__number {
-  font-weight: 600;
+.scm-order__strip--detail {
+  border: 1px solid rgb(34 30 26 / 12%);
+  border-radius: 4px;
 }
 
-.scm-order__status {
-  font-size: 0.875rem;
-  color: var(--scm-gold-text);
-}
-
-.scm-order__meta {
+.scm-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 36px;
   margin: 0;
+}
+
+.scm-fact__label {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--scm-gold-text); /* 6.85:1 on the strip */
+}
+
+.scm-fact__value {
+  margin: 2px 0 0;
   font-size: 0.9375rem;
-  opacity: 0.75;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.scm-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+  border-radius: 999px;
+}
+
+.scm-pill--progress {
+  color: #6b4e10;
+  background: #f3e3bd; /* 6.1:1 */
+}
+
+.scm-pill--done {
+  color: #2f5d3a;
+  background: #e2eee3; /* 6.4:1 */
+}
+
+.scm-pill--stop {
+  color: #7a1f12;
+  background: #f8e1d8; /* 8.2:1 */
 }
 
 .scm-order__items {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin: 4px 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
   font-size: 0.9375rem;
+}
+
+.scm-order > .scm-order__items {
+  padding: 18px 20px;
+}
+
+.scm-order__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  padding: 12px 20px;
+  border-block-start: 1px solid rgb(34 30 26 / 12%);
+}
+
+.scm-order__awb {
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+
+/* On a phone the three facts share one row and the button takes the width,
+   so every card ends in the same place. */
+@media screen and (max-width: 749px) {
+  .scm-order__strip {
+    padding: 14px 16px;
+  }
+
+  .scm-facts {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    justify-content: start;
+    gap: 8px 20px;
+  }
+
+  .scm-order > .scm-order__items {
+    padding: 16px;
+  }
+
+  .scm-order__foot {
+    padding: 12px 16px 16px;
+  }
+
+  .scm-order__foot .scm-button {
+    width: 100%;
+  }
 }
 
 /* A saree is remembered by its photograph, so the picture leads the row. */
@@ -896,17 +1271,9 @@ a.scm-item__title:hover {
 
 /* --- one order, opened ---------------------------------------------------- */
 
-.scm-order__actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 10px;
-  margin-block-start: 4px;
-}
-
 .scm-order__back {
   align-self: flex-start;
-  margin-block-end: 10px;
+  margin-block-end: -8px;
   background: none;
   border: none;
   padding: 0;
@@ -914,10 +1281,11 @@ a.scm-item__title:hover {
 }
 
 .scm-track {
-  margin: 18px 0 22px;
-  padding: 18px 20px;
+  margin: 0;
+  padding: 20px 24px;
   background: #fff;
   border: 1px solid rgb(34 30 26 / 14%);
+  border-radius: 4px;
 }
 
 .scm-track__title {

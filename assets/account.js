@@ -237,6 +237,111 @@ export function orderStatusLabel(status) {
   return ORDER_STATUS[status] ?? 'In progress';
 }
 
+/**
+ * The colour an order's status is shown in: finished, stopped, or still on
+ * its way. Anything unrecognised is still on its way, as the label says.
+ */
+export function statusTone(status) {
+  if (status === 'delivered') return 'done';
+  if (status === 'cancelled' || status === 'returned' || status === 'refunded') return 'stop';
+  return 'progress';
+}
+
+/** +918825464712 → +91 88254 64712. Anything else is left as it came. */
+export function formatPhone(phone) {
+  const value = String(phone ?? '');
+  const match = value.match(/^\+91(\d{5})(\d{5})$/);
+  return match ? `+91 ${match[1]} ${match[2]}` : value;
+}
+
+/* --- the signed-in frame -------------------------------------------------- */
+
+/**
+ * Every signed-in screen sits in the same frame: a sidebar saying who you are,
+ * where you are and how to leave, and the screen itself beside it. On a phone
+ * the sidebar folds into a row of tabs above the screen (see custom.css).
+ */
+export function accountShellHtml(current, profile, content) {
+  const name = displayName(profile);
+  const hello = name ? `Hello, ${escapeHtml(name.split(' ')[0])}` : 'Your account';
+  const phone = formatPhone(profile?.phone);
+
+  const tab = (key, label) => current === key
+    ? `<button class="scm-tab scm-tab--current" type="button" data-tab="${key}" aria-current="page">${label}</button>`
+    : `<button class="scm-tab" type="button" data-tab="${key}">${label}</button>`;
+
+  return `
+    <div class="scm-shell">
+      <aside class="scm-side">
+        <div class="scm-side__who">
+          <p class="scm-side__hello">${hello}</p>
+          ${phone ? `<p class="scm-side__phone">${escapeHtml(phone)}</p>` : ''}
+        </div>
+        <nav class="scm-nav" aria-label="Account">
+          ${tab('profile', 'Profile')}
+          ${tab('orders', 'Orders')}
+          <button class="scm-tab scm-side__signout" type="button" data-action="signout">Sign out</button>
+        </nav>
+      </aside>
+      <div class="scm-main">${content}</div>
+    </div>
+  `;
+}
+
+/* --- the orders list ------------------------------------------------------ */
+
+/**
+ * One order in the list.
+ *
+ * Laid out the way every shop's order history is: a strip with when, how
+ * much and which order; the items; then where it is and a way in. A saree is
+ * remembered by its photograph, not its SKU, so the picture carries the row.
+ *
+ * Everything optional is treated as optional: `tracking` can be null, the
+ * tracking `url` can be null while the number exists, and an item may have
+ * no image. Each piece appears only when it is there.
+ */
+export function orderCardHtml(order) {
+  const carrier = order.tracking?.carrier ?? 'the courier';
+  let tracking = '';
+  if (order.tracking?.url) {
+    tracking = `<a class="scm-link" href="${escapeHtml(order.tracking.url)}" target="_blank" rel="noopener">Track with ${escapeHtml(carrier)}</a>`;
+  } else if (order.tracking?.number) {
+    // Booked, but the courier has given no tracking page yet.
+    tracking = `<span class="scm-order__awb">${escapeHtml(carrier)} · ${escapeHtml(order.tracking.number)}</span>`;
+  }
+
+  const items = orderItemsHtml(order);
+
+  return `
+    <li class="scm-order">
+      <div class="scm-order__strip">
+        ${orderFactsHtml(order)}
+        <span class="scm-pill scm-pill--${statusTone(order.status)}">${escapeHtml(orderStatusLabel(order.status))}</span>
+      </div>
+      ${items ? `<ul class="scm-order__items">${items}</ul>` : ''}
+      <div class="scm-order__foot">
+        <div class="scm-order__tracking">${tracking}</div>
+        <button class="scm-button scm-button--ghost" type="button" data-order="${escapeHtml(String(order.id ?? ''))}">View details</button>
+      </div>
+    </li>
+  `;
+}
+
+/** Placed / total / order number, as labelled columns. */
+function orderFactsHtml(order) {
+  const fact = (label, value) => value
+    ? `<div class="scm-fact"><dt class="scm-fact__label">${label}</dt><dd class="scm-fact__value">${escapeHtml(value)}</dd></div>`
+    : '';
+  return `
+    <dl class="scm-facts">
+      ${fact('Order placed', formatOrderDate(order.placed_at))}
+      ${fact('Total', order.total ? formatMoney(order.total, order.currency) : '')}
+      ${fact('Order', order.number ?? '')}
+    </dl>
+  `;
+}
+
 /* --- one order ------------------------------------------------------------ */
 
 /**
@@ -351,11 +456,11 @@ export function orderDetailHtml(order) {
 
   return `
     <button class="scm-link scm-order__back" type="button" data-orders-back>\u2190 Back to orders</button>
-    <h1 class="scm-account__title">${escapeHtml(order.number ?? '')}</h1>
-    <p class="scm-account__lead">
-      ${escapeHtml(formatOrderDate(order.placed_at))}
-      ${order.total ? ` \u00b7 ${escapeHtml(formatMoney(order.total, order.currency))}` : ''}
-    </p>
+    <div class="scm-pane__head">
+      <h1 class="scm-account__title">Order ${escapeHtml(order.number ?? '')}</h1>
+      <span class="scm-pill scm-pill--${statusTone(order.status)}">${escapeHtml(orderStatusLabel(order.status))}</span>
+    </div>
+    <div class="scm-order__strip scm-order__strip--detail">${orderFactsHtml(order)}</div>
 
     <section class="scm-track" aria-label="Delivery">
       <h2 class="scm-track__title">${escapeHtml(orderStatusLabel(order.status))}</h2>
@@ -364,7 +469,11 @@ export function orderDetailHtml(order) {
       ${events ? `<ol class="scm-track__events">${events}</ol>` : ''}
     </section>
 
-    ${items ? `<ul class="scm-order__items scm-order__items--detail">${items}</ul>` : ''}
+    ${items ? `
+    <section class="scm-card" aria-labelledby="scm-items-title">
+      <h2 class="scm-card__title" id="scm-items-title">Items</h2>
+      <ul class="scm-order__items scm-order__items--detail">${items}</ul>
+    </section>` : ''}
   `;
 }
 
@@ -636,14 +745,15 @@ export function createMockFetch() {
 
 /* --- the screens ---------------------------------------------------------- */
 
+// `group` picks the card a field sits in; `wide` spans the whole row.
 const FIELDS = [
-  { key: 'name', label: 'Name', type: 'text', autocomplete: 'name' },
-  { key: 'email', label: 'Email', type: 'email', autocomplete: 'email' },
-  { key: 'street', label: 'Address', type: 'text', autocomplete: 'address-line1' },
-  { key: 'street2', label: 'Address line 2', type: 'text', autocomplete: 'address-line2' },
-  { key: 'city', label: 'City', type: 'text', autocomplete: 'address-level2' },
-  { key: 'state', label: 'State', type: 'text', autocomplete: 'address-level1' },
-  { key: 'zip', label: 'PIN code', type: 'text', autocomplete: 'postal-code', inputmode: 'numeric' },
+  { key: 'name', label: 'Full name', type: 'text', autocomplete: 'name', group: 'personal' },
+  { key: 'email', label: 'Email', type: 'email', autocomplete: 'email', group: 'personal' },
+  { key: 'street', label: 'Address', type: 'text', autocomplete: 'address-line1', group: 'address', wide: true },
+  { key: 'street2', label: 'Address line 2', type: 'text', autocomplete: 'address-line2', group: 'address', wide: true },
+  { key: 'city', label: 'City', type: 'text', autocomplete: 'address-level2', group: 'address' },
+  { key: 'state', label: 'State', type: 'text', autocomplete: 'address-level1', group: 'address' },
+  { key: 'zip', label: 'PIN code', type: 'text', autocomplete: 'postal-code', inputmode: 'numeric', group: 'address' },
 ];
 
 class AccountArea {
@@ -896,15 +1006,9 @@ class AccountArea {
     return this.showProfile(profile);
   }
 
-  navHtml(current) {
-    const tab = (key, label) =>
-      `<button class="scm-tab${current === key ? ' account-tab--current' : ''}"
-               type="button" data-tab="${key}"
-               ${current === key ? 'aria-current="page"' : ''}>${label}</button>`;
-    return `<nav class="scm-nav" aria-label="Account">${tab('profile', 'Profile')}${tab('orders', 'Orders')}</nav>`;
-  }
-
-  wireNav() {
+  /** Draw a signed-in screen inside the account frame and wire the frame up. */
+  renderShell(current, content) {
+    this.render(accountShellHtml(current, this.session.profile, content), { signedIn: true });
     for (const button of this.body.querySelectorAll('[data-tab]')) {
       button.addEventListener('click', () => {
         const tab = button.dataset.tab;
@@ -912,15 +1016,14 @@ class AccountArea {
         else this.showProfile(this.session.profile);
       });
     }
+    this.body.querySelector('[data-action="signout"]').addEventListener('click', () => this.signOut(false));
   }
 
   async showOrders(profile) {
-    this.render(`
-      ${this.navHtml('orders')}
+    this.renderShell('orders', `
       <h1 class="scm-account__title">Your orders</h1>
       <p class="scm-account__lead">Loading…</p>
-    `, { signedIn: true });
-    this.wireNav();
+    `);
 
     const result = await this.api.orders(this.session.accessToken);
 
@@ -939,62 +1042,21 @@ class AccountArea {
       const orders = result.data.orders ?? [];
       this.orders = orders;
       body = orders.length === 0
-        ? `<p class="scm-account__lead">You haven't placed an order yet.</p>`
-        : `<ul class="scm-orders">${orders.map((order) => this.orderHtml(order)).join('')}</ul>`;
+        ? `<div class="scm-card scm-empty">
+             <p class="scm-account__lead">You haven't placed an order yet.</p>
+             <a class="scm-button" href="/collections/all">Start shopping</a>
+           </div>`
+        : `<ul class="scm-orders">${orders.map(orderCardHtml).join('')}</ul>`;
     }
 
-    this.render(`
-      ${this.navHtml('orders')}
+    this.renderShell('orders', `
       <h1 class="scm-account__title">Your orders</h1>
       ${body}
-    `, { signedIn: true });
-    this.wireNav();
+    `);
 
     for (const button of this.body.querySelectorAll('[data-order]')) {
       button.addEventListener('click', () => this.showOrderDetail(button.dataset.order));
     }
-  }
-
-  /**
-   * One order in the list.
-   *
-   * Odoo sends more than the bare essentials — a product image, the variant,
-   * a link back to the product, the AWB number — and a saree is remembered by
-   * its photograph, not its SKU, so the picture carries the row.
-   *
-   * Everything optional is treated as optional: `tracking` can be null, the
-   * tracking `url` can be null while the number exists, and an item may have
-   * no image. Each piece appears only when it is there.
-   */
-  orderHtml(order) {
-    const carrier = order.tracking?.carrier ?? 'the courier';
-    let tracking = '';
-    if (order.tracking?.url) {
-      tracking = `<a class="scm-link" href="${escapeHtml(order.tracking.url)}" target="_blank" rel="noopener">Track with ${escapeHtml(carrier)}</a>`;
-    } else if (order.tracking?.number) {
-      // Booked, but the courier has given no tracking page yet.
-      tracking = `<p class="scm-order__meta">${escapeHtml(carrier)} \u00b7 ${escapeHtml(order.tracking.number)}</p>`;
-    }
-
-    const items = orderItemsHtml(order);
-
-    return `
-      <li class="scm-order">
-        <div class="scm-order__head">
-          <span class="scm-order__number">${escapeHtml(order.number ?? '')}</span>
-          <span class="scm-order__status">${escapeHtml(orderStatusLabel(order.status))}</span>
-        </div>
-        <p class="scm-order__meta">
-          ${escapeHtml(formatOrderDate(order.placed_at))} \u00b7
-          ${escapeHtml(formatMoney(order.total, order.currency))}
-        </p>
-        ${items ? `<ul class="scm-order__items">${items}</ul>` : ''}
-        <div class="scm-order__actions">
-          <button class="scm-link" type="button" data-order="${escapeHtml(String(order.id ?? ''))}">View details</button>
-          ${tracking}
-        </div>
-      </li>
-    `;
   }
 
   /**
@@ -1008,11 +1070,7 @@ class AccountArea {
     const order = findOrder(this.orders, id);
     if (!order) return this.showOrders(this.session.profile);
 
-    this.render(`
-      ${this.navHtml('orders')}
-      ${orderDetailHtml(order)}
-    `, { signedIn: true });
-    this.wireNav();
+    this.renderShell('orders', orderDetailHtml(order));
 
     const back = this.body.querySelector('[data-orders-back]');
     if (back) back.addEventListener('click', () => this.showOrders(this.session.profile));
@@ -1020,51 +1078,75 @@ class AccountArea {
 
   showProfile(profile) {
     const name = displayName(profile);
-    const greeting = name ? `Hello, ${escapeHtml(name.split(' ')[0])}` : 'Your account';
-    const lead = name
-      ? escapeHtml(profile.phone ?? '')
-      : `${escapeHtml(profile.phone ?? '')} — add your name below so we know who to address.`;
+    const field = (spec) => {
+      // Leave Name empty rather than pre-filling the phone number Odoo
+      // used as a placeholder — otherwise the customer has to delete
+      // their own number before they can type their name.
+      const value = spec.key === 'name' ? (name ?? '') : (profile[spec.key] ?? '');
+      return `
+        <label class="scm-field${spec.wide ? ' scm-field--wide' : ''}">
+          <span class="scm-field__label">${spec.label}</span>
+          <input class="scm-field__input" name="${spec.key}" type="${spec.type}"
+                 autocomplete="${spec.autocomplete}"
+                 ${spec.inputmode ? `inputmode="${spec.inputmode}"` : ''}
+                 value="${escapeHtml(value)}">
+        </label>`;
+    };
+    const group = (key) => FIELDS.filter((spec) => spec.group === key).map(field).join('');
 
-    this.render(`
-      ${this.navHtml('profile')}
-      <h1 class="scm-account__title">${greeting}</h1>
-      <p class="scm-account__lead">${lead}</p>
+    this.renderShell('profile', `
+      <div class="scm-pane__head">
+        <h1 class="scm-account__title">Profile</h1>
+      </div>
+      ${name ? '' : `<p class="scm-account__lead">Add your name below so we know who to address.</p>`}
 
       <form class="scm-account__form" data-form="profile" novalidate>
-        ${FIELDS.map((field) => {
-          // Leave Name empty rather than pre-filling the phone number Odoo
-          // used as a placeholder — otherwise the customer has to delete
-          // their own number before they can type their name.
-          const value = field.key === 'name' ? (name ?? '') : (profile[field.key] ?? '');
-          return `
-          <label class="scm-field">
-            <span class="scm-field__label">${field.label}</span>
-            <input class="scm-field__input" name="${field.key}" type="${field.type}"
-                   autocomplete="${field.autocomplete}"
-                   ${field.inputmode ? `inputmode="${field.inputmode}"` : ''}
-                   value="${escapeHtml(value)}">
-          </label>
-        `;
-        }).join('')}
+        <fieldset class="scm-card">
+          <legend class="scm-card__title">Personal details</legend>
+          <div class="scm-grid scm-grid--2">
+            ${group('personal')}
+            <div class="scm-field">
+              <span class="scm-field__label">Mobile number</span>
+              <p class="scm-field__static">${escapeHtml(formatPhone(profile.phone))}
+                <span class="scm-field__hint">Used to sign in</span></p>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="scm-card">
+          <legend class="scm-card__title">Delivery address</legend>
+          <div class="scm-grid scm-grid--3">
+            ${group('address')}
+          </div>
+        </fieldset>
+
         <p class="scm-error" data-error hidden></p>
-        <p class="scm-note" data-saved hidden>Saved.</p>
-        <button class="scm-button" type="submit">Save changes</button>
+        <div class="scm-save">
+          <p class="scm-note" data-saved hidden role="status">Saved.</p>
+          <button class="scm-button" type="submit">Save changes</button>
+        </div>
       </form>
 
-      <div class="scm-actions scm-actions--stacked">
-        <button class="scm-link" type="button" data-action="signout">Sign out</button>
-        <button class="scm-link" type="button" data-action="signout-all">Sign out on all devices</button>
-        <button class="scm-link scm-link--quiet" type="button" data-action="delete">Delete my account</button>
-      </div>
-    `, { signedIn: true });
+      <section class="scm-card scm-card--quiet" aria-labelledby="scm-settings-title">
+        <h2 class="scm-card__title" id="scm-settings-title">Account settings</h2>
+        <div class="scm-settings">
+          <div class="scm-setting">
+            <p class="scm-setting__text">Signed in on another phone or computer you no longer use?</p>
+            <button class="scm-button scm-button--ghost" type="button" data-action="signout-all">Sign out on all devices</button>
+          </div>
+          <div class="scm-setting">
+            <p class="scm-setting__text">Remove your account and the details saved with it.</p>
+            <button class="scm-link scm-link--danger" type="button" data-action="delete">Delete my account</button>
+          </div>
+        </div>
+      </section>
+    `);
 
     const form = this.body.querySelector('[data-form="profile"]');
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       this.saveProfile(form);
     });
-    this.wireNav();
-    this.body.querySelector('[data-action="signout"]').addEventListener('click', () => this.signOut(false));
     this.body.querySelector('[data-action="signout-all"]').addEventListener('click', () => this.signOut(true));
     this.body.querySelector('[data-action="delete"]').addEventListener('click', () => this.deleteAccount());
   }
