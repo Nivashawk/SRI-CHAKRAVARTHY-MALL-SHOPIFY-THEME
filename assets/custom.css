@@ -1281,24 +1281,59 @@ a.scm-item__title:hover {
 }
 
 .scm-track {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
   margin: 0;
-  padding: 20px 24px;
+  padding: 24px;
   background: #fff;
   border: 1px solid rgb(34 30 26 / 14%);
   border-radius: 4px;
 }
 
-.scm-track__title {
-  margin: 0 0 14px;
-  font-size: 1.0625rem;
-  color: var(--scm-gold-text);
+.scm-track__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-/* The journey reads top to bottom, each step tied to the next by a hairline
-   so the parcel's road is one object rather than five loose labels. */
-.scm-track__steps {
+.scm-track__status {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.scm-track__status .scm-pill {
+  padding: 6px 14px;
+  font-size: 0.9375rem;
+}
+
+.scm-track__updated {
+  margin: 0;
+  font-size: 0.875rem;
+  opacity: 0.75;
+}
+
+.scm-track__updated:empty {
+  display: none;
+}
+
+.scm-track__refresh {
+  min-height: 40px;
+  padding: 8px 16px;
+}
+
+/* The journey. Across the card on a wide screen, so the whole road reads at
+   a glance; down the card on a phone, where five labels will not fit side by
+   side. Each step's hairline joins it to the one before; it turns gold once
+   the parcel has reached the step. */
+.scm-track__steps {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1306,47 +1341,56 @@ a.scm-item__title:hover {
 
 .scm-track__step {
   position: relative;
-  padding: 0 0 16px 26px;
-  font-size: 0.9375rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 28px 4px 0;
+  font-size: 0.875rem;
+  text-align: center;
 }
 
 .scm-track__step::before {
   content: "";
   position: absolute;
-  inset-inline-start: 0;
-  inset-block-start: 4px;
-  width: 11px;
-  height: 11px;
+  inset-block-start: 0;
+  inset-inline-start: 50%;
+  z-index: 1;
+  width: 16px;
+  height: 16px;
+  margin-inline-start: -8px;
   border-radius: 50%;
-  border: 2px solid var(--scm-gold-rule);
-  background: var(--scm-ivory);
+  border: 2px solid rgb(34 30 26 / 28%);
+  background: #fff;
 }
 
 .scm-track__step::after {
   content: "";
   position: absolute;
-  inset-inline-start: 5px;
-  inset-block-start: 15px;
-  bottom: 0;
-  width: 1px;
-  background: rgb(34 30 26 / 16%);
+  inset-block-start: 7px;
+  inset-inline: calc(-50% + 8px) calc(50% + 8px);
+  height: 2px;
+  background: rgb(34 30 26 / 14%);
 }
 
-.scm-track__step:last-child {
-  padding-block-end: 0;
-}
-
-.scm-track__step:last-child::after {
+.scm-track__step:first-child::after {
   display: none;
 }
 
 .scm-track__step--done::before {
+  border-color: var(--scm-gold-rule);
   background: var(--scm-gold-rule);
 }
 
 .scm-track__step--current::before {
+  border-color: var(--scm-gold-rule);
   background: var(--scm-gold-fill);
-  box-shadow: 0 0 0 3px rgb(217 152 47 / 28%);
+  box-shadow: 0 0 0 4px rgb(217 152 47 / 25%);
+}
+
+.scm-track__step--done::after,
+.scm-track__step--current::after {
+  background: var(--scm-gold-rule);
 }
 
 .scm-track__step--current .scm-track__label {
@@ -1355,55 +1399,224 @@ a.scm-item__title:hover {
 }
 
 /* Not yet reached: visibly ahead of the parcel, still readable. */
-.scm-track__step--todo {
-  opacity: 0.6;
+.scm-track__step--todo .scm-track__label {
+  opacity: 0.65;
 }
 
-.scm-track__step--todo::before {
-  border-color: rgb(34 30 26 / 28%);
+.scm-track__date {
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.7;
 }
 
-.scm-track__carrier {
+@media screen and (max-width: 749px) {
+  .scm-track {
+    padding: 20px 16px;
+  }
+
+  .scm-track__steps {
+    grid-auto-flow: row;
+  }
+
+  .scm-track__step {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px 10px;
+    padding: 0 0 20px 30px;
+    text-align: start;
+  }
+
+  .scm-track__step::before {
+    inset-inline-start: 0;
+    margin-inline-start: 0;
+  }
+
+  /* Down the page the hairline runs to the next step instead. */
+  .scm-track__step::after,
+  .scm-track__step:first-child::after {
+    display: block;
+    inset-block: 18px -2px;
+    inset-inline: 7px auto;
+    width: 2px;
+    height: auto;
+    background: rgb(34 30 26 / 14%);
+  }
+
+  .scm-track__step--done::after {
+    background: var(--scm-gold-rule);
+  }
+
+  .scm-track__step--current::after {
+    background: rgb(34 30 26 / 14%);
+  }
+
+  .scm-track__step:last-child {
+    padding-block-end: 0;
+  }
+
+  .scm-track__step:last-child::after {
+    display: none;
+  }
+}
+
+/* The courier, the AWB, and the way to follow it. */
+.scm-courier {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin: 14px 0 0;
-  padding-block-start: 14px;
-  border-block-start: 1px solid rgb(34 30 26 / 12%);
-  font-size: 0.9375rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  padding: 16px 18px;
+  background: #f7f1e3;
+  border-radius: 4px;
 }
 
-.scm-track__awb {
-  font-variant-numeric: tabular-nums;
-  opacity: 0.8;
-}
-
-/* The courier's own history, shown only once Odoo sends it. */
-.scm-track__events {
+.scm-courier__info {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 14px 0 0;
-  padding: 14px 0 0;
-  border-block-start: 1px solid rgb(34 30 26 / 12%);
-  list-style: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 14px;
+}
+
+.scm-courier__name {
+  font-weight: 600;
+}
+
+.scm-courier__awb {
+  font-variant-numeric: tabular-nums;
+}
+
+.scm-courier__copy {
+  min-height: 32px;
   font-size: 0.875rem;
 }
 
+a.scm-courier__track {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.scm-courier__track {
+  min-height: 44px;
+  padding: 10px 22px;
+}
+
+.scm-track__note {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 0.875rem;
+  color: #2f5d3a; /* 6.8:1 on the courier panel */
+}
+
+@media screen and (max-width: 749px) {
+  .scm-courier__track {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* What the courier has reported, newest first. */
+.scm-track__events {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .scm-track__event {
+  position: relative;
   display: grid;
-  grid-template-columns: 6.5rem minmax(0, 1fr);
-  gap: 4px 12px;
+  grid-template-columns: 9.5rem minmax(0, 1fr);
+  gap: 2px 16px;
+  padding: 0 0 18px 24px;
+  font-size: 0.9375rem;
+}
+
+.scm-track__event::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 6px;
+  inset-inline-start: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgb(34 30 26 / 28%);
+}
+
+.scm-track__event::after {
+  content: "";
+  position: absolute;
+  inset-block: 20px 2px;
+  inset-inline-start: 4px;
+  width: 2px;
+  background: rgb(34 30 26 / 12%);
+}
+
+.scm-track__event:last-child {
+  padding-block-end: 0;
+}
+
+.scm-track__event:last-child::after {
+  display: none;
+}
+
+.scm-track__event--latest::before {
+  background: var(--scm-gold-fill);
+  box-shadow: 0 0 0 3px rgb(217 152 47 / 28%);
+}
+
+.scm-track__event--latest .scm-track__what {
+  font-weight: 600;
+  color: var(--scm-gold-text);
 }
 
 .scm-track__when {
-  opacity: 0.7;
+  font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
+  opacity: 0.75;
 }
 
 .scm-track__where {
   grid-column: 2;
+  font-size: 0.875rem;
+  opacity: 0.75;
+}
+
+.scm-track__empty {
+  margin: 0;
+  font-size: 0.9375rem;
+  opacity: 0.75;
+}
+
+@media screen and (max-width: 749px) {
+  .scm-track__event {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .scm-track__where {
+    grid-column: 1;
+  }
+}
+
+/* On the list card: AWB, freshness and the courier link on one wrapping line. */
+.scm-order__tracking {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 14px;
+}
+
+.scm-order__updated {
+  font-size: 0.8125rem;
   opacity: 0.7;
+}
+
+.scm-pill--alert {
+  color: #7a3e00;
+  background: #fbe2c2; /* 6.7:1 */
 }
 
 .scm-order__items--detail {
@@ -1419,4 +1632,33 @@ a.scm-item__title:hover {
 @keyframes scm-step-in {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* --- sign in before checkout ----------------------------------------------
+
+   html.scm-gate: the phone sign-in is on (layout/theme.liquid).
+   html.scm-signed-in: someone is signed in on this browser.
+
+   Shopify's express buttons (Buy it now, Shop Pay, GPay) go straight to
+   payment and their clicks cannot be held while someone signs in, so a
+   signed-out shopper gets our Buy it now instead, which signs them in first.
+   The cart's own Checkout button stays; assets/account.js guards it. */
+
+.scm-buy-now {
+  display: none;
+  width: 100%;
+}
+
+html.scm-gate:not(.scm-signed-in) .accelerated-checkout-block .shopify-payment-button,
+html.scm-gate:not(.scm-signed-in) .additional-checkout-buttons {
+  display: none;
+}
+
+html.scm-gate:not(.scm-signed-in) .scm-buy-now {
+  display: flex;
+}
+
+.scm-buy-now[aria-busy="true"] {
+  opacity: 0.6;
+  cursor: progress;
 }

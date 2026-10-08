@@ -156,6 +156,41 @@ export function shouldOpenSignInPopup(session, now = Date.now()) {
 }
 
 /**
+ * Is anyone signed in on this browser?
+ *
+ * Wider than "is the access token good": a lapsed token with a refresh token
+ * behind it is a customer who signed in and has not left. Mirrored by the
+ * inline script in layout/theme.liquid, which sets html.scm-signed-in before
+ * the page paints — keep the two in step.
+ */
+export function isSignedIn(session, now = Date.now()) {
+  if (!session) return false;
+  return sessionState(session, now) !== 'expired' || Boolean(session.refreshToken);
+}
+
+/**
+ * What the Checkout and Buy it now buttons do: send the shopper to sign in
+ * first, or let them through. Shopify's checkout cannot ask for our sign-in,
+ * so this is the last point at which we can.
+ */
+export function checkoutAction(session, now = Date.now()) {
+  return isSignedIn(session, now) ? 'proceed' : 'signin';
+}
+
+/**
+ * Cart attributes that travel with the order to Shopify, and from there to
+ * Odoo, so the order arrives already tied to the customer who placed it.
+ * Unknown values are left out rather than sent blank.
+ */
+export function checkoutAttributes(session) {
+  const profile = session?.profile ?? {};
+  const attributes = {};
+  if (profile.partner_id != null && profile.partner_id !== '') attributes.odoo_partner_id = String(profile.partner_id);
+  if (profile.phone) attributes.customer_phone = String(profile.phone);
+  return attributes;
+}
+
+/**
  * Demo mode, switched on by ?mock=1 in the URL.
  *
  * In demo mode nothing leaves the browser: no request reaches Odoo and no SMS
@@ -226,7 +261,14 @@ const ORDER_STATUS = {
   cancelled: 'Cancelled',
   returned: 'Returned',
   refunded: 'Refunded',
+  // What ST Courier's codes come to once Odoo translates them: an NDR (no one
+  // home, address not found) and an RTO (the parcel coming back to us).
+  delivery_attempted: 'Delivery attempted',
+  rto: 'Returning to us',
+  returning: 'Returning to us',
 };
+
+const STOPPED = new Set(['cancelled', 'returned', 'refunded', 'rto', 'returning']);
 
 /**
  * Courier and ERP systems speak in codes — DRS, RTO, rto_initiated. A customer
@@ -243,8 +285,115 @@ export function orderStatusLabel(status) {
  */
 export function statusTone(status) {
   if (status === 'delivered') return 'done';
-  if (status === 'cancelled' || status === 'returned' || status === 'refunded') return 'stop';
+  if (STOPPED.has(status)) return 'stop';
+  if (status === 'delivery_attempted') return 'alert'; // still coming, but needs the customer
   return 'progress';
+}
+
+/* --- times ---------------------------------------------------------------- */
+
+/** Day, month, hour and minute of a moment, in the given (or the browser's) zone. */
+function clockParts(date, timeZone) {
+  const parts = {};
+  const format = new Intl.DateTimeFormat('en-GB', {
+    timeZone, day: 'numeric', month: 'numeric', hour: 'numeric', minute: '2-digit', hourCycle: 'h23',
+  });
+  for (const part of format.formatToParts(date)) parts[part.type] = part.value;
+  return { day: Number(parts.day), month: Number(parts.month) - 1, hour: Number(parts.hour) % 24, minute: parts.minute };
+}
+
+/**
+ * When a courier update happened: 30 Sep, 2:57 pm. A parcel moves several
+ * times a day, so the time matters as much as the date. Months are spelled
+ * by hand for the same reason as formatOrderDate.
+ */
+export function formatEventTime(iso, timeZone) {
+  const date = new Date(iso ?? '');
+  if (Number.isNaN(date.getTime())) return '';
+  const { day, month, hour, minute } = clockParts(date, timeZone);
+  const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+  return `${day} ${MONTHS[month]}, ${hour12}:${minute} ${hour < 12 ? 'am' : 'pm'}`;
+}
+
+/**
+ * How fresh an update is: "just now", "5 minutes ago", "3 hours ago" — and,
+ * once it is a day old, the date and time, which say more than "2 days ago".
+ */
+export function relativeTime(iso, now = Date.now(), timeZone) {
+  const then = new Date(iso ?? '').getTime();
+  if (Number.isNaN(then)) return '';
+  const minutes = Math.floor((now - then) / 60_000);
+  if (minutes < 1) return 'just now';
+  if (minutes < 60) return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+  return formatEventTime(iso, timeZone);
+}
+
+/* --- the order, as the screens read it ------------------------------------ */
+
+/**
+ * One shape for an order, whichever names Odoo used.
+ *
+ * We asked for `status` and `tracking { carrier, number, url }`; Odoo's own
+ * order endpoint answers with `customer_status`, `awb_no`, `courier` and
+ * `tracking_url`, plus `last_status_at`, `delivered_at` and `events`. Both are
+ * read here, so the screens work with either and keep working when Odoo moves
+ * from one to the other. Safe to apply twice.
+ */
+export function normalizeOrder(raw) {
+  if (!raw || typeof raw !== 'object') return raw;
+  const given = raw.tracking ?? {};
+  const number = given.number ?? raw.awb_no ?? null;
+  const tracking = number
+    ? { carrier: given.carrier ?? raw.courier ?? null, number: String(number), url: given.url ?? raw.tracking_url ?? null }
+    : null;
+
+  const time = (event) => {
+    const t = new Date(event.at ?? '').getTime();
+    return Number.isNaN(t) ? -Infinity : t;
+  };
+  const events = (Array.isArray(raw.events) ? raw.events : [])
+    .filter((event) => event && (event.at || event.status))
+    .map((event) => ({ at: event.at ?? null, status: event.status ?? '', location: event.location ?? null }))
+    .sort((a, b) => time(b) - time(a));
+
+  return {
+    ...raw,
+    status: raw.status ?? raw.customer_status ?? null,
+    tracking,
+    lastStatus: raw.lastStatus ?? raw.last_status ?? null,
+    lastStatusAt: raw.lastStatusAt ?? raw.last_status_at ?? null,
+    deliveredAt: raw.deliveredAt ?? raw.delivered_at ?? null,
+    events,
+  };
+}
+
+/**
+ * Where to follow a parcel when Odoo sends no link of its own.
+ *
+ * ST Courier's site has no address that takes an AWB: its form posts the
+ * number and opens a fixed page. So the best we can do is open that page with
+ * the AWB already on the customer's clipboard (see the click handler).
+ */
+const CARRIER_PAGES = {
+  'st courier': 'https://stcourier.com/#track_shipment',
+};
+
+export function carrierTrackingPage(carrier) {
+  return CARRIER_PAGES[String(carrier ?? 'st courier').trim().toLowerCase()] ?? null;
+}
+
+/** The control that takes a customer to the courier, or nothing. */
+function trackControlHtml(tracking, className) {
+  if (!tracking?.number) return '';
+  const carrier = escapeHtml(tracking.carrier ?? 'ST Courier');
+  if (tracking.url) {
+    return `<a class="${className}" href="${escapeHtml(tracking.url)}" target="_blank" rel="noopener">Track on ${carrier}</a>`;
+  }
+  if (!carrierTrackingPage(tracking.carrier)) return '';
+  return `<button class="${className}" type="button" data-track-awb="${escapeHtml(tracking.number)}"
+            data-track-page="${escapeHtml(carrierTrackingPage(tracking.carrier))}">Track on ${carrier}</button>`;
 }
 
 /** +918825464712 → +91 88254 64712. Anything else is left as it came. */
@@ -301,15 +450,16 @@ export function accountShellHtml(current, profile, content) {
  * tracking `url` can be null while the number exists, and an item may have
  * no image. Each piece appears only when it is there.
  */
-export function orderCardHtml(order) {
-  const carrier = order.tracking?.carrier ?? 'the courier';
-  let tracking = '';
-  if (order.tracking?.url) {
-    tracking = `<a class="scm-link" href="${escapeHtml(order.tracking.url)}" target="_blank" rel="noopener">Track with ${escapeHtml(carrier)}</a>`;
-  } else if (order.tracking?.number) {
-    // Booked, but the courier has given no tracking page yet.
-    tracking = `<span class="scm-order__awb">${escapeHtml(carrier)} · ${escapeHtml(order.tracking.number)}</span>`;
-  }
+export function orderCardHtml(raw, now = Date.now()) {
+  const order = normalizeOrder(raw);
+  const { tracking } = order;
+  const updated = order.lastStatusAt ? `Updated ${relativeTime(order.lastStatusAt, now)}` : '';
+  const trackingHtml = tracking
+    ? `<span class="scm-order__awb">${escapeHtml(tracking.carrier ?? 'Courier')} \u00b7 ${escapeHtml(tracking.number)}</span>
+       ${updated ? `<span class="scm-order__updated">${escapeHtml(updated)}</span>` : ''}
+       ${trackControlHtml(tracking, 'scm-link')}
+       <span class="scm-track__note" data-track-note hidden role="status"></span>`
+    : '';
 
   const items = orderItemsHtml(order);
 
@@ -321,7 +471,7 @@ export function orderCardHtml(order) {
       </div>
       ${items ? `<ul class="scm-order__items">${items}</ul>` : ''}
       <div class="scm-order__foot">
-        <div class="scm-order__tracking">${tracking}</div>
+        <div class="scm-order__tracking">${trackingHtml}</div>
         <button class="scm-button scm-button--ghost" type="button" data-order="${escapeHtml(String(order.id ?? ''))}">View details</button>
       </div>
     </li>
@@ -377,12 +527,20 @@ export function trackingSteps(order) {
   if (status === 'cancelled') {
     return [step('placed', 'Order placed', 'done'), step('cancelled', 'Cancelled', 'current')];
   }
-  if (status === 'returned' || status === 'refunded') {
+  if (STOPPED.has(status)) {
     return [
       step('placed', 'Order placed', 'done'),
       step('shipped', 'Shipped', 'done'),
       step(status, orderStatusLabel(status), 'current'),
     ];
+  }
+  // A failed attempt is where "out for delivery" would be: the parcel got
+  // that far, and will be tried again or held for collection.
+  if (status === 'delivery_attempted') {
+    const at = JOURNEY.findIndex((entry) => entry.key === 'out_for_delivery');
+    return JOURNEY.map((entry, i) => i === at
+      ? step('delivery_attempted', 'Delivery attempted', 'current')
+      : step(entry.key, entry.label, i < at ? 'done' : 'todo'));
   }
 
   // An unrecognised status is treated as "only just placed" rather than
@@ -422,35 +580,61 @@ function orderItemsHtml(order) {
 }
 
 /**
- * One order, opened.
+ * One order, opened: where the parcel is, how fresh that is, how to follow
+ * it with the courier, and everything the courier has reported so far.
  *
- * Odoo's customer endpoint sends the status and the AWB but not yet the
- * courier's own history, so the journey above carries the screen. When
- * `events` does arrive the history is added underneath, and until then no
- * empty frame is drawn.
+ * Odoo writes ST Courier's status into Shopify and passes it on here. Until
+ * it sends the courier's own history (`events`), the journey carries the
+ * screen and the history card says what will appear there.
  */
-export function orderDetailHtml(order) {
-  const carrier = order.tracking?.carrier ?? 'the courier';
+export function orderDetailHtml(raw, now = Date.now()) {
+  const order = normalizeOrder(raw);
+  const { tracking } = order;
 
-  const steps = trackingSteps(order).map((step) => `
+  const stepDate = (key) => {
+    if (key === 'placed') return formatOrderDate(order.placed_at);
+    if (key === 'delivered' && order.deliveredAt) return formatOrderDate(order.deliveredAt);
+    return '';
+  };
+  const steps = trackingSteps(order).map((step) => {
+    const when = stepDate(step.key);
+    return `
     <li class="scm-track__step scm-track__step--${step.state}"${step.state === 'current' ? ' aria-current="step"' : ''}>
       <span class="scm-track__label">${escapeHtml(step.label)}</span>
-    </li>`).join('');
+      ${when ? `<span class="scm-track__date">${escapeHtml(when)}</span>` : ''}
+    </li>`;
+  }).join('');
 
-  let tracking = '';
-  if (order.tracking?.number) {
-    const number = `<span class="scm-track__awb">${escapeHtml(carrier)} \u00b7 ${escapeHtml(order.tracking.number)}</span>`;
-    tracking = order.tracking.url
-      ? `<p class="scm-track__carrier">${number} <a class="scm-link" href="${escapeHtml(order.tracking.url)}" target="_blank" rel="noopener">Follow on ${escapeHtml(carrier)}</a></p>`
-      : `<p class="scm-track__carrier">${number}</p>`;
+  let freshness = '';
+  if (order.status === 'delivered' && order.deliveredAt) {
+    freshness = `Delivered on ${formatEventTime(order.deliveredAt)}`;
+  } else if (order.lastStatusAt) {
+    freshness = `Updated ${relativeTime(order.lastStatusAt, now)}`;
   }
 
-  const events = (order.events ?? []).map((event) => `
-    <li class="scm-track__event">
-      <span class="scm-track__when">${escapeHtml(formatOrderDate(event.at))}</span>
-      <span class="scm-track__what">${escapeHtml(event.status ?? '')}</span>
+  const courier = tracking ? `
+      <div class="scm-courier">
+        <div class="scm-courier__info">
+          <span class="scm-courier__name">${escapeHtml(tracking.carrier ?? 'Courier')}</span>
+          <span class="scm-courier__awb">AWB <strong>${escapeHtml(tracking.number)}</strong></span>
+          <button class="scm-link scm-courier__copy" type="button" data-copy="${escapeHtml(tracking.number)}">Copy</button>
+        </div>
+        ${trackControlHtml(tracking, 'scm-button scm-courier__track')}
+        <p class="scm-track__note" data-track-note hidden role="status"></p>
+      </div>` : '';
+
+  const events = order.events.map((event, i) => `
+    <li class="scm-track__event${i === 0 ? ' scm-track__event--latest' : ''}">
+      <span class="scm-track__when">${escapeHtml(formatEventTime(event.at))}</span>
+      <span class="scm-track__what">${escapeHtml(event.status)}</span>
       ${event.location ? `<span class="scm-track__where">${escapeHtml(event.location)}</span>` : ''}
     </li>`).join('');
+
+  const history = events
+    ? `<ol class="scm-track__events">${events}</ol>`
+    : `<p class="scm-track__empty">${tracking
+        ? 'The courier\'s updates will appear here as the parcel moves.'
+        : 'Courier updates will appear here once your order is handed to the courier.'}</p>`;
 
   const items = orderItemsHtml(order);
 
@@ -458,15 +642,24 @@ export function orderDetailHtml(order) {
     <button class="scm-link scm-order__back" type="button" data-orders-back>\u2190 Back to orders</button>
     <div class="scm-pane__head">
       <h1 class="scm-account__title">Order ${escapeHtml(order.number ?? '')}</h1>
-      <span class="scm-pill scm-pill--${statusTone(order.status)}">${escapeHtml(orderStatusLabel(order.status))}</span>
     </div>
     <div class="scm-order__strip scm-order__strip--detail">${orderFactsHtml(order)}</div>
 
     <section class="scm-track" aria-label="Delivery">
-      <h2 class="scm-track__title">${escapeHtml(orderStatusLabel(order.status))}</h2>
+      <div class="scm-track__head">
+        <div class="scm-track__status">
+          <span class="scm-pill scm-pill--${statusTone(order.status)}">${escapeHtml(orderStatusLabel(order.status))}</span>
+          <p class="scm-track__updated" data-updated>${escapeHtml(freshness)}</p>
+        </div>
+        <button class="scm-button scm-button--ghost scm-track__refresh" type="button" data-action="refresh-order">Refresh</button>
+      </div>
       <ol class="scm-track__steps">${steps}</ol>
-      ${tracking}
-      ${events ? `<ol class="scm-track__events">${events}</ol>` : ''}
+      ${courier}
+    </section>
+
+    <section class="scm-card" aria-labelledby="scm-history-title">
+      <h2 class="scm-card__title" id="scm-history-title">Shipment updates</h2>
+      ${history}
     </section>
 
     ${items ? `
@@ -498,6 +691,7 @@ export function writeSession(session) {
   } catch {
     /* a session that cannot be saved still works until the page is closed */
   }
+  markSignedIn(isSignedIn(session));
 }
 
 export function clearSession() {
@@ -506,6 +700,17 @@ export function clearSession() {
   } catch {
     /* nothing to do */
   }
+  markSignedIn(false);
+}
+
+/**
+ * html.scm-signed-in decides which buy buttons show (see custom.css): Shopify's
+ * express buttons for a signed-in customer, our sign-in-first Buy it now for
+ * everyone else. Set early by layout/theme.liquid; kept true to the session here.
+ */
+function markSignedIn(signedIn) {
+  if (typeof document === 'undefined') return;
+  document.documentElement.classList.toggle('scm-signed-in', signedIn);
 }
 
 /* --- the Odoo client ------------------------------------------------------ */
@@ -700,7 +905,9 @@ export function createMockFetch() {
             currency: 'INR',
             item_count: 2,
             status: 'out_for_delivery',
-            tracking: { carrier: 'ST Courier', number: 'TN123456789', url: 'https://example.com/track' },
+            // ST Courier gives no tracking link, so — as live — there is none.
+            tracking: { carrier: 'ST Courier', number: '53038567223', url: null },
+            last_status_at: new Date(Date.now() - 2 * 3600_000).toISOString(),
             // The live endpoint does not send `events` yet; demo mode shows the
             // shape we have asked Odoo for, so the screen can be reviewed now.
             events: [
@@ -723,7 +930,8 @@ export function createMockFetch() {
             currency: 'INR',
             item_count: 1,
             status: 'delivered',
-            tracking: null,
+            tracking: { carrier: 'ST Courier', number: '53038561021', url: null },
+            delivered_at: '2026-08-13T09:40:00Z',
             items: [{ title: 'Soft silk saree', variant_title: 'Parrot green', quantity: 1,
                        price: '4999.00', line_total: '4999.00',
                        image_url: '/cdn/shop/files/saree-parrot-green-maroon-1.jpg?width=200' }],
@@ -775,6 +983,11 @@ class AccountArea {
     this.session = readSession();
     this.identifier = null;
     this.resendAt = 0;
+    // Set by openSignIn when the popup stands between the shopper and
+    // checkout: why they are being asked, and what to do once they are in.
+    this.reason = null;
+    this.onSignedIn = null;
+    if (!popup) this.body.addEventListener('click', (event) => this.handleTrackingClick(event));
   }
 
   async start() {
@@ -798,8 +1011,24 @@ class AccountArea {
       return this.showSignIn();
     }
 
+    if (this.popup && this.onSignedIn) return this.continueSignedIn();
     if (this.popup) return this.showSignedInPrompt();
     return this.showAccount();
+  }
+
+  /**
+   * Signed in, and the popup was opened on the way to somewhere — checkout.
+   * Say where we are going, then go; the shopper has already said what they
+   * wanted to do once and should not have to press it again.
+   */
+  continueSignedIn() {
+    const next = this.onSignedIn;
+    this.onSignedIn = null;
+    this.render(`
+      <h2 class="scm-account__title" id="scm-dialog-title">Thank you</h2>
+      <p class="scm-account__lead" role="status">Taking you to checkout…</p>
+    `);
+    next();
   }
 
   /**
@@ -855,9 +1084,12 @@ class AccountArea {
   }
 
   showSignIn(prefill = '') {
+    const [title, lead] = this.reason === 'checkout'
+      ? ['Sign in to check out', 'Sign in with your mobile number so we can send you order and delivery updates. New here? The same code creates your account.']
+      : ['Welcome back', 'Sign in with your mobile number.'];
     this.render(`
-      <h1 class="scm-account__title">Welcome back</h1>
-      <p class="scm-account__lead">Sign in with your mobile number.</p>
+      <h1 class="scm-account__title">${title}</h1>
+      <p class="scm-account__lead">${lead}</p>
       <form class="scm-account__form" data-form="signin" novalidate>
         <label class="scm-field">
           <span class="scm-field__label">Mobile number or email</span>
@@ -959,6 +1191,7 @@ class AccountArea {
     this.session = sessionFromTokens(result.data);
     writeSession(this.session);
 
+    if (this.popup && this.onSignedIn) return this.continueSignedIn();
     if (this.popup) {
       // Signed in mid-browse: close the popup and leave the customer where
       // they were, rather than marching them off to an account page they
@@ -1039,14 +1272,14 @@ class AccountArea {
     } else if (!result.ok) {
       body = `<p class="scm-error">${escapeHtml(errorMessage(result.code))}</p>`;
     } else {
-      const orders = result.data.orders ?? [];
+      const orders = (result.data.orders ?? []).map(normalizeOrder);
       this.orders = orders;
       body = orders.length === 0
         ? `<div class="scm-card scm-empty">
              <p class="scm-account__lead">You haven't placed an order yet.</p>
              <a class="scm-button" href="/collections/all">Start shopping</a>
            </div>`
-        : `<ul class="scm-orders">${orders.map(orderCardHtml).join('')}</ul>`;
+        : `<ul class="scm-orders">${orders.map((order) => orderCardHtml(order)).join('')}</ul>`;
     }
 
     this.renderShell('orders', `
@@ -1074,6 +1307,64 @@ class AccountArea {
 
     const back = this.body.querySelector('[data-orders-back]');
     if (back) back.addEventListener('click', () => this.showOrders(this.session.profile));
+
+    const refresh = this.body.querySelector('[data-action="refresh-order"]');
+    if (refresh) refresh.addEventListener('click', () => this.refreshOrder(order.id, refresh));
+  }
+
+  /**
+   * Ask Odoo again, then redraw the same order. Odoo is the one listening to
+   * ST Courier, so this is as fresh as the status gets.
+   */
+  async refreshOrder(id, button) {
+    button.disabled = true;
+    button.textContent = 'Checking…';
+    const result = await this.api.orders(this.session.accessToken);
+    if (result.ok) {
+      this.orders = (result.data.orders ?? []).map(normalizeOrder);
+      if (!findOrder(this.orders, id)) return this.showOrders(this.session.profile);
+      this.showOrderDetail(id);
+      const updated = this.body.querySelector('[data-updated]');
+      if (updated && !updated.textContent.trim()) updated.textContent = 'Checked just now';
+      const again = this.body.querySelector('[data-action="refresh-order"]');
+      if (again) again.textContent = 'Up to date';
+      return;
+    }
+    button.disabled = false;
+    button.textContent = 'Refresh';
+    const updated = this.body.querySelector('[data-updated]');
+    if (updated) updated.textContent = 'Could not check just now. Try again in a moment.';
+  }
+
+  /**
+   * Copy and Track, on the list and on an opened order. One listener on the
+   * body, which survives every redraw.
+   */
+  handleTrackingClick(event) {
+    const target = event.target instanceof Element ? event.target : null;
+    const copy = target?.closest('[data-copy]');
+    if (copy) {
+      copyText(copy.dataset.copy).then((ok) => {
+        copy.textContent = ok ? 'Copied' : 'Copy failed';
+        window.setTimeout(() => { copy.textContent = 'Copy'; }, 2000);
+      });
+      return;
+    }
+
+    const track = target?.closest('[data-track-awb]');
+    if (!track) return;
+    const awb = track.dataset.trackAwb;
+    // Open first, while the click still counts as the customer's own: a
+    // window opened after an await is treated as a pop-up and blocked.
+    window.open(track.dataset.trackPage, '_blank', 'noopener');
+    const note = track.parentElement?.querySelector('[data-track-note]');
+    copyText(awb).then((ok) => {
+      if (!note) return;
+      note.textContent = ok
+        ? `AWB ${awb} is copied. Paste it into the box on ST Courier's page and press Search.`
+        : `Enter AWB ${awb} in the box on ST Courier's page and press Search.`;
+      note.hidden = false;
+    });
   }
 
   showProfile(profile) {
@@ -1202,6 +1493,27 @@ function escapeHtml(value) {
   })[char]);
 }
 
+/** Put text on the clipboard; true if it got there. */
+async function copyText(text) {
+  try {
+    await window.navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    // Older browsers, or a page without clipboard permission.
+    const field = document.createElement('textarea');
+    field.value = text;
+    field.setAttribute('readonly', '');
+    field.style.position = 'fixed';
+    field.style.opacity = '0';
+    document.body.append(field);
+    field.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch { ok = false; }
+    field.remove();
+    return ok;
+  }
+}
+
 function deviceName() {
   const ua = window.navigator.userAgent;
   if (/iPhone|iPad/.test(ua)) return 'iPhone or iPad';
@@ -1214,6 +1526,91 @@ function deviceName() {
 /** Where the account page lives, as set in the theme settings. */
 function accountPageUrl() {
   return document.querySelector('[data-account-page-url]')?.dataset.accountPageUrl || '/pages/account';
+}
+
+/* --- sign in before checkout ----------------------------------------------
+
+   Shopify's checkout cannot ask for our sign-in, so the theme asks on the way
+   there: the cart's Checkout button and, for signed-out shoppers, our own
+   Buy it now (Shopify's express buttons are hidden for them in custom.css —
+   their clicks cannot be held while someone signs in).
+
+   Someone who types /checkout into the address bar still gets through; this
+   guards the doors a shopper actually uses.
+   -------------------------------------------------------------------------- */
+
+function shopRoot() {
+  return window.Shopify?.routes?.root ?? '/';
+}
+
+/** Tie the cart to the customer, then leave for checkout. */
+async function goToCheckout() {
+  const attributes = checkoutAttributes(readSession());
+  if (Object.keys(attributes).length > 0) {
+    try {
+      await fetch(`${shopRoot()}cart/update.js`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ attributes }),
+      });
+    } catch {
+      // A cart without the attributes is still a cart; the order is matched
+      // by phone in Odoo. Never block the sale on this.
+    }
+  }
+  window.location.href = '/checkout';
+}
+
+/** Put the product the button belongs to in the cart, then go to checkout. */
+async function buyNow(button) {
+  const form = button.closest('form');
+  if (!form) return;
+  button.disabled = true;
+  button.setAttribute('aria-busy', 'true');
+  try {
+    const response = await fetch(`${shopRoot()}cart/add.js`, {
+      method: 'POST',
+      headers: { Accept: 'application/json' },
+      body: new FormData(form),
+    });
+    if (!response.ok) {
+      const problem = await response.json().catch(() => ({}));
+      window.alert(problem.description || problem.message || 'We could not add this to your cart. Please try again.');
+      return;
+    }
+    await goToCheckout();
+  } catch {
+    window.alert('We could not reach the shop. Check your connection and try again.');
+  } finally {
+    button.disabled = false;
+    button.removeAttribute('aria-busy');
+  }
+}
+
+function wireCheckoutGate(openSignIn) {
+  const whenSignedIn = (go) => {
+    if (checkoutAction(readSession()) === 'proceed') return go();
+    openSignIn({ reason: 'checkout', onSignedIn: go });
+  };
+
+  // Capture phase, on the document: the cart drawer is re-rendered on every
+  // change, so a listener on the button itself would be lost.
+  document.addEventListener('submit', (event) => {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement) || form.id !== 'cart-form') return;
+    if (event.submitter?.name !== 'checkout') return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    whenSignedIn(goToCheckout);
+  }, true);
+
+  // The quick-add modal morphs product forms in later, so this is delegated too.
+  document.addEventListener('click', (event) => {
+    const button = event.target instanceof Element ? event.target.closest('[data-scm-buy-now]') : null;
+    if (!button) return;
+    event.preventDefault();
+    whenSignedIn(() => buyNow(button));
+  });
 }
 
 /* --- boot ----------------------------------------------------------------
@@ -1244,18 +1641,32 @@ if (typeof document !== 'undefined') {
     const dialogRoot = dialog.querySelector('[data-account-area]');
     let area = null;
 
-    const open = () => {
+    /**
+     * Open the sign-in popup. `onSignedIn` runs once the shopper is in — at
+     * once if they already are — and `reason` changes what the popup says.
+     */
+    const openSignIn = ({ reason = null, onSignedIn = null } = {}) => {
       area ??= new AccountArea(dialogRoot, { popup: true });
       area.session = readSession();
+      area.reason = reason;
+      area.onSignedIn = onSignedIn ? () => { dialog.close(); onSignedIn(); } : null;
       area.start();
-      dialog.showModal();
+      if (!dialog.open) dialog.showModal();
     };
+
+    // Whatever the popup was opened for is forgotten when it closes, so a later
+    // click on the header icon cannot set off a checkout.
+    dialog.addEventListener('close', () => {
+      if (!area) return;
+      area.reason = null;
+      area.onSignedIn = null;
+    });
 
     for (const link of document.querySelectorAll('.account-button__link')) {
       link.addEventListener('click', (event) => {
         if (!shouldOpenSignInPopup(readSession())) return; // signed in: follow the link
         event.preventDefault();
-        open();
+        openSignIn();
       });
     }
 
@@ -1263,6 +1674,8 @@ if (typeof document !== 'undefined') {
     dialog.addEventListener('click', (event) => {
       if (event.target === dialog) dialog.close();
     });
+
+    wireCheckoutGate(openSignIn);
   };
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot, { once: true });

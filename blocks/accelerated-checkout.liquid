@@ -37,6 +37,18 @@
     {% endunless %}
   >
     {{ accelerated_checkout_button }}
+
+    {%- comment -%}
+      With the phone sign-in on, a signed-out shopper sees this instead of
+      Shopify's express buttons (custom.css swaps them on html.scm-signed-in):
+      it asks them to sign in, then adds the item and goes to checkout.
+      assets/account.js handles the click.
+    {%- endcomment -%}
+    {%- if settings.account_mode == 'custom' -%}
+      <button type="button" class="button button-secondary scm-buy-now" data-scm-buy-now>
+        {{ 'account.buy_now' | t }}
+      </button>
+    {%- endif -%}
   </div>
 {% endif %}
 

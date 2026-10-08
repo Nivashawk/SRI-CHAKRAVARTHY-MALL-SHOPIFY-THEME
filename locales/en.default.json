@@ -10,7 +10,8 @@
 {
   "account": {
     "signin_title": "Sign in",
-    "signin_noscript": "Signing in needs JavaScript. Please turn it on, or call us and we'll help."
+    "signin_noscript": "Signing in needs JavaScript. Please turn it on, or call us and we'll help.",
+    "buy_now": "Buy it now"
   },
   "accessibility": {
     "account": "Account",

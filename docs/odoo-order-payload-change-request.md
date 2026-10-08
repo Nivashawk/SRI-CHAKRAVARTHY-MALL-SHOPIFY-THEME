@@ -240,3 +240,28 @@ New fields marked `← new`.
 4. **The API key**, with no IP restriction (§3.3).
 5. **Confirmation that the order attaches to the partner created at sign-in**, matched on the top-level `phone` per §3.2, rather than creating a new contact — and that `shipping_address.phone` is never used for that match.
 6. **A date for `GET /partners/me/orders`** (§4). Until it exists the account page shows "Order history is being connected", which is honest but not much use to a customer.
+
+---
+
+## 7. Tracking on the customer's order screen (added 8 Oct 2026)
+
+The account page now has a full tracking screen: the journey, how fresh the status is, a Refresh button, the AWB with a link to ST Courier, and the courier's update history. It already reads the names your staff endpoint uses, so no renaming is needed. What it needs is for **`GET /api/v1/partners/me/orders`** to carry these fields on each order:
+
+| Field | Example | Shown as |
+|---|---|---|
+| `customer_status` (or `status`) | `"out_for_delivery"` | The status badge and the journey step |
+| `awb_no` | `"53038567223"` | AWB, with Copy and Track on ST Courier |
+| `courier` | `"ST Courier"` | Courier name |
+| `tracking_url` | `null` or a link | The Track button, when you have a link |
+| `last_status_at` | `"2026-10-08T09:00:00Z"` | "Updated 1 hour ago" |
+| `delivered_at` | `"2026-10-08T06:00:00Z"` | "Delivered on 8 Oct, 11:30 am" |
+| `events` | `[{ "at": "…", "status": "In transit", "location": "TNKGR-Krishnagiri hub" }]` | The shipment history, newest first |
+
+`events` is the one that matters most. Your staff endpoint already has it. Please send the same list here, with `status` in plain words (not `DRS`/`RTO`).
+
+Two more status values the screen now understands, for ST Courier's exceptions:
+
+- `delivery_attempted`: an NDR (customer not available, address not found). Shown in amber as "Delivery attempted".
+- `rto`: the parcel is coming back to us. Shown as "Returning to us".
+
+**ST Courier tracking link.** stcourier.com has no address that opens tracking for a given AWB; its form posts the number and then shows a fixed page. So today our Track button copies the AWB and opens ST Courier's tracking page for the customer to paste it. If ST Courier gives you a per-AWB tracking URL through the API, please send it as `tracking_url`, and the button will use it directly.

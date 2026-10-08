@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { findOrder, trackingSteps, orderDetailHtml } from '../assets/account.js';
+import { findOrder, trackingSteps, orderDetailHtml, normalizeOrder, relativeTime, formatEventTime, orderStatusLabel, statusTone } from '../assets/account.js';
 
 // Opening one order. The list answers "what did I buy"; this screen answers
 // "where is it", which is the question people actually come back to ask.
@@ -113,7 +113,7 @@ describe('orderDetailHtml', () => {
     expect(withEvents).toContain('scm-track__events');
     expect(withEvents).toContain('Out for Delivery');
     expect(withEvents).toContain('Gandhi Nagar');
-    expect(withEvents).toContain('30 Sep 2026');
+    expect(withEvents).toMatch(/30 Sep, \d{1,2}:\d{2} [ap]m/); // updates carry the time, not just the day
   });
 
   it('escapes anything a customer did not write themselves', () => {
@@ -130,5 +130,141 @@ describe('orderDetailHtml', () => {
     const bare = orderDetailHtml({ id: '7', number: '#7', status: 'placed', currency: 'INR' });
     expect(bare).toContain('#7');
     expect(bare).toContain('Order placed');
+  });
+});
+
+// --- tracking ---------------------------------------------------------------
+
+describe('normalizeOrder', () => {
+  it('reads the field names Odoo actually sends', () => {
+    // As captured from Odoo's order endpoint on 6 Oct (docs/odoo-order-api-test-log.md).
+    const odoo = normalizeOrder({
+      id: 7, number: '#1017', customer_status: 'packed',
+      awb_no: '53038567223', courier: 'ST Courier', tracking_url: null,
+      last_status: 'Booked', last_status_at: '2026-10-07T10:00:00Z', delivered_at: null, events: [],
+    });
+    expect(odoo.status).toBe('packed');
+    expect(odoo.tracking).toEqual({ carrier: 'ST Courier', number: '53038567223', url: null });
+    expect(odoo.lastStatus).toBe('Booked');
+    expect(odoo.lastStatusAt).toBe('2026-10-07T10:00:00Z');
+    expect(odoo.deliveredAt).toBeNull();
+  });
+
+  it('reads the shape we asked for, and is safe to apply twice', () => {
+    const once = normalizeOrder(order);
+    expect(once.status).toBe('out_for_delivery');
+    expect(once.tracking.number).toBe('TN123456789');
+    expect(normalizeOrder(once)).toEqual(once);
+  });
+
+  it('puts the newest courier update first and drops empty ones', () => {
+    const { events } = normalizeOrder({
+      ...order,
+      events: [
+        { at: '2026-09-29T12:30:00Z', status: 'Booked' },
+        { at: '2026-09-30T09:27:00Z', status: 'Out for delivery' },
+        {},
+        { at: '2026-09-30T04:10:00Z', status: 'In transit' },
+      ],
+    });
+    expect(events.map((e) => e.status)).toEqual(['Out for delivery', 'In transit', 'Booked']);
+  });
+
+  it('has no tracking until there is a number', () => {
+    expect(normalizeOrder({ id: 1, status: 'placed' }).tracking).toBeNull();
+  });
+});
+
+describe('courier statuses', () => {
+  it('names a failed delivery attempt and a return in words', () => {
+    expect(orderStatusLabel('delivery_attempted')).toBe('Delivery attempted');
+    expect(orderStatusLabel('rto')).toBe('Returning to us');
+    expect(statusTone('delivery_attempted')).toBe('alert');
+    expect(statusTone('rto')).toBe('stop');
+  });
+
+  it('shows a failed attempt where the parcel is, not back at the start', () => {
+    const steps = trackingSteps({ status: 'delivery_attempted' });
+    const current = steps.find((s) => s.state === 'current');
+    expect(current.label).toBe('Delivery attempted');
+    expect(steps.at(-1).state).toBe('todo');
+  });
+
+  it('shows a parcel on its way back as such', () => {
+    expect(trackingSteps({ status: 'rto' }).map((s) => s.key)).toEqual(['placed', 'shipped', 'rto']);
+  });
+});
+
+describe('times', () => {
+  const now = Date.parse('2026-10-08T10:00:00Z');
+
+  it('says how fresh an update is in words while it is recent', () => {
+    expect(relativeTime('2026-10-08T09:59:40Z', now)).toBe('just now');
+    expect(relativeTime('2026-10-08T09:55:00Z', now)).toBe('5 minutes ago');
+    expect(relativeTime('2026-10-08T09:00:00Z', now)).toBe('1 hour ago');
+    expect(relativeTime('2026-10-08T07:00:00Z', now)).toBe('3 hours ago');
+  });
+
+  it('gives the date and time once it is older than a day', () => {
+    expect(relativeTime('2026-10-06T09:00:00Z', now, 'Asia/Kolkata')).toBe('6 Oct, 2:30 pm');
+  });
+
+  it('writes an update time the way people say it', () => {
+    expect(formatEventTime('2026-09-30T09:27:00Z', 'Asia/Kolkata')).toBe('30 Sep, 2:57 pm');
+    expect(formatEventTime('2026-09-30T18:40:00Z', 'Asia/Kolkata')).toBe('1 Oct, 12:10 am');
+    expect(formatEventTime('nonsense')).toBe('');
+  });
+});
+
+describe('tracking on the order screen', () => {
+  const now = Date.parse('2026-10-08T10:00:00Z');
+  const booked = {
+    id: '1017', number: '#1017', placed_at: '2026-10-07T08:00:00Z', total: '1.00', currency: 'INR',
+    customer_status: 'shipped', awb_no: '53038567223', courier: 'ST Courier', tracking_url: null,
+    last_status_at: '2026-10-08T09:00:00Z', items: [],
+  };
+
+  it('offers to copy the AWB and follow it on ST Courier', () => {
+    const html = orderDetailHtml(booked, now);
+    expect(html).toContain('data-copy="53038567223"');
+    expect(html).toContain('data-track-awb="53038567223"');
+    expect(html).toContain('Track on ST Courier');
+  });
+
+  it('uses the courier link itself when Odoo sends one', () => {
+    const html = orderDetailHtml({ ...booked, tracking_url: 'https://track.example/530' }, now);
+    expect(html).toContain('href="https://track.example/530"');
+    expect(html).not.toContain('data-track-awb');
+  });
+
+  it('says when the status last changed, and can be refreshed', () => {
+    const html = orderDetailHtml(booked, now);
+    expect(html).toContain('Updated 1 hour ago');
+    expect(html).toContain('data-action="refresh-order"');
+  });
+
+  it('says when it was delivered', () => {
+    const html = orderDetailHtml({ ...booked, customer_status: 'delivered', delivered_at: '2026-10-08T06:00:00Z' }, now);
+    expect(html).toMatch(/Delivered on 8 Oct/);
+  });
+
+  it('explains the empty history instead of drawing an empty box', () => {
+    const html = orderDetailHtml(booked, now);
+    expect(html).toContain('scm-track__empty');
+    expect(html).not.toContain('scm-track__events');
+  });
+
+  it('marks the newest courier update', () => {
+    const html = orderDetailHtml({ ...booked, events: [
+      { at: '2026-10-07T12:00:00Z', status: 'Booked', location: 'Chennai' },
+      { at: '2026-10-08T05:00:00Z', status: 'In transit', location: 'Krishnagiri hub' },
+    ] }, now);
+    expect(html.indexOf('In transit')).toBeLessThan(html.indexOf('Booked'));
+    expect(html).toMatch(/scm-track__event--latest[^]*In transit/);
+  });
+
+  it('escapes the AWB everywhere it is used', () => {
+    const html = orderDetailHtml({ ...booked, awb_no: '"><img src=x>' }, now);
+    expect(html).not.toContain('<img src=x>');
   });
 });

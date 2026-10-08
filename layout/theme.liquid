@@ -24,6 +24,24 @@
     {%- render 'theme-styles-variables' -%}
     {%- render 'color-palette' -%}
     {{ 'custom.css' | asset_url | stylesheet_tag }}
+
+    {%- comment -%}
+      Phone sign-in: mark the page before it paints, so the right buy buttons
+      show from the first frame (custom.css). scm-gate means the sign-in is on;
+      scm-signed-in mirrors isSignedIn() in assets/account.js — keep in step.
+    {%- endcomment -%}
+    {%- if settings.account_mode == 'custom' -%}
+      <script>
+        (function () {
+          var c = document.documentElement.classList;
+          c.add('scm-gate');
+          try {
+            var s = JSON.parse(localStorage.getItem('scm.account.session') || 'null');
+            if (s && (Number(s.expiresAt) > Date.now() || s.refreshToken)) c.add('scm-signed-in');
+          } catch (e) {}
+        })();
+      </script>
+    {%- endif -%}
     <script src="{{ 'custom.js' | asset_url }}" defer></script>
 
     {% if request.design_mode %}
