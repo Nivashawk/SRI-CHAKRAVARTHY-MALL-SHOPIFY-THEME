@@ -370,6 +370,85 @@ export function normalizeOrder(raw) {
 }
 
 /**
+ * The order from the list, completed by the order-detail endpoint. The detail
+ * is the fresher of the two, so its status and tracking win; anything only
+ * the list carried (items, totals) is kept.
+ */
+export function mergeOrderDetail(listed, detail) {
+  if (!detail || typeof detail !== 'object') return listed;
+  const base = normalizeOrder(listed);
+  const extra = normalizeOrder(detail);
+  const fresher = (key) => extra[key] ?? base[key];
+  return normalizeOrder({
+    ...base,
+    ...detail,
+    status: fresher('status'),
+    tracking: extra.tracking ?? base.tracking,
+    lastStatus: fresher('lastStatus'),
+    lastStatusAt: fresher('lastStatusAt'),
+    deliveredAt: fresher('deliveredAt'),
+    events: extra.events.length > 0 ? extra.events : base.events,
+  });
+}
+
+/* --- delivery, payment and price, from the order-detail endpoint ---------- */
+
+function addressHtml(address) {
+  if (!address || typeof address !== 'object') return '';
+  const place = [[address.city, address.state].filter(Boolean).join(', '), address.zip].filter(Boolean).join(' ');
+  const lines = [address.name, address.street, address.street2, place]
+    .filter(Boolean)
+    .map((line) => `<span>${escapeHtml(line)}</span>`);
+  if (address.phone) lines.push(`<span class="scm-address__phone">${escapeHtml(formatPhone(address.phone))}</span>`);
+  if (lines.length === 0) return '';
+  return `
+    <div class="scm-facet">
+      <h3 class="scm-facet__title">Delivery address</h3>
+      <p class="scm-address">${lines.join('')}</p>
+    </div>`;
+}
+
+function paymentHtml(order) {
+  const method = String(order.payment_method ?? '').toLowerCase();
+  if (!method) return '';
+  let text = 'Paid online';
+  if (method === 'cod') {
+    const due = Number(order.cod_amount);
+    text = due > 0
+      ? `Cash on delivery \u00b7 ${formatMoney(due, order.currency)} to pay on delivery`
+      : 'Cash on delivery';
+  }
+  return `
+    <div class="scm-facet">
+      <h3 class="scm-facet__title">Payment</h3>
+      <p class="scm-pay">${escapeHtml(text)}</p>
+    </div>`;
+}
+
+/** Subtotal, discount, shipping, tax and total — only once Odoo sends a subtotal. */
+function summaryHtml(order) {
+  if (order.subtotal == null || order.subtotal === '') return '';
+  const money = (value) => formatMoney(value, order.currency);
+  const row = (label, value, extra = '') =>
+    `<div class="scm-summary__row${extra}"><dt>${label}</dt><dd>${escapeHtml(value)}</dd></div>`;
+
+  const rows = [row('Subtotal', money(order.subtotal))];
+  const discount = Number(order.discount_total);
+  if (discount > 0) {
+    const codes = (order.discount_codes ?? []).filter(Boolean).map(escapeHtml).join(', ');
+    rows.push(row(`Discount${codes ? ` <span class="scm-summary__codes">${codes}</span>` : ''}`, `\u2212${money(discount)}`));
+  }
+  if (order.shipping_total != null) {
+    rows.push(row('Shipping', Number(order.shipping_total) > 0 ? money(order.shipping_total) : 'Free'));
+  }
+  if (Number(order.tax_total) > 0) rows.push(row('Tax', money(order.tax_total)));
+  const total = order.amount_total ?? order.total;
+  if (total != null) rows.push(row('Total', money(total), ' scm-summary__row--total'));
+
+  return `<dl class="scm-summary">${rows.join('')}</dl>`;
+}
+
+/**
  * Where to follow a parcel when Odoo sends no link of its own.
  *
  * ST Courier's site has no address that takes an AWB: its form posts the
@@ -637,6 +716,8 @@ export function orderDetailHtml(raw, now = Date.now()) {
         : 'Courier updates will appear here once your order is handed to the courier.'}</p>`;
 
   const items = orderItemsHtml(order);
+  const facets = addressHtml(order.shipping_address) + paymentHtml(order);
+  const summary = summaryHtml(order);
 
   return `
     <button class="scm-link scm-order__back" type="button" data-orders-back>\u2190 Back to orders</button>
@@ -662,10 +743,14 @@ export function orderDetailHtml(raw, now = Date.now()) {
       ${history}
     </section>
 
-    ${items ? `
+    ${facets ? `
+    <section class="scm-card scm-facets" aria-label="Delivery and payment">${facets}</section>` : ''}
+
+    ${items || summary ? `
     <section class="scm-card" aria-labelledby="scm-items-title">
       <h2 class="scm-card__title" id="scm-items-title">Items</h2>
-      <ul class="scm-order__items scm-order__items--detail">${items}</ul>
+      ${items ? `<ul class="scm-order__items scm-order__items--detail">${items}</ul>` : ''}
+      ${summary}
     </section>` : ''}
   `;
 }
@@ -794,6 +879,17 @@ export class OdooAccountApi {
   orders(token) {
     return this.call('/api/v1/partners/me/orders', { method: 'GET', token });
   }
+
+  /**
+   * One order, with what the list leaves out: delivery address, payment, the
+   * price breakdown and the courier's history. Asked of Odoo (see
+   * docs/odoo-booking-blockers.md §2) and not built yet — the route answers
+   * Odoo's website 404 page without CORS headers, so in a browser it fails as
+   * a network error. Callers treat any failure as "not available".
+   */
+  order(token, id) {
+    return this.call(`/api/v1/partners/me/orders/${encodeURIComponent(id)}`, { method: 'GET', token });
+  }
 }
 
 const ASSUMED_TOKEN_SECONDS = 900; // 15 minutes, the lifetime the contract asks for
@@ -870,7 +966,7 @@ export function createMockFetch() {
   const reply = (body, status = 200) =>
     Promise.resolve({ ok: status < 400, status, json: () => Promise.resolve(body) });
 
-  return async (url, options = {}) => {
+  const mockFetch = async (url, options = {}) => {
     const path = String(url).split('?')[0];
     const body = options.body ? JSON.parse(options.body) : {};
     await new Promise((resolve) => setTimeout(resolve, 400)); // feels like a network
@@ -893,6 +989,27 @@ export function createMockFetch() {
       return reply({ status: 'ok', access_token: 'mock-access-token-2', refresh_token: 'mock-refresh-2', expires_in: 900, profile });
     }
     if (path.endsWith('/auth/logout')) return reply({ status: 'ok' });
+    // The order-detail endpoint Odoo has been asked for: the list entry plus
+    // address, payment and the price breakdown, in the staff endpoint's names.
+    const one = path.match(/\/partners\/me\/orders\/([^/]+)$/);
+    if (one) {
+      const list = await (await mockFetch(path.replace(/\/[^/]+$/, ''), { method: 'GET' })).json();
+      const found = list.orders.find((o) => o.id === decodeURIComponent(one[1]));
+      if (!found) return reply({ status: 'error', error: 'not_found' }, 404);
+      const total = Number(found.total);
+      return reply({
+        status: 'ok',
+        order: {
+          ...found,
+          shipping_address: { name: profile.name, street: profile.street, street2: profile.street2,
+            city: profile.city, state: profile.state, zip: profile.zip, phone: profile.phone },
+          payment_method: found.status === 'delivered' ? 'prepaid' : 'cod',
+          cod_amount: found.status === 'delivered' ? 0 : total,
+          subtotal: total + 500, discount_total: 500, discount_codes: ['WELCOME500'],
+          shipping_total: 0, tax_total: 0, amount_total: total,
+        },
+      });
+    }
     if (path.endsWith('/partners/me/orders')) {
       return reply({
         status: 'ok',
@@ -949,6 +1066,7 @@ export function createMockFetch() {
     }
     return reply({ status: 'error', error: 'not_found' }, 404);
   };
+  return mockFetch;
 }
 
 /* --- the screens ---------------------------------------------------------- */
@@ -1253,6 +1371,7 @@ class AccountArea {
   }
 
   async showOrders(profile) {
+    this.openOrderId = null;
     this.renderShell('orders', `
       <h1 class="scm-account__title">Your orders</h1>
       <p class="scm-account__lead">Loading…</p>
@@ -1295,13 +1414,15 @@ class AccountArea {
   /**
    * One order, opened from the list.
    *
-   * The list payload already carries everything this screen shows, so opening
-   * an order costs no second request and works offline-ish: tapping back and
-   * forth never reloads.
+   * Drawn at once from the list, which already carries the status, tracking
+   * and items, so opening an order never waits on the network. The fuller
+   * record (address, payment, price breakdown, courier history) is then asked
+   * for in the background and drawn in when it arrives.
    */
-  showOrderDetail(id) {
+  showOrderDetail(id, { fetchDetail = true } = {}) {
     const order = findOrder(this.orders, id);
     if (!order) return this.showOrders(this.session.profile);
+    this.openOrderId = String(id);
 
     this.renderShell('orders', orderDetailHtml(order));
 
@@ -1310,30 +1431,68 @@ class AccountArea {
 
     const refresh = this.body.querySelector('[data-action="refresh-order"]');
     if (refresh) refresh.addEventListener('click', () => this.refreshOrder(order.id, refresh));
+
+    if (fetchDetail) this.loadOrderDetail(id);
+  }
+
+  /**
+   * Fetch one order's detail into this.orders. False when there is none —
+   * Odoo has not built the endpoint yet, and a failure is remembered for the
+   * rest of the visit so each open does not ask again.
+   */
+  async fetchOrderDetail(id) {
+    if (this.detailUnavailable) return false;
+    const result = await this.api.order(this.session.accessToken, id);
+    if (!result.ok) {
+      this.detailUnavailable = true;
+      return false;
+    }
+    const detail = result.data.order ?? result.data;
+    this.orders = this.orders.map((order) =>
+      String(order.id) === String(id) ? mergeOrderDetail(order, detail) : order);
+    return true;
+  }
+
+  async loadOrderDetail(id) {
+    const got = await this.fetchOrderDetail(id);
+    // Redraw only if the customer is still looking at this order.
+    if (got && this.openOrderId === String(id) && this.body.querySelector('[data-orders-back]')) {
+      this.showOrderDetail(id, { fetchDetail: false });
+    }
   }
 
   /**
    * Ask Odoo again, then redraw the same order. Odoo is the one listening to
-   * ST Courier, so this is as fresh as the status gets.
+   * ST Courier, so this is as fresh as the status gets. The order on its own
+   * when Odoo offers that; the whole list otherwise.
    */
   async refreshOrder(id, button) {
     button.disabled = true;
     button.textContent = 'Checking…';
-    const result = await this.api.orders(this.session.accessToken);
-    if (result.ok) {
-      this.orders = (result.data.orders ?? []).map(normalizeOrder);
-      if (!findOrder(this.orders, id)) return this.showOrders(this.session.profile);
-      this.showOrderDetail(id);
+
+    let fresh = await this.fetchOrderDetail(id);
+    if (!fresh) {
+      const result = await this.api.orders(this.session.accessToken);
+      if (result.ok) {
+        this.orders = (result.data.orders ?? []).map(normalizeOrder);
+        fresh = true;
+      }
+    }
+
+    if (!fresh) {
+      button.disabled = false;
+      button.textContent = 'Refresh';
       const updated = this.body.querySelector('[data-updated]');
-      if (updated && !updated.textContent.trim()) updated.textContent = 'Checked just now';
-      const again = this.body.querySelector('[data-action="refresh-order"]');
-      if (again) again.textContent = 'Up to date';
+      if (updated) updated.textContent = 'Could not check just now. Try again in a moment.';
       return;
     }
-    button.disabled = false;
-    button.textContent = 'Refresh';
+
+    if (!findOrder(this.orders, id)) return this.showOrders(this.session.profile);
+    this.showOrderDetail(id, { fetchDetail: false });
     const updated = this.body.querySelector('[data-updated]');
-    if (updated) updated.textContent = 'Could not check just now. Try again in a moment.';
+    if (updated && !updated.textContent.trim()) updated.textContent = 'Checked just now';
+    const again = this.body.querySelector('[data-action="refresh-order"]');
+    if (again) again.textContent = 'Up to date';
   }
 
   /**

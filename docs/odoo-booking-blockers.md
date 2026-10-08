@@ -92,6 +92,27 @@ Until this exists the detail screen shows the journey derived from `status` and 
 Courier's own page, and simply adds the history underneath when you ship it. No further work on
 our side.
 
+**Status, 8 Oct 2026:** not built yet. `GET /api/v1/partners/me/orders/<id>` returns Odoo's HTML
+website 404 page with no CORS headers, while `/partners/me/orders` beside it answers JSON
+(`401 missing_token`, `Access-Control-Allow-Origin: *`). The storefront already calls the detail
+route whenever an order is opened or refreshed, and draws in whatever it returns, so the day it
+answers, customers see it with no release on our side.
+
+What the screen renders from it, in the field names your staff endpoint
+(`GET /api/v1/shopify/order`) already uses, so the same serializer can be reused, filtered to the
+token's partner:
+
+| Field | Shown as |
+|---|---|
+| `shipping_address { name, street, street2, city, state, zip, phone }` | Delivery address |
+| `payment_method`, `cod_amount` | "Cash on delivery · ₹4,500.00 to pay on delivery" or "Paid online" |
+| `subtotal`, `discount_total`, `discount_codes`, `shipping_total`, `tax_total`, `amount_total` | Price breakdown under the items |
+| `customer_status`, `awb_no`, `courier`, `tracking_url`, `last_status_at`, `delivered_at` | Status, AWB and "Updated …" (fresher than the list) |
+| `events [{ at, status, location }]` | Shipment updates, newest first |
+
+Please also send the CORS headers on this route, as on the list route, or the browser cannot read
+it, not even its errors.
+
 ---
 
 ## What we have done on the Shopify side

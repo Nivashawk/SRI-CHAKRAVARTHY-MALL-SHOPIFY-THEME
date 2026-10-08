@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { findOrder, trackingSteps, orderDetailHtml, normalizeOrder, relativeTime, formatEventTime, orderStatusLabel, statusTone } from '../assets/account.js';
+import { findOrder, trackingSteps, orderDetailHtml, normalizeOrder, relativeTime, formatEventTime, orderStatusLabel, statusTone, mergeOrderDetail, OdooAccountApi } from '../assets/account.js';
 
 // Opening one order. The list answers "what did I buy"; this screen answers
 // "where is it", which is the question people actually come back to ask.
@@ -266,5 +266,116 @@ describe('tracking on the order screen', () => {
   it('escapes the AWB everywhere it is used', () => {
     const html = orderDetailHtml({ ...booked, awb_no: '"><img src=x>' }, now);
     expect(html).not.toContain('<img src=x>');
+  });
+});
+
+// --- the order-detail endpoint ----------------------------------------------
+// GET /partners/me/orders/<id> is asked of Odoo but not built yet. The screen
+// calls it anyway and shows what it adds the day it answers.
+
+describe('mergeOrderDetail', () => {
+  const listed = normalizeOrder({ ...order, events: [] });
+  const detail = {
+    customer_status: 'delivered',
+    delivered_at: '2026-10-01T06:00:00Z',
+    shipping_address: { name: 'Nivas S', city: 'Chennai' },
+    events: [
+      { at: '2026-09-29T12:30:00Z', status: 'Booked' },
+      { at: '2026-10-01T06:00:00Z', status: 'Delivered' },
+    ],
+  };
+
+  it('lets the detail win and keeps what only the list had', () => {
+    const merged = mergeOrderDetail(listed, { ...detail, status: 'delivered' });
+    expect(merged.status).toBe('delivered');
+    expect(merged.deliveredAt).toBe('2026-10-01T06:00:00Z');
+    expect(merged.shipping_address.city).toBe('Chennai');
+    expect(merged.items).toHaveLength(2);
+    expect(merged.tracking.number).toBe('TN123456789');
+  });
+
+  it('reads Odoo status names in the detail even over the list status', () => {
+    expect(mergeOrderDetail(listed, detail).status).toBe('delivered');
+  });
+
+  it('sorts the history it brings', () => {
+    expect(mergeOrderDetail(listed, detail).events[0].status).toBe('Delivered');
+  });
+
+  it('leaves the list order alone when there is no detail', () => {
+    expect(mergeOrderDetail(listed, null)).toEqual(listed);
+  });
+});
+
+describe('orderDetailHtml with the detail fields', () => {
+  const now = Date.parse('2026-10-08T10:00:00Z');
+  const full = {
+    ...order,
+    shipping_address: { name: 'Nivas S', street: 'no:11, Mahavishnu Nagar', street2: '2nd street',
+      city: 'Tiruvallur', state: 'Tamil Nadu', zip: '600110', phone: '+918825464712' },
+    payment_method: 'cod', cod_amount: 12450,
+    subtotal: 12950, discount_total: 500, discount_codes: ['DIWALI500'], shipping_total: 0, tax_total: 0,
+    amount_total: 12450,
+  };
+
+  it('shows where it is going', () => {
+    const html = orderDetailHtml(full, now);
+    expect(html).toContain('Delivery address');
+    expect(html).toContain('Mahavishnu Nagar');
+    expect(html).toContain('Tiruvallur, Tamil Nadu 600110');
+    expect(html).toContain('+91 88254 64712');
+  });
+
+  it('says what is left to pay on a cash-on-delivery order', () => {
+    expect(orderDetailHtml(full, now)).toContain('Cash on delivery');
+    expect(orderDetailHtml(full, now)).toContain('₹12,450.00 to pay on delivery');
+    expect(orderDetailHtml({ ...full, payment_method: 'prepaid', cod_amount: 0 }, now)).toContain('Paid online');
+  });
+
+  it('breaks down the price', () => {
+    const html = orderDetailHtml(full, now);
+    expect(html).toContain('scm-summary');
+    expect(html).toContain('₹12,950.00');
+    expect(html).toContain('DIWALI500');
+    expect(html).toContain('−₹500.00');
+    expect(html).toMatch(/Shipping[^]*Free/);
+  });
+
+  it('draws none of it until the detail arrives', () => {
+    const html = orderDetailHtml(order, now);
+    expect(html).not.toContain('Delivery address');
+    expect(html).not.toContain('scm-summary');
+    expect(html).not.toContain('Cash on delivery');
+  });
+
+  it('escapes the address', () => {
+    const html = orderDetailHtml({ ...full, shipping_address: { street: '<img src=x onerror=1>' } }, now);
+    expect(html).not.toContain('<img src=x');
+  });
+});
+
+describe('OdooAccountApi.order', () => {
+  it('asks for one order, with the customer token, by its id', async () => {
+    const calls = [];
+    const api = new OdooAccountApi({
+      baseUrl: 'https://odoo.test/',
+      fetchImpl: async (url, init) => {
+        calls.push({ url, init });
+        return { ok: true, status: 200, json: async () => ({ status: 'ok', order: { id: '1/7' } }) };
+      },
+    });
+    const result = await api.order('tok', '1/7');
+    expect(calls[0].url).toBe('https://odoo.test/api/v1/partners/me/orders/1%2F7');
+    expect(calls[0].init.method).toBe('GET');
+    expect(calls[0].init.headers.Authorization).toBe('Bearer tok');
+    expect(result.ok).toBe(true);
+  });
+
+  it('reports a missing route as a 404 rather than success', async () => {
+    const api = new OdooAccountApi({
+      baseUrl: 'https://odoo.test',
+      fetchImpl: async () => ({ ok: false, status: 404, json: async () => { throw new SyntaxError('html'); } }),
+    });
+    expect(await api.order('tok', '7')).toMatchObject({ ok: false, status: 404 });
   });
 });

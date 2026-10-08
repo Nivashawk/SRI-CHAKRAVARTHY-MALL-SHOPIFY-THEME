@@ -1634,6 +1634,90 @@ a.scm-courier__track {
   to { opacity: 1; }
 }
 
+/* --- delivery, payment and price (order-detail endpoint) ------------------ */
+
+.scm-facets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 20px 32px;
+}
+
+.scm-facet__title {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--scm-gold-text);
+}
+
+.scm-address {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.scm-address__phone {
+  margin-block-start: 4px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+}
+
+.scm-pay {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.scm-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 20px 0 0;
+  padding-block-start: 16px;
+  border-block-start: 1px solid rgb(34 30 26 / 12%);
+  font-size: 0.9375rem;
+}
+
+.scm-summary__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.scm-summary__row dt {
+  opacity: 0.8;
+}
+
+.scm-summary__row dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.scm-summary__codes {
+  margin-inline-start: 6px;
+  padding: 1px 8px;
+  font-size: 0.8125rem;
+  background: #f7f1e3;
+  border-radius: 999px;
+}
+
+.scm-summary__row--total {
+  margin-block-start: 4px;
+  padding-block-start: 12px;
+  border-block-start: 1px solid rgb(34 30 26 / 12%);
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+
+.scm-summary__row--total dt {
+  opacity: 1;
+}
+
 /* --- sign in before checkout ----------------------------------------------
 
    html.scm-gate: the phone sign-in is on (layout/theme.liquid).
