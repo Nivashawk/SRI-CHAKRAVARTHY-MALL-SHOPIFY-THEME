@@ -111,6 +111,10 @@
     "whatsapp_enabled": true,
     "whatsapp_number": "9361422459",
     "whatsapp_message": "Hello, I would like to know more about your sarees.",
+    "call_enabled": true,
+    "call_number": "",
+    "call_mode": "phone",
+    "account_mode": "custom",
     "content_for_index": [],
     "blocks": {
       "17370010407503379518": {
@@ -129,10 +133,7 @@
       "foreground": "#221E1A",
       "color1": "#D9982F",
       "color2": "#E7DFD2"
-    },
-    "call_enabled": true,
-    "call_number": "",
-    "call_mode": "phone"
+    }
   },
   "presets": {
     "Horizon": {
