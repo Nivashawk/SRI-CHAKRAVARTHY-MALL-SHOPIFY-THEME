@@ -38,7 +38,40 @@
     {% endstyle %}
   {% endif %}
 
-  <div class="slide__image-container{% if rounded_image_corners %} slide__image-container--rounded{% endif %}">
+  {%- comment -%}
+    Crop position, per slide, as custom properties rather than an inline style on the
+    <img>. Mobile art direction serves its file through a <source>, so BOTH breakpoints
+    paint the same <img>: an inline object-position would win everywhere and silently
+    undo the mobile rule below. Custom properties let each media query resolve its own.
+
+    Each is emitted only when that image carries a focal point the merchant actually
+    chose, so the head-safe defaults in the stylesheet stay in charge otherwise.
+
+    An image with NO focal point set does not report blank -- Shopify reports dead
+    centre, '50.0% 50.0%'. Emitting that would override the safe default with the
+    exact crop that cuts the heads off, so centre is treated as "unset". The cost is
+    that deliberately choosing dead centre is indistinguishable from choosing
+    nothing, which is the right trade here: centre is the broken case.
+  {%- endcomment -%}
+  {%- liquid
+    assign focal_centre = '50.0% 50.0%,50% 50%,center center' | split: ','
+
+    assign focal_vars = ''
+    assign fp_desktop = block_settings.image_1.presentation.focal_point
+    unless fp_desktop == blank or focal_centre contains fp_desktop
+      assign focal_vars = '--slide-focal-desktop: ' | append: fp_desktop | append: ';'
+    endunless
+
+    assign fp_mobile = block_settings.image_1_mobile.presentation.focal_point
+    unless fp_mobile == blank or focal_centre contains fp_mobile
+      assign focal_vars = focal_vars | append: '--slide-focal-mobile: ' | append: fp_mobile | append: ';'
+    endunless
+  -%}
+
+  <div
+    class="slide__image-container{% if rounded_image_corners %} slide__image-container--rounded{% endif %}"
+    {% if focal_vars != blank %}style="{{ focal_vars }}"{% endif %}
+  >
     {%- if block_settings.toggle_overlay -%}
       {% render 'overlay', settings: block_settings %}
     {%- endif -%}
@@ -223,22 +256,29 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center center;
+
+    /* The slide box is a fixed 45rem tall against a full-bleed width, so the wider
+       the screen the harder the photo is cropped vertically. At 1920px a 4:3 photo
+       renders 1440px tall in a 720px box and `center` keeps only the middle
+       25%-75% -- which cut the models' heads off entirely, since they sit about
+       15% down. Anchoring at 12% keeps the hairline inside even at 4K while
+       trimming most of the sky; the visible band runs from just above the head to
+       roughly mid-saree.
+
+       A Shopify focal point on the image overrides this per slide. */
+    object-position: var(--slide-focal-desktop, center 12%);
   }
 
-  /* Mobile art direction uses portrait model shots (3:4) inside a landscape
-     40dvh row, so centre-cropping cuts roughly equal slices off the top and
-     bottom -- and the top slice contains the model's head. Anchoring to the top
-     pushes the whole overflow to the bottom, which is only fabric.
-
-     Deliberately mobile-only: the desktop images are landscape and lose nothing
-     worth keeping when centred, so they stay as they were. */
+  /* Mobile art direction uses portrait model shots (3:4), so centre-cropping cuts
+     roughly equal slices off the top and bottom -- and the top slice contains the
+     model's head. Anchoring to the top pushes the whole overflow to the bottom,
+     which is only fabric. */
   @media screen and (max-width: 749px) {
     .slide__image-container > .slide__image,
     .slide__image-container > .slide__picture > .slide__image,
     .slide__image-container > .slide__video,
     .slide__image-container > .slide__video-poster {
-      object-position: center top;
+      object-position: var(--slide-focal-mobile, center top);
     }
   }
 
